@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package game;
+
+option go_package = "github.com/megakuul/orbstrike/proto";
+
+service GameService {
+  rpc StartSession(stream RouteNote) returns (GameBoard) {}
+}
+
+// Gameboard representation
+message GameBoard {
+    repeated Player players = 1;
+}
+
+message Player {
+    int32 x = 1;           // X position
+    int32 y = 2;           // Y position
+    int32 color = 3;       // Numeric representation of color
+    int32 kills = 4;       // Number of kills
+    bool ringEnabled = 5;  // If the ring is enabled
+}
+
+// Direction to move
+message Move {
+    enum Direction {
+        UP = 0;
+        DOWN = 1;
+        LEFT = 2;
+        RIGHT = 3;
+        UP_LEFT = 4;
+        UP_RIGHT = 5;
+        DOWN_LEFT = 6;
+        DOWN_RIGHT = 7;
+    }
+    Direction direction = 1;
+}
