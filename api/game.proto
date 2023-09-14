@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package game;
 
-option go_package = "github.com/megakuul/orbstrike/proto";
+option go_package = "github.com/megakuul/orbstrike/server/proto";
 
 service GameService {
-  rpc StartSession(stream RouteNote) returns (GameBoard) {}
+  rpc StreamGameboard(stream Move) returns (stream GameBoard) {}
 }
 
 // Gameboard representation

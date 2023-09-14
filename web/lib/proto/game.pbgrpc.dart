@@ -21,8 +21,8 @@ export 'game.pb.dart';
 
 @$pb.GrpcServiceName('game.GameService')
 class GameServiceClient extends $grpc.Client {
-  static final _$gameUpdate = $grpc.ClientMethod<$0.Move, $0.GameBoard>(
-      '/game.GameService/GameUpdate',
+  static final _$streamGameboard = $grpc.ClientMethod<$0.Move, $0.GameBoard>(
+      '/game.GameService/StreamGameboard',
       ($0.Move value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.GameBoard.fromBuffer(value));
 
@@ -32,8 +32,8 @@ class GameServiceClient extends $grpc.Client {
       : super(channel, options: options,
         interceptors: interceptors);
 
-  $grpc.ResponseFuture<$0.GameBoard> gameUpdate($0.Move request, {$grpc.CallOptions? options}) {
-    return $createUnaryCall(_$gameUpdate, request, options: options);
+  $grpc.ResponseStream<$0.GameBoard> streamGameboard($async.Stream<$0.Move> request, {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$streamGameboard, request, options: options);
   }
 }
 
@@ -43,17 +43,13 @@ abstract class GameServiceBase extends $grpc.Service {
 
   GameServiceBase() {
     $addMethod($grpc.ServiceMethod<$0.Move, $0.GameBoard>(
-        'GameUpdate',
-        gameUpdate_Pre,
-        false,
-        false,
+        'StreamGameboard',
+        streamGameboard,
+        true,
+        true,
         ($core.List<$core.int> value) => $0.Move.fromBuffer(value),
         ($0.GameBoard value) => value.writeToBuffer()));
   }
 
-  $async.Future<$0.GameBoard> gameUpdate_Pre($grpc.ServiceCall call, $async.Future<$0.Move> request) async {
-    return gameUpdate(call, await request);
-  }
-
-  $async.Future<$0.GameBoard> gameUpdate($grpc.ServiceCall call, $0.Move request);
+  $async.Stream<$0.GameBoard> streamGameboard($grpc.ServiceCall call, $async.Stream<$0.Move> request);
 }

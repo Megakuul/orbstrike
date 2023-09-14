@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	GameService_GameUpdate_FullMethodName = "/game.GameService/GameUpdate"
+	GameService_StreamGameboard_FullMethodName = "/game.GameService/StreamGameboard"
 )
 
 // GameServiceClient is the client API for GameService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GameServiceClient interface {
-	GameUpdate(ctx context.Context, in *Move, opts ...grpc.CallOption) (*GameBoard, error)
+	StreamGameboard(ctx context.Context, opts ...grpc.CallOption) (GameService_StreamGameboardClient, error)
 }
 
 type gameServiceClient struct {
@@ -37,20 +37,42 @@ func NewGameServiceClient(cc grpc.ClientConnInterface) GameServiceClient {
 	return &gameServiceClient{cc}
 }
 
-func (c *gameServiceClient) GameUpdate(ctx context.Context, in *Move, opts ...grpc.CallOption) (*GameBoard, error) {
-	out := new(GameBoard)
-	err := c.cc.Invoke(ctx, GameService_GameUpdate_FullMethodName, in, out, opts...)
+func (c *gameServiceClient) StreamGameboard(ctx context.Context, opts ...grpc.CallOption) (GameService_StreamGameboardClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GameService_ServiceDesc.Streams[0], GameService_StreamGameboard_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &gameServiceStreamGameboardClient{stream}
+	return x, nil
+}
+
+type GameService_StreamGameboardClient interface {
+	Send(*Move) error
+	Recv() (*GameBoard, error)
+	grpc.ClientStream
+}
+
+type gameServiceStreamGameboardClient struct {
+	grpc.ClientStream
+}
+
+func (x *gameServiceStreamGameboardClient) Send(m *Move) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *gameServiceStreamGameboardClient) Recv() (*GameBoard, error) {
+	m := new(GameBoard)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // GameServiceServer is the server API for GameService service.
 // All implementations must embed UnimplementedGameServiceServer
 // for forward compatibility
 type GameServiceServer interface {
-	GameUpdate(context.Context, *Move) (*GameBoard, error)
+	StreamGameboard(GameService_StreamGameboardServer) error
 	mustEmbedUnimplementedGameServiceServer()
 }
 
@@ -58,8 +80,8 @@ type GameServiceServer interface {
 type UnimplementedGameServiceServer struct {
 }
 
-func (UnimplementedGameServiceServer) GameUpdate(context.Context, *Move) (*GameBoard, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GameUpdate not implemented")
+func (UnimplementedGameServiceServer) StreamGameboard(GameService_StreamGameboardServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamGameboard not implemented")
 }
 func (UnimplementedGameServiceServer) mustEmbedUnimplementedGameServiceServer() {}
 
@@ -74,22 +96,30 @@ func RegisterGameServiceServer(s grpc.ServiceRegistrar, srv GameServiceServer) {
 	s.RegisterService(&GameService_ServiceDesc, srv)
 }
 
-func _GameService_GameUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Move)
-	if err := dec(in); err != nil {
+func _GameService_StreamGameboard_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GameServiceServer).StreamGameboard(&gameServiceStreamGameboardServer{stream})
+}
+
+type GameService_StreamGameboardServer interface {
+	Send(*GameBoard) error
+	Recv() (*Move, error)
+	grpc.ServerStream
+}
+
+type gameServiceStreamGameboardServer struct {
+	grpc.ServerStream
+}
+
+func (x *gameServiceStreamGameboardServer) Send(m *GameBoard) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *gameServiceStreamGameboardServer) Recv() (*Move, error) {
+	m := new(Move)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(GameServiceServer).GameUpdate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: GameService_GameUpdate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GameServiceServer).GameUpdate(ctx, req.(*Move))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 // GameService_ServiceDesc is the grpc.ServiceDesc for GameService service.
@@ -98,12 +128,14 @@ func _GameService_GameUpdate_Handler(srv interface{}, ctx context.Context, dec f
 var GameService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "game.GameService",
 	HandlerType: (*GameServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "GameUpdate",
-			Handler:    _GameService_GameUpdate_Handler,
+			StreamName:    "StreamGameboard",
+			Handler:       _GameService_StreamGameboard_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "game.proto",
 }

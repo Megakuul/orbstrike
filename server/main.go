@@ -1,37 +1,63 @@
 package main
 
 import (
-	"context"
+	"io"
 	"log"
-	"net"
+	"net/http"
 
+	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"github.com/megakuul/orbstrike/server/proto"
 	"google.golang.org/grpc"
-	pt "github.com/megakuul/orbstrike/proto"
 )
 
 type server struct {
-
+	proto.UnimplementedGameServiceServer
 }
 
-func (s *server) HandleGameUpdate(ctx context.Context, mv *pt.Move) (*pt.GameBoard, error) {
-	return &pt.GameBoard{
-		Players: []*pt.Player{
-			{X: 10, Y: 20, Color: 1, Kills: 5, RingEnabled: true},
-			{X: 30, Y: 40, Color: 2, Kills: 3, RingEnabled: false},
-		},
-	}, nil
+func (s *server) StreamGameboard(stream proto.GameService_StreamGameboardServer) error {
+	for {
+		direction, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		_ = direction
+		if err!=nil{
+			return err
+		}
+
+		board := &proto.GameBoard{
+			Players: []*proto.Player{
+				{X: 10, Y: 20, Color: 1, Kills: 5, RingEnabled: true},
+				{X: 30, Y: 40, Color: 2, Kills: 3, RingEnabled: false},
+			},
+		}
+
+		if err = stream.Send(board); err!= nil {
+			return err
+		}
+	}
 }
 
 func main() {
-	lis,err:= net.Listen("tcp", ":50051")
-	if err!=nil {
-		log.Fatalf("Failed to listen: %v", err)
+	grpcSrv := grpc.NewServer()
+	proto.RegisterGameServiceServer(grpcSrv, &server{})
+
+	wrpSrv := grpcweb.WrapServer(grpcSrv,
+		grpcweb.WithCorsForRegisteredEndpointsOnly(false),
+		grpcweb.WithOriginFunc(func(origin string) bool {
+			return true
+		}),
+	)
+
+	httpSrv := &http.Server{
+		Addr: ":8080",
+		Handler: http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			if wrpSrv.IsGrpcWebRequest(req) || wrpSrv.IsAcceptableGrpcCorsRequest(req) {
+				wrpSrv.ServeHTTP(res, req)
+			}
+		}),
 	}
 
-	s := grpc.NewServer()
-	pt.RegisterGameServiceServer(s, &server{})
-
-	if err := s.Serve(lis); err!=nil {
-		log.Fatalf("Failed to serve: %v", err)
-	}
+	log.Println("Listening on ", httpSrv.Addr)
+	log.Fatal(httpSrv.ListenAndServe())
 }
