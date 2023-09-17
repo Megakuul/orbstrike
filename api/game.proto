@@ -10,15 +10,18 @@ service GameService {
 
 // Gameboard representation
 message GameBoard {
-    repeated Player players = 1;
+  repeated Player players = 1;
+  double x = 2;
+  double y = 3;
 }
 
 message Player {
-    int32 x = 1;           // X position
-    int32 y = 2;           // Y position
-    int32 color = 3;       // Numeric representation of color
-    int32 kills = 4;       // Number of kills
-    bool ringEnabled = 5;  // If the ring is enabled
+  int32 id = 1;
+    double x = 2;           // X position
+    double y = 3;           // Y position
+    int32 color = 4;       // Numeric representation of color
+    int32 kills = 5;       // Number of kills
+    bool ringEnabled = 6;  // If the ring is enabled
 }
 
 // Direction to move

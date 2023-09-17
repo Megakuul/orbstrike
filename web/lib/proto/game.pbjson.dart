@@ -18,30 +18,34 @@ const GameBoard$json = {
   '1': 'GameBoard',
   '2': [
     {'1': 'players', '3': 1, '4': 3, '5': 11, '6': '.game.Player', '10': 'players'},
+    {'1': 'x', '3': 2, '4': 1, '5': 1, '10': 'x'},
+    {'1': 'y', '3': 3, '4': 1, '5': 1, '10': 'y'},
   ],
 };
 
 /// Descriptor for `GameBoard`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List gameBoardDescriptor = $convert.base64Decode(
-    'CglHYW1lQm9hcmQSJgoHcGxheWVycxgBIAMoCzIMLmdhbWUuUGxheWVyUgdwbGF5ZXJz');
+    'CglHYW1lQm9hcmQSJgoHcGxheWVycxgBIAMoCzIMLmdhbWUuUGxheWVyUgdwbGF5ZXJzEgwKAX'
+    'gYAiABKAFSAXgSDAoBeRgDIAEoAVIBeQ==');
 
 @$core.Deprecated('Use playerDescriptor instead')
 const Player$json = {
   '1': 'Player',
   '2': [
-    {'1': 'x', '3': 1, '4': 1, '5': 5, '10': 'x'},
-    {'1': 'y', '3': 2, '4': 1, '5': 5, '10': 'y'},
-    {'1': 'color', '3': 3, '4': 1, '5': 5, '10': 'color'},
-    {'1': 'kills', '3': 4, '4': 1, '5': 5, '10': 'kills'},
-    {'1': 'ringEnabled', '3': 5, '4': 1, '5': 8, '10': 'ringEnabled'},
+    {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+    {'1': 'x', '3': 2, '4': 1, '5': 1, '10': 'x'},
+    {'1': 'y', '3': 3, '4': 1, '5': 1, '10': 'y'},
+    {'1': 'color', '3': 4, '4': 1, '5': 5, '10': 'color'},
+    {'1': 'kills', '3': 5, '4': 1, '5': 5, '10': 'kills'},
+    {'1': 'ringEnabled', '3': 6, '4': 1, '5': 8, '10': 'ringEnabled'},
   ],
 };
 
 /// Descriptor for `Player`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List playerDescriptor = $convert.base64Decode(
-    'CgZQbGF5ZXISDAoBeBgBIAEoBVIBeBIMCgF5GAIgASgFUgF5EhQKBWNvbG9yGAMgASgFUgVjb2'
-    'xvchIUCgVraWxscxgEIAEoBVIFa2lsbHMSIAoLcmluZ0VuYWJsZWQYBSABKAhSC3JpbmdFbmFi'
-    'bGVk');
+    'CgZQbGF5ZXISDgoCaWQYASABKAVSAmlkEgwKAXgYAiABKAFSAXgSDAoBeRgDIAEoAVIBeRIUCg'
+    'Vjb2xvchgEIAEoBVIFY29sb3ISFAoFa2lsbHMYBSABKAVSBWtpbGxzEiAKC3JpbmdFbmFibGVk'
+    'GAYgASgIUgtyaW5nRW5hYmxlZA==');
 
 @$core.Deprecated('Use moveDescriptor instead')
 const Move$json = {

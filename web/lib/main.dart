@@ -1,14 +1,18 @@
 import 'dart:async';
 
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:grpc/grpc_web.dart';
-import 'package:grpc/grpc.dart';
 import 'proto/game.pbgrpc.dart';
 import 'proto/game.pb.dart';
+import 'GameBoard.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  final game = GameField(apiUri: Uri.parse("http://localhost:8080"));
+
+  runApp(GameWidget(game: game));
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -40,20 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int kills = 0;
 
   void StartChan() {
-    final chan = GrpcWebClientChannel.xhr(Uri.parse("http://localhost:8080"));
 
-    final client = GameServiceClient(chan);
-
-    final request = StreamController<Move>();
-
-    final response = client.streamGameboard(request.stream);
-
-    response.listen((gameboard) {
-      print(gameboard.players[1].kills);
-      kills = gameboard.players[1].kills;
-    });
-
-    request.add(Move(direction: Move_Direction.RIGHT));
   }
 
   @override

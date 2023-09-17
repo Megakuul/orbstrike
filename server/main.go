@@ -26,9 +26,11 @@ func (s *server) StreamGameboard(stream proto.GameService_StreamGameboardServer)
 		}
 
 		board := &proto.GameBoard{
+			X: 700,
+			Y: 700,
 			Players: []*proto.Player{
-				{X: 10, Y: 20, Color: 1, Kills: 5, RingEnabled: true},
-				{X: 30, Y: 40, Color: 2, Kills: 3, RingEnabled: false},
+				{Id: 34234, X: 10, Y: 20, Color: 1, Kills: 5, RingEnabled: true},
+				{Id: 32523, X: 50, Y: 80, Color: 2, Kills: 3, RingEnabled: false},
 			},
 		}
 
