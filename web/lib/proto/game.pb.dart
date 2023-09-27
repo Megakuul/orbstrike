@@ -20,19 +20,19 @@ export 'game.pbenum.dart';
 /// Gameboard representation
 class GameBoard extends $pb.GeneratedMessage {
   factory GameBoard({
-    $core.Iterable<Player>? players,
-    $core.double? x,
-    $core.double? y,
+    $core.Map<$core.int, Player>? players,
+    $core.int? id,
+    $core.double? rad,
   }) {
     final $result = create();
     if (players != null) {
       $result.players.addAll(players);
     }
-    if (x != null) {
-      $result.x = x;
+    if (id != null) {
+      $result.id = id;
     }
-    if (y != null) {
-      $result.y = y;
+    if (rad != null) {
+      $result.rad = rad;
     }
     return $result;
   }
@@ -41,9 +41,9 @@ class GameBoard extends $pb.GeneratedMessage {
   factory GameBoard.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GameBoard', package: const $pb.PackageName(_omitMessageNames ? '' : 'game'), createEmptyInstance: create)
-    ..pc<Player>(1, _omitFieldNames ? '' : 'players', $pb.PbFieldType.PM, subBuilder: Player.create)
-    ..a<$core.double>(2, _omitFieldNames ? '' : 'x', $pb.PbFieldType.OD)
-    ..a<$core.double>(3, _omitFieldNames ? '' : 'y', $pb.PbFieldType.OD)
+    ..m<$core.int, Player>(1, _omitFieldNames ? '' : 'players', entryClassName: 'GameBoard.PlayersEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.OM, valueCreator: Player.create, valueDefaultOrMaker: Player.getDefault, packageName: const $pb.PackageName('game'))
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'id', $pb.PbFieldType.O3)
+    ..a<$core.double>(3, _omitFieldNames ? '' : 'rad', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -69,25 +69,25 @@ class GameBoard extends $pb.GeneratedMessage {
   static GameBoard? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<Player> get players => $_getList(0);
+  $core.Map<$core.int, Player> get players => $_getMap(0);
 
   @$pb.TagNumber(2)
-  $core.double get x => $_getN(1);
+  $core.int get id => $_getIZ(1);
   @$pb.TagNumber(2)
-  set x($core.double v) { $_setDouble(1, v); }
+  set id($core.int v) { $_setSignedInt32(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasX() => $_has(1);
+  $core.bool hasId() => $_has(1);
   @$pb.TagNumber(2)
-  void clearX() => clearField(2);
+  void clearId() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.double get y => $_getN(2);
+  $core.double get rad => $_getN(2);
   @$pb.TagNumber(3)
-  set y($core.double v) { $_setDouble(2, v); }
+  set rad($core.double v) { $_setDouble(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasY() => $_has(2);
+  $core.bool hasRad() => $_has(2);
   @$pb.TagNumber(3)
-  void clearY() => clearField(3);
+  void clearRad() => clearField(3);
 }
 
 class Player extends $pb.GeneratedMessage {
@@ -214,10 +214,22 @@ class Player extends $pb.GeneratedMessage {
 class Move extends $pb.GeneratedMessage {
   factory Move({
     Move_Direction? direction,
+    $core.bool? enableRing,
+    $core.int? userkey,
+    $core.int? gameid,
   }) {
     final $result = create();
     if (direction != null) {
       $result.direction = direction;
+    }
+    if (enableRing != null) {
+      $result.enableRing = enableRing;
+    }
+    if (userkey != null) {
+      $result.userkey = userkey;
+    }
+    if (gameid != null) {
+      $result.gameid = gameid;
     }
     return $result;
   }
@@ -226,7 +238,10 @@ class Move extends $pb.GeneratedMessage {
   factory Move.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Move', package: const $pb.PackageName(_omitMessageNames ? '' : 'game'), createEmptyInstance: create)
-    ..e<Move_Direction>(1, _omitFieldNames ? '' : 'direction', $pb.PbFieldType.OE, defaultOrMaker: Move_Direction.UP, valueOf: Move_Direction.valueOf, enumValues: Move_Direction.values)
+    ..e<Move_Direction>(1, _omitFieldNames ? '' : 'direction', $pb.PbFieldType.OE, defaultOrMaker: Move_Direction.NONE, valueOf: Move_Direction.valueOf, enumValues: Move_Direction.values)
+    ..aOB(2, _omitFieldNames ? '' : 'enableRing', protoName: 'enableRing')
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'userkey', $pb.PbFieldType.O3)
+    ..a<$core.int>(4, _omitFieldNames ? '' : 'gameid', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -259,6 +274,33 @@ class Move extends $pb.GeneratedMessage {
   $core.bool hasDirection() => $_has(0);
   @$pb.TagNumber(1)
   void clearDirection() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.bool get enableRing => $_getBF(1);
+  @$pb.TagNumber(2)
+  set enableRing($core.bool v) { $_setBool(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasEnableRing() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearEnableRing() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get userkey => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set userkey($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasUserkey() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearUserkey() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.int get gameid => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set gameid($core.int v) { $_setSignedInt32(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasGameid() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearGameid() => clearField(4);
 }
 
 

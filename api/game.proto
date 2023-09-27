@@ -4,37 +4,43 @@ package game;
 
 option go_package = "github.com/megakuul/orbstrike/server/proto";
 
+
+
 service GameService {
   rpc StreamGameboard(stream Move) returns (stream GameBoard) {}
 }
 
 // Gameboard representation
 message GameBoard {
-  repeated Player players = 1;
-  double x = 2;
-  double y = 3;
+  map<int32, Player> players = 1;
+  int32 id = 2;
+  double rad = 3;
 }
 
 message Player {
   int32 id = 1;
-    double x = 2;           // X position
-    double y = 3;           // Y position
-    int32 color = 4;       // Numeric representation of color
-    int32 kills = 5;       // Number of kills
-    bool ringEnabled = 6;  // If the ring is enabled
+  double x = 2;           // X position
+  double y = 3;           // Y position
+  int32 color = 4;       // Numeric representation of color
+  int32 kills = 5;       // Number of kills
+  bool ringEnabled = 6;  // If the ring is enabled
 }
 
 // Direction to move
 message Move {
-    enum Direction {
-        UP = 0;
-        DOWN = 1;
-        LEFT = 2;
-        RIGHT = 3;
-        UP_LEFT = 4;
-        UP_RIGHT = 5;
-        DOWN_LEFT = 6;
-        DOWN_RIGHT = 7;
-    }
-    Direction direction = 1;
+  enum Direction {
+	NONE = 0;
+	UP = 1;
+	DOWN = 2;
+	LEFT = 3;
+	UP_LEFT = 4;
+	DOWN_LEFT = 5;
+	RIGHT = 6;
+	UP_RIGHT = 7;
+	DOWN_RIGHT = 8;
+  }
+  Direction direction = 1;
+  bool enableRing = 2;
+  int32 userkey = 3;
+  int32 gameid = 4;
 }

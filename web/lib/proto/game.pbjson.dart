@@ -17,16 +17,29 @@ import 'dart:typed_data' as $typed_data;
 const GameBoard$json = {
   '1': 'GameBoard',
   '2': [
-    {'1': 'players', '3': 1, '4': 3, '5': 11, '6': '.game.Player', '10': 'players'},
-    {'1': 'x', '3': 2, '4': 1, '5': 1, '10': 'x'},
-    {'1': 'y', '3': 3, '4': 1, '5': 1, '10': 'y'},
+    {'1': 'players', '3': 1, '4': 3, '5': 11, '6': '.game.GameBoard.PlayersEntry', '10': 'players'},
+    {'1': 'id', '3': 2, '4': 1, '5': 5, '10': 'id'},
+    {'1': 'rad', '3': 3, '4': 1, '5': 1, '10': 'rad'},
   ],
+  '3': [GameBoard_PlayersEntry$json],
+};
+
+@$core.Deprecated('Use gameBoardDescriptor instead')
+const GameBoard_PlayersEntry$json = {
+  '1': 'PlayersEntry',
+  '2': [
+    {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
+    {'1': 'value', '3': 2, '4': 1, '5': 11, '6': '.game.Player', '10': 'value'},
+  ],
+  '7': {'7': true},
 };
 
 /// Descriptor for `GameBoard`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List gameBoardDescriptor = $convert.base64Decode(
-    'CglHYW1lQm9hcmQSJgoHcGxheWVycxgBIAMoCzIMLmdhbWUuUGxheWVyUgdwbGF5ZXJzEgwKAX'
-    'gYAiABKAFSAXgSDAoBeRgDIAEoAVIBeQ==');
+    'CglHYW1lQm9hcmQSNgoHcGxheWVycxgBIAMoCzIcLmdhbWUuR2FtZUJvYXJkLlBsYXllcnNFbn'
+    'RyeVIHcGxheWVycxIOCgJpZBgCIAEoBVICaWQSEAoDcmFkGAMgASgBUgNyYWQaSAoMUGxheWVy'
+    'c0VudHJ5EhAKA2tleRgBIAEoBVIDa2V5EiIKBXZhbHVlGAIgASgLMgwuZ2FtZS5QbGF5ZXJSBX'
+    'ZhbHVlOgI4AQ==');
 
 @$core.Deprecated('Use playerDescriptor instead')
 const Player$json = {
@@ -52,6 +65,9 @@ const Move$json = {
   '1': 'Move',
   '2': [
     {'1': 'direction', '3': 1, '4': 1, '5': 14, '6': '.game.Move.Direction', '10': 'direction'},
+    {'1': 'enableRing', '3': 2, '4': 1, '5': 8, '10': 'enableRing'},
+    {'1': 'userkey', '3': 3, '4': 1, '5': 5, '10': 'userkey'},
+    {'1': 'gameid', '3': 4, '4': 1, '5': 5, '10': 'gameid'},
   ],
   '4': [Move_Direction$json],
 };
@@ -60,21 +76,23 @@ const Move$json = {
 const Move_Direction$json = {
   '1': 'Direction',
   '2': [
-    {'1': 'UP', '2': 0},
-    {'1': 'DOWN', '2': 1},
-    {'1': 'LEFT', '2': 2},
-    {'1': 'RIGHT', '2': 3},
+    {'1': 'NONE', '2': 0},
+    {'1': 'UP', '2': 1},
+    {'1': 'DOWN', '2': 2},
+    {'1': 'LEFT', '2': 3},
     {'1': 'UP_LEFT', '2': 4},
-    {'1': 'UP_RIGHT', '2': 5},
-    {'1': 'DOWN_LEFT', '2': 6},
-    {'1': 'DOWN_RIGHT', '2': 7},
+    {'1': 'DOWN_LEFT', '2': 5},
+    {'1': 'RIGHT', '2': 6},
+    {'1': 'UP_RIGHT', '2': 7},
+    {'1': 'DOWN_RIGHT', '2': 8},
   ],
 };
 
 /// Descriptor for `Move`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List moveDescriptor = $convert.base64Decode(
     'CgRNb3ZlEjIKCWRpcmVjdGlvbhgBIAEoDjIULmdhbWUuTW92ZS5EaXJlY3Rpb25SCWRpcmVjdG'
-    'lvbiJsCglEaXJlY3Rpb24SBgoCVVAQABIICgRET1dOEAESCAoETEVGVBACEgkKBVJJR0hUEAMS'
-    'CwoHVVBfTEVGVBAEEgwKCFVQX1JJR0hUEAUSDQoJRE9XTl9MRUZUEAYSDgoKRE9XTl9SSUdIVB'
-    'AH');
+    'lvbhIeCgplbmFibGVSaW5nGAIgASgIUgplbmFibGVSaW5nEhgKB3VzZXJrZXkYAyABKAVSB3Vz'
+    'ZXJrZXkSFgoGZ2FtZWlkGAQgASgFUgZnYW1laWQidgoJRGlyZWN0aW9uEggKBE5PTkUQABIGCg'
+    'JVUBABEggKBERPV04QAhIICgRMRUZUEAMSCwoHVVBfTEVGVBAEEg0KCURPV05fTEVGVBAFEgkK'
+    'BVJJR0hUEAYSDAoIVVBfUklHSFQQBxIOCgpET1dOX1JJR0hUEAg=');
 

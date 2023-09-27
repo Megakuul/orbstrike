@@ -1,148 +1,151 @@
 import 'dart:async';
 
+import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
-import 'package:grpc/grpc_web.dart';
+import 'package:flutter/services.dart';
+import 'package:grpc/grpc.dart';
 import 'proto/game.pbgrpc.dart';
+import 'package:rxdart/rxdart.dart';
 
-// This will be in cookie or something like that
-const myid = 32523;
+import 'package:orbstrike/KeyboardHandler.dart';
+import 'package:orbstrike/PlayerC.dart';
+import 'package:orbstrike/WorldBorder.dart';
+import 'package:orbstrike/GameBoard.helper.dart';
 
-class GameField extends FlameGame {
-  final Uri apiUri;
+// This will be somewhere else
+const playerID = 34234;
+const gameID = 187;
+
+
+class GameField extends FlameGame with KeyboardEvents {
+  final String host;
+  final int port;
+
   final World world = World();
   final Map<int, PlayerC> playerComponents = {};
   late final CameraComponent mainCamera;
 
-  static GrpcWebClientChannel? apiChan;
+  static ClientChannel? apiChan;
   static GameServiceClient? apiClient;
-  static StreamController<Move> apiReqStream = StreamController<Move>();
+  static BehaviorSubject<Move> apiReqStream = BehaviorSubject<Move>();
 
   // Border size is loaded when connected to the gRPC endpoint
   static GameBoard board = GameBoard();
   static WorldBorder? border;
-  static PlayerC mainPlayerComponent = PlayerC(pPlayer: Player());
+  static PlayerC? mainPlayerComponent;
+  static Move_Direction mainPlayerDirection = Move_Direction.NONE;
 
-  GameField({required this.apiUri});
-
-  void _updateGameBoard(GameBoard board, Map<int, PlayerC> playerComps) {
-    final playerIDs = board.players.map((p) => p.id).toSet();
-
-    // Remove players that are not existent anymore
-    playerComps.removeWhere((id, component) {
-      if (!playerIDs.contains(id)) {
-        world.remove(component);
-        return true;
-      }
-      return false;
-    });
-
-    for (var pPlayer in board.players) {
-      if (!playerComps.containsKey(pPlayer.id)) {
-        final player = PlayerC(pPlayer: pPlayer);
-        if (pPlayer.id==myid) {
-          mainPlayerComponent = player;
-        } else {
-          playerComponents[pPlayer.id] = player;
-        }
-        world.add(player);
-      }
-    }
-  }
+  GameField({required this.host, required this.port});
 
   @override
-  Color backgroundColor() => Colors.blue;
+  Color backgroundColor() => Colors.black12;
+
+  @override
+  KeyEventResult onKeyEvent(
+    RawKeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
+    final dirBuf = HandleKeyboardInput();
+    if (dirBuf==null) {
+      return KeyEventResult.ignored;
+    }
+    mainPlayerDirection = dirBuf;
+    return KeyEventResult.handled;
+  }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
   }
 
+  double keystrokeAccumulator = 0.0;
+  final double keystrokeUpdateInterval = 0.10;
+
   @override
   void update(double dt) {
     super.update(dt);
 
-    mainCamera.follow(mainPlayerComponent);
+    keystrokeAccumulator += dt;
+    while (keystrokeAccumulator >= keystrokeUpdateInterval) {
+      apiReqStream.add(Move(direction: mainPlayerDirection, enableRing: true, gameid: gameID, userkey: playerID));
+      keystrokeAccumulator -= keystrokeUpdateInterval;
+    }
+
+    if (mainPlayerComponent!=null) {
+      mainCamera.follow(mainPlayerComponent!);
+    }
   }
+
+
 
   @override
   Future<void> onLoad() async {
     mainCamera = CameraComponent(world: world);
     addAll([mainCamera, world]);
 
-    apiChan = GrpcWebClientChannel.xhr(apiUri);
+    _startGrpcConnection();
+
+    apiReqStream.add(Move(direction: Move_Direction.NONE, enableRing: false, gameid: gameID, userkey: playerID));
+  }
+
+  void _startGrpcConnection() {
+    bool isExpectedDone = false;
+
+    if (apiChan != null) {
+      apiChan!.shutdown();
+    }
+
+    apiChan = ClientChannel(
+      host,
+      port: port,
+      options: const ChannelOptions(
+        credentials: ChannelCredentials.insecure(),
+      ),
+    );
+
     apiClient = GameServiceClient(apiChan!);
-    apiReqStream = StreamController<Move>();
 
     apiClient!.streamGameboard(apiReqStream.stream)
         .listen((game) {
       board = game;
-      _updateGameBoard(board, playerComponents);
+      if (mainPlayerComponent==null && board.players[playerID]!=null) {
+        mainPlayerComponent = PlayerC(pPlayer: board.players[playerID]!);
+        world.add(mainPlayerComponent!);
+      }
+      updateGameBoard(board, playerComponents, playerID, mainPlayerComponent).forEach((key, value) {
+        if (value) {
+          world.add(key);
+        } else {
+          world.remove(key);
+        }
+      });
+
       if (border==null) {
-        border = WorldBorder(color: Colors.green, width: board.y, height: board.x, stroke: 10);
-        add(border!);
+        border = WorldBorder(colors: [Colors.orange, Colors.red], radius: board.rad, stroke: 10);
+        world.add(border!);
+      }
+    }, onError: (error) {
+      // gRPC endpoint sends errors for things like "Game Over", "Game not found" etc. -> 400 Errors
+      // TODO: These things are displayed with widgets using the context from the top level ui (but this is not implemented right now).
+      print('Error encountered: ${error.message}');
+      isExpectedDone = true;
+    }, onDone: () {
+      if (!isExpectedDone) {
+        // gRPC endpoint closes connection when facing a unexpected issue (e.g. read EOF, major failure etc.) -> 500 Errors
+        // Wait around 5 seconds, on major failures this gives the cluster time to rebuild pods without being spammed.
+        print("Server closed connection unexpected");
+        Future.delayed(const Duration(seconds: 5), () {
+          _startGrpcConnection();
+        });
       }
     });
-    apiReqStream.add(Move(direction: Move_Direction.RIGHT));
   }
 }
 
-class PlayerC extends PositionComponent with HasGameRef<GameField> {
-  // This variable is a pointer to the player object
-  final Player pPlayer;
 
-  PlayerC({required this.pPlayer});
 
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
 
-    x = pPlayer.x;
-    y = pPlayer.y;
 
-    final paint = Paint()..color = Colors.red;
-    canvas.drawCircle(const Offset(0, 0), 15, paint);
-
-    if (pPlayer.ringEnabled) {
-      final ringpnt = Paint()
-          ..color = const Color(0xFF000000)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3;
-      canvas.drawCircle(const Offset(0,0), 20, ringpnt);
-    }
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
-}
-
-class WorldBorder extends PositionComponent {
-  final Color color;
-  final double stroke;
-  final double width;
-  final double height;
-
-  WorldBorder({required this.color, required this.width, required this.height, required this.stroke});
-
-  @override
-  double get z => 1000;
-
-  @override
-  void render(Canvas canvas) {
-    final paint = Paint()
-        ..color = color
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = stroke;
-
-    final rect = Rect.fromLTWH(0,0, width, height);
-    canvas.drawRect(rect, paint);
-  }
-
-  @override
-  bool get isHud => false;
-}
 

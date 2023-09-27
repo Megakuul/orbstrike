@@ -14,23 +14,25 @@ import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class Move_Direction extends $pb.ProtobufEnum {
-  static const Move_Direction UP = Move_Direction._(0, _omitEnumNames ? '' : 'UP');
-  static const Move_Direction DOWN = Move_Direction._(1, _omitEnumNames ? '' : 'DOWN');
-  static const Move_Direction LEFT = Move_Direction._(2, _omitEnumNames ? '' : 'LEFT');
-  static const Move_Direction RIGHT = Move_Direction._(3, _omitEnumNames ? '' : 'RIGHT');
+  static const Move_Direction NONE = Move_Direction._(0, _omitEnumNames ? '' : 'NONE');
+  static const Move_Direction UP = Move_Direction._(1, _omitEnumNames ? '' : 'UP');
+  static const Move_Direction DOWN = Move_Direction._(2, _omitEnumNames ? '' : 'DOWN');
+  static const Move_Direction LEFT = Move_Direction._(3, _omitEnumNames ? '' : 'LEFT');
   static const Move_Direction UP_LEFT = Move_Direction._(4, _omitEnumNames ? '' : 'UP_LEFT');
-  static const Move_Direction UP_RIGHT = Move_Direction._(5, _omitEnumNames ? '' : 'UP_RIGHT');
-  static const Move_Direction DOWN_LEFT = Move_Direction._(6, _omitEnumNames ? '' : 'DOWN_LEFT');
-  static const Move_Direction DOWN_RIGHT = Move_Direction._(7, _omitEnumNames ? '' : 'DOWN_RIGHT');
+  static const Move_Direction DOWN_LEFT = Move_Direction._(5, _omitEnumNames ? '' : 'DOWN_LEFT');
+  static const Move_Direction RIGHT = Move_Direction._(6, _omitEnumNames ? '' : 'RIGHT');
+  static const Move_Direction UP_RIGHT = Move_Direction._(7, _omitEnumNames ? '' : 'UP_RIGHT');
+  static const Move_Direction DOWN_RIGHT = Move_Direction._(8, _omitEnumNames ? '' : 'DOWN_RIGHT');
 
   static const $core.List<Move_Direction> values = <Move_Direction> [
+    NONE,
     UP,
     DOWN,
     LEFT,
-    RIGHT,
     UP_LEFT,
-    UP_RIGHT,
     DOWN_LEFT,
+    RIGHT,
+    UP_RIGHT,
     DOWN_RIGHT,
   ];
 
