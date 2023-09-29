@@ -2,84 +2,29 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
 	"net"
-	"math"
-	
+
+	"github.com/megakuul/orbstrike/server/conf"
+	"github.com/megakuul/orbstrike/server/logger"
+	"github.com/megakuul/orbstrike/server/socket"
 	"github.com/megakuul/orbstrike/server/proto"
 	"google.golang.org/grpc"
 )
 
-type server struct {
-	boards map[int32]*proto.GameBoard
-	proto.UnimplementedGameServiceServer
-}
-
-func (s *server) StreamGameboard(stream proto.GameService_StreamGameboardServer) error {
-	for {
-		req, err := stream.Recv()
-		if err == io.EOF {
-			return nil
-		}
-		if err!=nil{
-			fmt.Println(err)
-			return err
-		}
-
-		const speed = 10;
-		
-		curBoard, ok := s.boards[req.Gameid]
-		if !ok {
-			return fmt.Errorf("No such game %d\n", req.Gameid)
-		}
-		
-		curPlayer := curBoard.Players[req.Userkey]
-		if curPlayer==nil {
-			return fmt.Errorf("Player is not registered in this game\n")
-		}
-
-		if (isOutsideMap(curPlayer.X, curPlayer.Y, curBoard.Rad)) {
-			delete(curBoard.Players, curPlayer.Id)
-			return fmt.Errorf("Game Over!\n")
-		}
-		
-		switch (req.Direction) {
-		case proto.Move_UP:
-			curPlayer.Y -= speed
-		case proto.Move_UP_LEFT:
-			curPlayer.Y -= speed
-			curPlayer.X -= speed
-		case proto.Move_UP_RIGHT:
-			curPlayer.X += speed
-			curPlayer.Y -= speed
-		case proto.Move_DOWN:
-			curPlayer.Y += speed
-		case proto.Move_DOWN_LEFT:
-			curPlayer.Y += speed
-			curPlayer.X -= speed
-		case proto.Move_DOWN_RIGHT:
-			curPlayer.Y += speed
-			curPlayer.X += speed			
-		case proto.Move_LEFT:
-			curPlayer.X -= speed
-		case proto.Move_RIGHT:
-			curPlayer.X += speed
-		}
-
-
-		if err = stream.Send(curBoard); err!= nil {
-			return err
-		}
-	}
-}
-
-func isOutsideMap(x, y, radius float64) bool {
-	distanceFromCenter := math.Sqrt(x*x + y*y)
-	return distanceFromCenter > radius
-}
+var config conf.Config
 
 func main() {
+	config, err := conf.LoadConig("orbstrike")
+	if err!=nil {
+		fmt.Println(err)
+	}
+	
+	err = logger.InitLogger(config.LogFile, config.LogOptions, config.MaxLogSizeKB)
+	if err!=nil {
+		fmt.Println(err)
+	}
+	
+	/** Example Board */
 	board := &proto.GameBoard{
 		Id: 187,
 		Rad: 500,
@@ -88,20 +33,23 @@ func main() {
 			32523: {Id: 32523, X: 50, Y: 80, Color: 2, Kills: 3, RingEnabled: false},
 		},
 	}
-
+	/** Example Board */
+	
 	grpcSrv := grpc.NewServer()
-	proto.RegisterGameServiceServer(grpcSrv, &server{
-		boards: map[int32]*proto.GameBoard{
+	proto.RegisterGameServiceServer(grpcSrv, &socket.Server{
+		Boards: map[int32]*proto.GameBoard{
 			board.Id: board,
 		},
+		SessionRequests: map[int64]*proto.Move{},
+		SessionResponses: map[int64]error{},
 	})
 	
-	lis, err := net.Listen("tcp", ":8080")
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err!=nil {
-		log.Fatalf("[ORBSTRIKE-SERVER PANIC]: %v", err)
+		logger.WriteErrLogger(err)
 	}
-	fmt.Println("[ORBSTRIKE-SERVER INFO]: Listening to port 8080")
+	logger.WriteInformationLogger("Listening to port %d", config.Port) 
 	if err := grpcSrv.Serve(lis); err != nil {
-		log.Fatalf("[ORBSTRIKE-SERVER PANIC]: %v", err)
+		logger.WriteErrLogger(err)
 	}
 }
