@@ -3,3 +3,7 @@ port: 8080
 logfile: "./orbstrike.log"
 logoptions: "ERROR|WARNING|INFORMATION"
 maxlogsizekb: 200
+# Defines how much requests can be in a respond channel
+maxchannelsize: 10
+# Defines how much requests are processed synchron per worker
+requestperworker: 15

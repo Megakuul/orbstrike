@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/megakuul/orbstrike/server/conf"
 	"github.com/megakuul/orbstrike/server/logger"
-	"github.com/megakuul/orbstrike/server/socket"
 	"github.com/megakuul/orbstrike/server/proto"
+	"github.com/megakuul/orbstrike/server/socket"
+	"github.com/megakuul/orbstrike/server/responder"
 	"google.golang.org/grpc"
 )
 
@@ -34,15 +36,19 @@ func main() {
 		},
 	}
 	/** Example Board */
-	
-	grpcSrv := grpc.NewServer()
-	proto.RegisterGameServiceServer(grpcSrv, &socket.Server{
+
+	server:=&socket.Server{
 		Boards: map[int32]*proto.GameBoard{
 			board.Id: board,
 		},
 		SessionRequests: map[int64]*proto.Move{},
 		SessionResponses: map[int64]error{},
-	})
+	}
+	
+	grpcSrv := grpc.NewServer()
+	proto.RegisterGameServiceServer(grpcSrv, server)
+
+	go responder.StartScheduler(server, &config, 3*time.Second)
 	
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err!=nil {
