@@ -12,6 +12,7 @@ type Config struct {
 
 	MaxChannelSize int `mapstructure:"maxchannelsize"`
 	RequestPerWorker int `mapstructure:"requestsperworker"`
+	ResponseIntervalMS int `mapstructure:"responseintervalms"`
 }
 
 func LoadConig(confpath string) (Config, error) {
@@ -27,6 +28,7 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("maxlogsizekb", 500)
 	viper.SetDefault("maxchannelsize", 15)
 	viper.SetDefault("requestsperworker", 10)
+	viper.SetDefault("responseintervalms", 15)
 
 	err := viper.ReadInConfig()
 	if err!=nil {

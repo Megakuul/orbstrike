@@ -8,7 +8,7 @@ import(
 	"github.com/megakuul/orbstrike/server/proto"
 )
 
-const speed = 10
+const speed = 1
 
 func Respond(sessionRequests map[int64]*proto.Move, srv *socket.Server) {
 	for sessionId, Move := range sessionRequests {

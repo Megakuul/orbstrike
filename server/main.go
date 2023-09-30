@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net"
-	"time"
 
 	"github.com/megakuul/orbstrike/server/conf"
 	"github.com/megakuul/orbstrike/server/logger"
@@ -48,7 +47,7 @@ func main() {
 	grpcSrv := grpc.NewServer()
 	proto.RegisterGameServiceServer(grpcSrv, server)
 
-	go responder.StartScheduler(server, &config, 3*time.Second)
+	go responder.StartScheduler(server, &config)
 	
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err!=nil {

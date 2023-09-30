@@ -7,3 +7,5 @@ maxlogsizekb: 200
 maxchannelsize: 10
 # Defines how much requests are processed synchron per worker
 requestperworker: 15
+# Defines the interval in which responses are sent to the clients
+responseintervalms: 15

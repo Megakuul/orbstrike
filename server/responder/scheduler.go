@@ -8,11 +8,13 @@ import (
 	"github.com/megakuul/orbstrike/server/conf"
 )
 
-func StartScheduler(srv *socket.Server, config *conf.Config, interval time.Duration) {
+func StartScheduler(srv *socket.Server, config *conf.Config) {
 	pool := &Pool{
 		Workers: []PoolWorker{},
 		MaxQueueSize: config.MaxChannelSize,
 	}
+	interval :=
+		time.Duration(config.ResponseIntervalMS)*time.Millisecond
 	
 	for {
 		start := time.Now()
