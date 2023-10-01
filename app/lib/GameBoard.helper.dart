@@ -7,7 +7,7 @@ import 'package:orbstrike/PlayerC.dart';
 /// Changes the state of the playerComponents and the mainPlayerComponent based on the new GameBoard
 ///
 /// Returns a Map containing Components to add (true) and remove (false) from the world
-Map<Component, bool> updateGameBoard(final GameBoard board, final Map<int, PlayerC> playerComps, final int playerID, PlayerC? mainPlayerComponent) {
+Map<Component, bool> updateGameBoard(final GameBoard board, final Map<int, PlayerO> playerComps, final int playerID, PlayerC? mainPlayerComponent) {
   Map<Component, bool> componentBuffer = {};
 
   final player = board.players[playerID];
@@ -30,7 +30,7 @@ Map<Component, bool> updateGameBoard(final GameBoard board, final Map<int, Playe
 
   for (var pPlayer in board.players.values) {
     if (!playerComps.containsKey(pPlayer.id)) {
-      final player = PlayerC(pPlayer: pPlayer);
+      final player = PlayerO(pPlayer: pPlayer);
       if (pPlayer.id!=playerID) {
         playerComps[pPlayer.id] = player;
         componentBuffer.putIfAbsent(player, () => true);

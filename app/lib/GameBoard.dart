@@ -18,13 +18,12 @@ import 'package:orbstrike/GameBoard.helper.dart';
 const playerID = 34234;
 const gameID = 187;
 
-
-class GameField extends FlameGame with KeyboardEvents {
+class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final String host;
   final int port;
 
   final World world = World();
-  final Map<int, PlayerC> playerComponents = {};
+  final Map<int, PlayerO> playerComponents = {};
   late final CameraComponent mainCamera;
 
   static ClientChannel? apiChan;
@@ -36,6 +35,8 @@ class GameField extends FlameGame with KeyboardEvents {
   static WorldBorder? border;
   static PlayerC? mainPlayerComponent;
   static Move_Direction mainPlayerDirection = Move_Direction.NONE;
+  static bool mainPlayerRingState = false;
+  static List<int> mainPlayerCollided = [];
 
   GameField({required this.host, required this.port});
 
@@ -47,17 +48,13 @@ class GameField extends FlameGame with KeyboardEvents {
     RawKeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
-    final dirBuf = HandleKeyboardInput();
+    mainPlayerRingState = getRingState();
+    final dirBuf = getMovementInput();
     if (dirBuf==null) {
       return KeyEventResult.ignored;
     }
     mainPlayerDirection = dirBuf;
     return KeyEventResult.handled;
-  }
-
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
   }
 
   double keystrokeAccumulator = 0.0;
@@ -69,7 +66,12 @@ class GameField extends FlameGame with KeyboardEvents {
 
     keystrokeAccumulator += dt;
     while (keystrokeAccumulator >= keystrokeUpdateInterval) {
-      apiReqStream.add(Move(direction: mainPlayerDirection, enableRing: true, gameid: gameID, userkey: playerID));
+      apiReqStream.add(Move(
+          direction: mainPlayerDirection,
+          enableRing: mainPlayerRingState,
+          hitPlayers: mainPlayerCollided,
+          gameid: gameID, userkey: playerID
+      ));
       keystrokeAccumulator -= keystrokeUpdateInterval;
     }
 
@@ -77,8 +79,6 @@ class GameField extends FlameGame with KeyboardEvents {
       mainCamera.follow(mainPlayerComponent!);
     }
   }
-
-
 
   @override
   Future<void> onLoad() async {
@@ -111,7 +111,7 @@ class GameField extends FlameGame with KeyboardEvents {
         .listen((game) {
       board = game;
       if (mainPlayerComponent==null && board.players[playerID]!=null) {
-        mainPlayerComponent = PlayerC(pPlayer: board.players[playerID]!);
+        mainPlayerComponent = PlayerC(pPlayer: board.players[playerID]!, collided: mainPlayerCollided);
         world.add(mainPlayerComponent!);
       }
       updateGameBoard(board, playerComponents, playerID, mainPlayerComponent).forEach((key, value) {

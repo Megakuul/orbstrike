@@ -48,26 +48,31 @@ const Player$json = {
     {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
     {'1': 'x', '3': 2, '4': 1, '5': 1, '10': 'x'},
     {'1': 'y', '3': 3, '4': 1, '5': 1, '10': 'y'},
-    {'1': 'color', '3': 4, '4': 1, '5': 5, '10': 'color'},
-    {'1': 'kills', '3': 5, '4': 1, '5': 5, '10': 'kills'},
-    {'1': 'ringEnabled', '3': 6, '4': 1, '5': 8, '10': 'ringEnabled'},
+    {'1': 'rad', '3': 4, '4': 1, '5': 1, '10': 'rad'},
+    {'1': 'ringrad', '3': 5, '4': 1, '5': 1, '10': 'ringrad'},
+    {'1': 'color', '3': 6, '4': 1, '5': 5, '10': 'color'},
+    {'1': 'kills', '3': 7, '4': 1, '5': 5, '10': 'kills'},
+    {'1': 'ringEnabled', '3': 8, '4': 1, '5': 8, '10': 'ringEnabled'},
+    {'1': 'speed', '3': 9, '4': 1, '5': 5, '10': 'speed'},
   ],
 };
 
 /// Descriptor for `Player`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List playerDescriptor = $convert.base64Decode(
-    'CgZQbGF5ZXISDgoCaWQYASABKAVSAmlkEgwKAXgYAiABKAFSAXgSDAoBeRgDIAEoAVIBeRIUCg'
-    'Vjb2xvchgEIAEoBVIFY29sb3ISFAoFa2lsbHMYBSABKAVSBWtpbGxzEiAKC3JpbmdFbmFibGVk'
-    'GAYgASgIUgtyaW5nRW5hYmxlZA==');
+    'CgZQbGF5ZXISDgoCaWQYASABKAVSAmlkEgwKAXgYAiABKAFSAXgSDAoBeRgDIAEoAVIBeRIQCg'
+    'NyYWQYBCABKAFSA3JhZBIYCgdyaW5ncmFkGAUgASgBUgdyaW5ncmFkEhQKBWNvbG9yGAYgASgF'
+    'UgVjb2xvchIUCgVraWxscxgHIAEoBVIFa2lsbHMSIAoLcmluZ0VuYWJsZWQYCCABKAhSC3Jpbm'
+    'dFbmFibGVkEhQKBXNwZWVkGAkgASgFUgVzcGVlZA==');
 
 @$core.Deprecated('Use moveDescriptor instead')
 const Move$json = {
   '1': 'Move',
   '2': [
-    {'1': 'direction', '3': 1, '4': 1, '5': 14, '6': '.game.Move.Direction', '10': 'direction'},
-    {'1': 'enableRing', '3': 2, '4': 1, '5': 8, '10': 'enableRing'},
-    {'1': 'userkey', '3': 3, '4': 1, '5': 5, '10': 'userkey'},
-    {'1': 'gameid', '3': 4, '4': 1, '5': 5, '10': 'gameid'},
+    {'1': 'userkey', '3': 1, '4': 1, '5': 5, '10': 'userkey'},
+    {'1': 'gameid', '3': 2, '4': 1, '5': 5, '10': 'gameid'},
+    {'1': 'direction', '3': 3, '4': 1, '5': 14, '6': '.game.Move.Direction', '10': 'direction'},
+    {'1': 'enableRing', '3': 4, '4': 1, '5': 8, '10': 'enableRing'},
+    {'1': 'hitPlayers', '3': 5, '4': 3, '5': 5, '10': 'hitPlayers'},
   ],
   '4': [Move_Direction$json],
 };
@@ -90,9 +95,10 @@ const Move_Direction$json = {
 
 /// Descriptor for `Move`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List moveDescriptor = $convert.base64Decode(
-    'CgRNb3ZlEjIKCWRpcmVjdGlvbhgBIAEoDjIULmdhbWUuTW92ZS5EaXJlY3Rpb25SCWRpcmVjdG'
-    'lvbhIeCgplbmFibGVSaW5nGAIgASgIUgplbmFibGVSaW5nEhgKB3VzZXJrZXkYAyABKAVSB3Vz'
-    'ZXJrZXkSFgoGZ2FtZWlkGAQgASgFUgZnYW1laWQidgoJRGlyZWN0aW9uEggKBE5PTkUQABIGCg'
-    'JVUBABEggKBERPV04QAhIICgRMRUZUEAMSCwoHVVBfTEVGVBAEEg0KCURPV05fTEVGVBAFEgkK'
-    'BVJJR0hUEAYSDAoIVVBfUklHSFQQBxIOCgpET1dOX1JJR0hUEAg=');
+    'CgRNb3ZlEhgKB3VzZXJrZXkYASABKAVSB3VzZXJrZXkSFgoGZ2FtZWlkGAIgASgFUgZnYW1laW'
+    'QSMgoJZGlyZWN0aW9uGAMgASgOMhQuZ2FtZS5Nb3ZlLkRpcmVjdGlvblIJZGlyZWN0aW9uEh4K'
+    'CmVuYWJsZVJpbmcYBCABKAhSCmVuYWJsZVJpbmcSHgoKaGl0UGxheWVycxgFIAMoBVIKaGl0UG'
+    'xheWVycyJ2CglEaXJlY3Rpb24SCAoETk9ORRAAEgYKAlVQEAESCAoERE9XThACEggKBExFRlQQ'
+    'AxILCgdVUF9MRUZUEAQSDQoJRE9XTl9MRUZUEAUSCQoFUklHSFQQBhIMCghVUF9SSUdIVBAHEg'
+    '4KCkRPV05fUklHSFQQCA==');
 

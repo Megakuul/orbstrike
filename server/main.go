@@ -30,8 +30,28 @@ func main() {
 		Id: 187,
 		Rad: 500,
 		Players: map[int32]*proto.Player{
-			34234: {Id: 34234, X: 10, Y: 20, Color: 1, Kills: 5, RingEnabled: true},
-			32523: {Id: 32523, X: 50, Y: 80, Color: 2, Kills: 3, RingEnabled: false},
+			34234: {
+				Id: 34234,
+				X: 0,
+				Y: 20,
+				Rad: 25,
+				Ringrad: 40,
+				Color: 1,
+				Kills: 5,
+				RingEnabled: true,
+				Speed: 1,
+			},
+			32523: {
+				Id: 32523,
+				X: 50,
+				Y: 80,
+				Rad: 25,
+				Ringrad: 40,
+				Color: 2,
+				Kills: 3,
+				RingEnabled: false,
+				Speed: 1,
+			},
 		},
 	}
 	/** Example Board */

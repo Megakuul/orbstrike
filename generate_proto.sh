@@ -73,7 +73,7 @@ export PATH="$PATH":"$HOME/.pub-cache/bin"
 export PATH="$PATH":"$GOPATH/bin"
 
 # Generate Dart protofiles
-protoc --dart_out=grpc:web/lib/proto -Iapi game.proto
+protoc --dart_out=grpc:app/lib/proto -Iapi game.proto
 
 # Generate GO protofiles
 protoc --go_out=server/proto --go_opt=paths=source_relative --go-grpc_out=server/proto --go-grpc_opt=paths=source_relative -Iapi game.proto

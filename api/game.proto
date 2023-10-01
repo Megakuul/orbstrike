@@ -19,11 +19,14 @@ message GameBoard {
 
 message Player {
   int32 id = 1;
-  double x = 2;           // X position
-  double y = 3;           // Y position
-  int32 color = 4;       // Numeric representation of color
-  int32 kills = 5;       // Number of kills
-  bool ringEnabled = 6;  // If the ring is enabled
+  double x = 2;        
+  double y = 3;
+  double rad = 4;
+  double ringrad = 5;
+  int32 color = 6;
+  int32 kills = 7;
+  bool ringEnabled = 8;
+  int32 speed = 9;
 }
 
 // Direction to move
@@ -39,8 +42,9 @@ message Move {
 	UP_RIGHT = 7;
 	DOWN_RIGHT = 8;
   }
-  Direction direction = 1;
-  bool enableRing = 2;
-  int32 userkey = 3;
-  int32 gameid = 4;
+  int32 userkey = 1;
+  int32 gameid = 2;
+  Direction direction = 3;
+  bool enableRing = 4;
+  repeated int32 hitPlayers = 5;
 }

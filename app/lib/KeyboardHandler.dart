@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:orbstrike/proto/game.pb.dart';
 
-Move_Direction? HandleKeyboardInput() {
+Move_Direction? getMovementInput() {
   final w = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyW);
   final s = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyS);
   final a = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyA);
@@ -37,4 +37,11 @@ Move_Direction? HandleKeyboardInput() {
   }
 
   return null;
+}
+
+bool getRingState() {
+  if (RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyR)) {
+    return true;
+  }
+  return false;
 }
