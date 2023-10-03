@@ -15,7 +15,7 @@ import (
 var config conf.Config
 
 func main() {
-	config, err := conf.LoadConig("orbstrike")
+	config, err := conf.LoadConig("orbstrike.server")
 	if err!=nil {
 		fmt.Println(err)
 	}
@@ -32,7 +32,7 @@ func main() {
 		Players: map[int32]*proto.Player{
 			34234: {
 				Id: 34234,
-				X: 0,
+				X: 10,
 				Y: 20,
 				Rad: 25,
 				Ringrad: 40,

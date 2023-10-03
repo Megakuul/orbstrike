@@ -4,8 +4,6 @@ package game;
 
 option go_package = "github.com/megakuul/orbstrike/server/proto";
 
-
-
 service GameService {
   rpc StreamGameboard(stream Move) returns (stream GameBoard) {}
 }

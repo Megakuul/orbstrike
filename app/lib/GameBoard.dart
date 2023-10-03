@@ -107,7 +107,13 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
     apiClient = GameServiceClient(apiChan!);
 
-    apiClient!.streamGameboard(apiReqStream.stream)
+    final Map<String, String> streamHeaders = {
+      "gameid": "187",
+    };
+
+    final callOptions = CallOptions(metadata: streamHeaders);
+
+    apiClient!.streamGameboard(apiReqStream.stream, options: callOptions)
         .listen((game) {
       board = game;
       if (mainPlayerComponent==null && board.players[playerID]!=null) {

@@ -6,14 +6,14 @@ import (
 
 type Config struct {
 	Port int `mapstructure:"port"`
-	Secret string `mapstructure:"secret"`
+	
 	LogFile string `mapstructure:"logfile"`
 	LogOptions string `mapstructure:"logoptions"`
 	MaxLogSizeKB int `mapstructure:"maxlogsizekb"`
-
-	MaxChannelSize int `mapstructure:"maxchannelsize"`
-	RequestPerWorker int `mapstructure:"requestsperworker"`
-	ResponseIntervalMS int `mapstructure:"responseintervalms"`
+	
+	Base64SSLCertificate string `mapstructure:"base64_ssl_certificate`
+	Base64SSLPrivateKey string `mapstructure:"base64_ssl_privatekey`
+	Base64SSLCA string `mapstructure:"base64_ssl_ca`
 }
 
 func LoadConig(confpath string) (Config, error) {
@@ -30,6 +30,10 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("maxchannelsize", 15)
 	viper.SetDefault("requestsperworker", 10)
 	viper.SetDefault("responseintervalms", 15)
+
+	viper.SetDefault("base64_ssl_certificate", "")
+	viper.SetDefault("base64_ssl_privatekey", "")
+	viper.SetDefault("base64_ssl_ca", "")
 
 	err := viper.ReadInConfig()
 	if err!=nil {
