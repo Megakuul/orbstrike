@@ -7,20 +7,20 @@ import (
 	"sync"
 	"time"
 
-	"github.com/megakuul/orbstrike/server/proto"
+	"github.com/megakuul/orbstrike/server/proto/game"
 )
 
 type Server struct {
-	Boards map[int32]*proto.GameBoard
-	SessionRequests map[int64]*proto.Move
+	Boards map[int32]*game.GameBoard
+	SessionRequests map[int64]*game.Move
 	SessionResponses map[int64]error
 	Mutex sync.RWMutex
-	proto.UnimplementedGameServiceServer
+	game.UnimplementedGameServiceServer
 }
 
-func (s *Server) StreamGameboard(stream proto.GameService_StreamGameboardServer) error {
+func (s *Server) StreamGameboard(stream game.GameService_StreamGameboardServer) error {
 	var err error
-	var req *proto.Move
+	var req *game.Move
 	
 	// TODO: If the application scales to 100+ instances this may not be enough uniqueness
 	sessionId := time.Now().UnixNano() * int64(rand.Intn(255))

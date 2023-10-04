@@ -72,8 +72,30 @@ flutter pub global activate protoc_plugin
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 export PATH="$PATH":"$GOPATH/bin"
 
-# Generate Dart protofiles
-protoc --dart_out=grpc:app/lib/proto -Iapi game.proto
+GAME_PROTO_PATH=proto/game
+AUTH_PROTO_PATH=proto/auth
 
-# Generate GO protofiles
-protoc --go_out=server/proto --go_opt=paths=source_relative --go-grpc_out=server/proto --go-grpc_opt=paths=source_relative -Iapi game.proto
+# Generate Dart protofiles
+protoc --dart_out=grpc:app/lib/$GAME_PROTO_PATH -Iapi/game game.proto
+protoc --dart_out=grpc:app/lib/$AUTH_PROTO_PATH -Iapi/auth auth.proto
+
+# Generate Go protofiles
+protoc --go_out=server/$GAME_PROTO_PATH \
+ --go_opt=paths=source_relative \
+ --go-grpc_out=server/$GAME_PROTO_PATH \
+ --go-grpc_opt=paths=source_relative -Iapi/game game.proto
+ 
+ protoc --go_out=orchestrator/$GAME_PROTO_PATH \
+ --go_opt=paths=source_relative \
+ --go-grpc_out=orchestrator/$GAME_PROTO_PATH \
+ --go-grpc_opt=paths=source_relative -Iapi/game game.proto
+ 
+ protoc --go_out=server/$AUTH_PROTO_PATH \
+ --go_opt=paths=source_relative \
+ --go-grpc_out=server/$AUTH_PROTO_PATH \
+ --go-grpc_opt=paths=source_relative -Iapi/auth auth.proto
+ 
+  protoc --go_out=orchestrator/$AUTH_PROTO_PATH \
+ --go_opt=paths=source_relative \
+ --go-grpc_out=orchestrator/$AUTH_PROTO_PATH \
+ --go-grpc_opt=paths=source_relative -Iapi/auth auth.proto

@@ -5,12 +5,12 @@ import(
 	"math"
 	
 	"github.com/megakuul/orbstrike/server/socket"
-	"github.com/megakuul/orbstrike/server/proto"
+	"github.com/megakuul/orbstrike/server/proto/game"
 )
 
 const speed = 1
 
-func Respond(sessionRequests map[int64]*proto.Move, srv *socket.Server) {
+func Respond(sessionRequests map[int64]*game.Move, srv *socket.Server) {
 	for sessionId, Move := range sessionRequests {
 		srv.Mutex.Lock()
 		srv.SessionResponses[sessionId] = nil
@@ -66,25 +66,25 @@ func Respond(sessionRequests map[int64]*proto.Move, srv *socket.Server) {
 			}
 		} else {
 			switch (Move.Direction) {
-			case proto.Move_UP:
+			case game.Move_UP:
 				curPlayer.Y -= speed
-			case proto.Move_UP_LEFT:
+			case game.Move_UP_LEFT:
 				curPlayer.Y -= speed
 				curPlayer.X -= speed
-			case proto.Move_UP_RIGHT:
+			case game.Move_UP_RIGHT:
 				curPlayer.X += speed
 				curPlayer.Y -= speed
-			case proto.Move_DOWN:
+			case game.Move_DOWN:
 				curPlayer.Y += speed
-			case proto.Move_DOWN_LEFT:
+			case game.Move_DOWN_LEFT:
 				curPlayer.Y += speed
 				curPlayer.X -= speed
-			case proto.Move_DOWN_RIGHT:
+			case game.Move_DOWN_RIGHT:
 				curPlayer.Y += speed
 				curPlayer.X += speed			
-			case proto.Move_LEFT:
+			case game.Move_LEFT:
 				curPlayer.X -= speed
-			case proto.Move_RIGHT:
+			case game.Move_RIGHT:
 				curPlayer.X += speed
 			}
 		}

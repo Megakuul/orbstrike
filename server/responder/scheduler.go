@@ -3,7 +3,7 @@ package responder
 import (
 	"time"
 
-	"github.com/megakuul/orbstrike/server/proto"
+	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/socket"
 	"github.com/megakuul/orbstrike/server/conf"
 )
@@ -37,15 +37,15 @@ func StartScheduler(srv *socket.Server, config *conf.Config) {
 }
 
 
-func splitRequestMap(reqMap map[int64]*proto.Move, desiredSlices int) []map[int64]*proto.Move {
+func splitRequestMap(reqMap map[int64]*game.Move, desiredSlices int) []map[int64]*game.Move {
 	if desiredSlices <= 0 {
-		return []map[int64]*proto.Move{}
+		return []map[int64]*game.Move{}
 	}
 	size := (len(reqMap) + desiredSlices - 1) / desiredSlices
 	
-	slices := make([]map[int64]*proto.Move, desiredSlices)
+	slices := make([]map[int64]*game.Move, desiredSlices)
 	for i := range slices {
-		slices[i] = make(map[int64]*proto.Move)
+		slices[i] = make(map[int64]*game.Move)
 	}
 
 	mapSliceIdx := 0

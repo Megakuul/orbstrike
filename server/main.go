@@ -6,9 +6,10 @@ import (
 
 	"github.com/megakuul/orbstrike/server/conf"
 	"github.com/megakuul/orbstrike/server/logger"
-	"github.com/megakuul/orbstrike/server/proto"
 	"github.com/megakuul/orbstrike/server/socket"
 	"github.com/megakuul/orbstrike/server/responder"
+	"github.com/megakuul/orbstrike/server/proto/game"
+	
 	"google.golang.org/grpc"
 )
 
@@ -26,10 +27,10 @@ func main() {
 	}
 	
 	/** Example Board */
-	board := &proto.GameBoard{
+	board := &game.GameBoard{
 		Id: 187,
 		Rad: 500,
-		Players: map[int32]*proto.Player{
+		Players: map[int32]*game.Player{
 			34234: {
 				Id: 34234,
 				X: 10,
@@ -57,15 +58,15 @@ func main() {
 	/** Example Board */
 
 	server:=&socket.Server{
-		Boards: map[int32]*proto.GameBoard{
+		Boards: map[int32]*game.GameBoard{
 			board.Id: board,
 		},
-		SessionRequests: map[int64]*proto.Move{},
+		SessionRequests: map[int64]*game.Move{},
 		SessionResponses: map[int64]error{},
 	}
 	
 	grpcSrv := grpc.NewServer()
-	proto.RegisterGameServiceServer(grpcSrv, server)
+	game.RegisterGameServiceServer(grpcSrv, server)
 
 	go responder.StartScheduler(server, &config)
 	
