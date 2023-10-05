@@ -21,6 +21,10 @@ export 'game.pb.dart';
 
 @$pb.GrpcServiceName('game.GameService')
 class GameServiceClient extends $grpc.Client {
+  static final _$proxyGameboard = $grpc.ClientMethod<$0.Move, $0.GameBoard>(
+      '/game.GameService/ProxyGameboard',
+      ($0.Move value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.GameBoard.fromBuffer(value));
   static final _$streamGameboard = $grpc.ClientMethod<$0.Move, $0.GameBoard>(
       '/game.GameService/StreamGameboard',
       ($0.Move value) => value.writeToBuffer(),
@@ -31,6 +35,10 @@ class GameServiceClient extends $grpc.Client {
       $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options,
         interceptors: interceptors);
+
+  $grpc.ResponseStream<$0.GameBoard> proxyGameboard($async.Stream<$0.Move> request, {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$proxyGameboard, request, options: options);
+  }
 
   $grpc.ResponseStream<$0.GameBoard> streamGameboard($async.Stream<$0.Move> request, {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$streamGameboard, request, options: options);
@@ -43,6 +51,13 @@ abstract class GameServiceBase extends $grpc.Service {
 
   GameServiceBase() {
     $addMethod($grpc.ServiceMethod<$0.Move, $0.GameBoard>(
+        'ProxyGameboard',
+        proxyGameboard,
+        true,
+        true,
+        ($core.List<$core.int> value) => $0.Move.fromBuffer(value),
+        ($0.GameBoard value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.Move, $0.GameBoard>(
         'StreamGameboard',
         streamGameboard,
         true,
@@ -51,5 +66,6 @@ abstract class GameServiceBase extends $grpc.Service {
         ($0.GameBoard value) => value.writeToBuffer()));
   }
 
+  $async.Stream<$0.GameBoard> proxyGameboard($grpc.ServiceCall call, $async.Stream<$0.Move> request);
   $async.Stream<$0.GameBoard> streamGameboard($grpc.ServiceCall call, $async.Stream<$0.Move> request);
 }

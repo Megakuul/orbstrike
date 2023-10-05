@@ -6,7 +6,8 @@ import (
 
 type Config struct {
 	Port int `mapstructure:"port"`
-	
+	TimeoutMin int `mapstructure:"timeoutmin"`
+
 	LogFile string `mapstructure:"logfile"`
 	LogOptions string `mapstructure:"logoptions"`
 	MaxLogSizeKB int `mapstructure:"maxlogsizekb"`
@@ -23,7 +24,8 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
-	
+
+	viper.SetDefault("timeoutmin", 180)
 	viper.SetDefault("logoptions", "ERROR|WARNING")
 	viper.SetDefault("logfile", "orbstrike.log")
 	viper.SetDefault("maxlogsizekb", 500)

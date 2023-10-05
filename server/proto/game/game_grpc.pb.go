@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	GameService_ProxyGameboard_FullMethodName  = "/game.GameService/ProxyGameboard"
 	GameService_StreamGameboard_FullMethodName = "/game.GameService/StreamGameboard"
 )
 
@@ -26,6 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GameServiceClient interface {
+	ProxyGameboard(ctx context.Context, opts ...grpc.CallOption) (GameService_ProxyGameboardClient, error)
 	StreamGameboard(ctx context.Context, opts ...grpc.CallOption) (GameService_StreamGameboardClient, error)
 }
 
@@ -37,8 +39,39 @@ func NewGameServiceClient(cc grpc.ClientConnInterface) GameServiceClient {
 	return &gameServiceClient{cc}
 }
 
+func (c *gameServiceClient) ProxyGameboard(ctx context.Context, opts ...grpc.CallOption) (GameService_ProxyGameboardClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GameService_ServiceDesc.Streams[0], GameService_ProxyGameboard_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &gameServiceProxyGameboardClient{stream}
+	return x, nil
+}
+
+type GameService_ProxyGameboardClient interface {
+	Send(*Move) error
+	Recv() (*GameBoard, error)
+	grpc.ClientStream
+}
+
+type gameServiceProxyGameboardClient struct {
+	grpc.ClientStream
+}
+
+func (x *gameServiceProxyGameboardClient) Send(m *Move) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *gameServiceProxyGameboardClient) Recv() (*GameBoard, error) {
+	m := new(GameBoard)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *gameServiceClient) StreamGameboard(ctx context.Context, opts ...grpc.CallOption) (GameService_StreamGameboardClient, error) {
-	stream, err := c.cc.NewStream(ctx, &GameService_ServiceDesc.Streams[0], GameService_StreamGameboard_FullMethodName, opts...)
+	stream, err := c.cc.NewStream(ctx, &GameService_ServiceDesc.Streams[1], GameService_StreamGameboard_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +105,7 @@ func (x *gameServiceStreamGameboardClient) Recv() (*GameBoard, error) {
 // All implementations must embed UnimplementedGameServiceServer
 // for forward compatibility
 type GameServiceServer interface {
+	ProxyGameboard(GameService_ProxyGameboardServer) error
 	StreamGameboard(GameService_StreamGameboardServer) error
 	mustEmbedUnimplementedGameServiceServer()
 }
@@ -80,6 +114,9 @@ type GameServiceServer interface {
 type UnimplementedGameServiceServer struct {
 }
 
+func (UnimplementedGameServiceServer) ProxyGameboard(GameService_ProxyGameboardServer) error {
+	return status.Errorf(codes.Unimplemented, "method ProxyGameboard not implemented")
+}
 func (UnimplementedGameServiceServer) StreamGameboard(GameService_StreamGameboardServer) error {
 	return status.Errorf(codes.Unimplemented, "method StreamGameboard not implemented")
 }
@@ -94,6 +131,32 @@ type UnsafeGameServiceServer interface {
 
 func RegisterGameServiceServer(s grpc.ServiceRegistrar, srv GameServiceServer) {
 	s.RegisterService(&GameService_ServiceDesc, srv)
+}
+
+func _GameService_ProxyGameboard_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GameServiceServer).ProxyGameboard(&gameServiceProxyGameboardServer{stream})
+}
+
+type GameService_ProxyGameboardServer interface {
+	Send(*GameBoard) error
+	Recv() (*Move, error)
+	grpc.ServerStream
+}
+
+type gameServiceProxyGameboardServer struct {
+	grpc.ServerStream
+}
+
+func (x *gameServiceProxyGameboardServer) Send(m *GameBoard) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *gameServiceProxyGameboardServer) Recv() (*Move, error) {
+	m := new(Move)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _GameService_StreamGameboard_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -130,6 +193,12 @@ var GameService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*GameServiceServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "ProxyGameboard",
+			Handler:       _GameService_ProxyGameboard_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
 		{
 			StreamName:    "StreamGameboard",
 			Handler:       _GameService_StreamGameboard_Handler,

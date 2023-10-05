@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:orbstrike/proto/game.pb.dart';
+import 'package:orbstrike/proto/game/game.pbenum.dart';
 
 Move_Direction? getMovementInput() {
   final w = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyW);

@@ -1,8 +1,7 @@
 import 'package:flame/components.dart';
-import 'package:orbstrike/proto/game.pb.dart';
-import 'proto/game.pbgrpc.dart';
 
 import 'package:orbstrike/PlayerC.dart';
+import 'package:orbstrike/proto/game/game.pb.dart';
 
 /// Changes the state of the playerComponents and the mainPlayerComponent based on the new GameBoard
 ///

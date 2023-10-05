@@ -6,7 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:grpc/grpc.dart';
-import 'proto/game.pbgrpc.dart';
+import 'package:orbstrike/proto/game/game.pbgrpc.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'package:orbstrike/KeyboardHandler.dart';
@@ -113,7 +113,7 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
     final callOptions = CallOptions(metadata: streamHeaders);
 
-    apiClient!.streamGameboard(apiReqStream.stream, options: callOptions)
+    apiClient!.proxyGameboard(apiReqStream.stream, options: callOptions)
         .listen((game) {
       board = game;
       if (mainPlayerComponent==null && board.players[playerID]!=null) {

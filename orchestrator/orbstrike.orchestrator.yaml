@@ -1,5 +1,7 @@
 # This is an example config, those options can also be configured with ENV-Variables
 port: 8080
+# Deadline for socket connections (minutes)
+timeoutmin: 180
 
 secret: "mysupersecretkey"
 logfile: "./orbstrike.orchestrator.log"

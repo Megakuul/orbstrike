@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/megakuul/orbstrike/orchestrator/conf"
 	"github.com/megakuul/orbstrike/orchestrator/logger"
@@ -36,7 +37,9 @@ func main() {
 		logger.WriteErrLogger(err)
 	}
 
-	server:=&socket.Server{}
+	server:=&socket.Server{
+		Timeout: time.Minute*time.Duration(config.TimeoutMin),
+	}
 
 	var grpcSrv *grpc.Server
 	if tlscred!=nil {

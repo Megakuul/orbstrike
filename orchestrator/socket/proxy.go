@@ -2,33 +2,41 @@ package socket
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"time"
 
 	"github.com/megakuul/orbstrike/orchestrator/proto/game"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
+
+const GAMEID_MD_KEY = "gameid"
+
+const METADATA_MISSING_ERRMSG = "Invalid proxy request: Metadata header is missing"
+const GAMEID_MISSING_ERRMSG = "Invalid proxy request: Metadata must contain 'gameid' key"
 
 type Server struct {
 	Timeout time.Duration
 	game.UnimplementedGameServiceServer
 }
 
-func (s *Server) ProxyGameboard(clientStream game.GameService_StreamGameboardServer) error {
-	initialReq, err := clientStream.Recv()
-	if err == io.EOF {
-		return err
-	}
-	if err!=nil {
-		return err
+func (s *Server) ProxyGameboard(clientStream game.GameService_ProxyGameboardServer) error {
+	metaData, ok := metadata.FromIncomingContext(clientStream.Context())
+	if !ok {
+		return fmt.Errorf(METADATA_MISSING_ERRMSG)
 	}
 
-	_ = initialReq
+	gameid:=metaData.Get(GAMEID_MD_KEY)
+	if len(gameid) == 0 {
+		return fmt.Errorf(GAMEID_MISSING_ERRMSG)
+	}
 
+	fmt.Println(gameid)
+	
 	// Search the server with the gameid that is in req.Gameid
-	address := "localhost:187"
-
+	address := "localhost:50050"
 	
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err!=nil {
@@ -38,25 +46,24 @@ func (s *Server) ProxyGameboard(clientStream game.GameService_StreamGameboardSer
 
 	srv:=game.NewGameServiceClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), s.Timeout)
+	srvCtx, cancel := context.WithTimeout(context.Background(), s.Timeout)
 	defer cancel()
 	
-	srvStream, err := srv.StreamGameboard(ctx)
+	srvStream, err := srv.StreamGameboard(srvCtx)
 	if err!=nil {
 		return err
 	}
 
-	exitChan:=make(chan error)
+	errChan:=make(chan error)
+	exitChan:=make(chan struct{})
 
-	// TODO: Add a mechanism to exit the other loop if one fails
+	go startWriterLoop(srvStream, clientStream, errChan, exitChan)
 
-	go startWriterLoop(srvStream, clientStream, exitChan)
+	go startReaderLoop(srvStream, clientStream, errChan, exitChan)
 
-	go startReaderLoop(srvStream, clientStream, exitChan)
-
-	// Wait until something is sent to exitChan
+	// Wait until something is sent to errChan
 	select {
-	case chanErr := <-exitChan:
+	case chanErr := <-errChan:
 		close(exitChan)
 		return chanErr
 	}
@@ -64,46 +71,57 @@ func (s *Server) ProxyGameboard(clientStream game.GameService_StreamGameboardSer
 
 func startWriterLoop(
 	srvStream game.GameService_StreamGameboardClient,
-	clientStream game.GameService_StreamGameboardServer,
-	exitChan chan<-error) {
+	clientStream game.GameService_ProxyGameboardServer,
+	errChan chan<-error, exitChan <-chan struct{}) {
 	for {
 		res,err:=srvStream.Recv()
 		if err == io.EOF {
-			exitChan<-nil
+			errChan<-nil
 			return
 		}
 		if err!=nil {
-			exitChan<-err
+			errChan<-err
 			return
 		}
 
 		clientStream.Send(res)
 		if err!=nil {
-			exitChan<-err
+			errChan<-err
 			return
+		}
+		select {
+		case <-exitChan:
+			return
+		default:
 		}
 	}
 }
 
 func startReaderLoop(
 	srvStream game.GameService_StreamGameboardClient,
-	clientStream game.GameService_StreamGameboardServer,
-	exitChan chan<-error) {
+	clientStream game.GameService_ProxyGameboardServer,
+	errChan chan<-error, exitChan<-chan struct{}) {
 	for {
 		req, err := clientStream.Recv()
 		if err == io.EOF {
-			exitChan<-nil
+			errChan<-nil
 			return
 		}
 		if err!=nil {
-			exitChan<-err
+			errChan<-err
 			return
 		}
 
 		srvStream.Send(req)
 		if err!=nil {
-			exitChan<-err
+			errChan<-err
 			return
+		}
+		
+		select {
+		case <-exitChan:
+			return
+		default:
 		}
 	}
 }

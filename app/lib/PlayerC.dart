@@ -1,8 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:orbstrike/proto/game.pb.dart';
 import 'package:flutter/material.dart';
-import 'proto/game.pbgrpc.dart';
+import 'package:orbstrike/proto/game/game.pb.dart';
 
 /// Current player
 class PlayerC extends PositionComponent with CollisionCallbacks {

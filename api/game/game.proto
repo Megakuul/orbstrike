@@ -5,6 +5,7 @@ package game;
 option go_package = "./game";
 
 service GameService {
+  rpc ProxyGameboard(stream Move) returns (stream GameBoard) {}
   rpc StreamGameboard(stream Move) returns (stream GameBoard) {}
 }
 
