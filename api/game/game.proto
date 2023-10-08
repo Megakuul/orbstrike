@@ -18,14 +18,15 @@ message GameBoard {
 
 message Player {
   int32 id = 1;
-  double x = 2;        
-  double y = 3;
-  double rad = 4;
-  double ringrad = 5;
-  int32 color = 6;
-  int32 kills = 7;
-  bool ringEnabled = 8;
-  int32 speed = 9;
+  string name = 2;
+  double x = 3;
+  double y = 4;
+  double rad = 5;
+  double ringrad = 6;
+  int32 color = 7;
+  int32 kills = 8;
+  bool ringEnabled = 9;
+  int32 speed = 10;
 }
 
 // Direction to move

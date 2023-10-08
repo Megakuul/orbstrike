@@ -20,14 +20,196 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type CreateGameRequest struct {
+	Identifier           string   `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CreateGameRequest) Reset()         { *m = CreateGameRequest{} }
+func (m *CreateGameRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateGameRequest) ProtoMessage()    {}
+func (*CreateGameRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8bbd6f3875b0e874, []int{0}
+}
+
+func (m *CreateGameRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateGameRequest.Unmarshal(m, b)
+}
+func (m *CreateGameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateGameRequest.Marshal(b, m, deterministic)
+}
+func (m *CreateGameRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateGameRequest.Merge(m, src)
+}
+func (m *CreateGameRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateGameRequest.Size(m)
+}
+func (m *CreateGameRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateGameRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateGameRequest proto.InternalMessageInfo
+
+func (m *CreateGameRequest) GetIdentifier() string {
+	if m != nil {
+		return m.Identifier
+	}
+	return ""
+}
+
+type CreateGameResponse struct {
+	Gameid               int32    `protobuf:"varint,1,opt,name=gameid,proto3" json:"gameid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CreateGameResponse) Reset()         { *m = CreateGameResponse{} }
+func (m *CreateGameResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateGameResponse) ProtoMessage()    {}
+func (*CreateGameResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8bbd6f3875b0e874, []int{1}
+}
+
+func (m *CreateGameResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateGameResponse.Unmarshal(m, b)
+}
+func (m *CreateGameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateGameResponse.Marshal(b, m, deterministic)
+}
+func (m *CreateGameResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateGameResponse.Merge(m, src)
+}
+func (m *CreateGameResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateGameResponse.Size(m)
+}
+func (m *CreateGameResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateGameResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateGameResponse proto.InternalMessageInfo
+
+func (m *CreateGameResponse) GetGameid() int32 {
+	if m != nil {
+		return m.Gameid
+	}
+	return 0
+}
+
+type JoinGameRequest struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Gameid               int32    `protobuf:"varint,2,opt,name=gameid,proto3" json:"gameid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *JoinGameRequest) Reset()         { *m = JoinGameRequest{} }
+func (m *JoinGameRequest) String() string { return proto.CompactTextString(m) }
+func (*JoinGameRequest) ProtoMessage()    {}
+func (*JoinGameRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8bbd6f3875b0e874, []int{2}
+}
+
+func (m *JoinGameRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_JoinGameRequest.Unmarshal(m, b)
+}
+func (m *JoinGameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_JoinGameRequest.Marshal(b, m, deterministic)
+}
+func (m *JoinGameRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_JoinGameRequest.Merge(m, src)
+}
+func (m *JoinGameRequest) XXX_Size() int {
+	return xxx_messageInfo_JoinGameRequest.Size(m)
+}
+func (m *JoinGameRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_JoinGameRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_JoinGameRequest proto.InternalMessageInfo
+
+func (m *JoinGameRequest) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *JoinGameRequest) GetGameid() int32 {
+	if m != nil {
+		return m.Gameid
+	}
+	return 0
+}
+
+type JoinGameResponse struct {
+	Userkey              int32    `protobuf:"varint,1,opt,name=userkey,proto3" json:"userkey,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *JoinGameResponse) Reset()         { *m = JoinGameResponse{} }
+func (m *JoinGameResponse) String() string { return proto.CompactTextString(m) }
+func (*JoinGameResponse) ProtoMessage()    {}
+func (*JoinGameResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8bbd6f3875b0e874, []int{3}
+}
+
+func (m *JoinGameResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_JoinGameResponse.Unmarshal(m, b)
+}
+func (m *JoinGameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_JoinGameResponse.Marshal(b, m, deterministic)
+}
+func (m *JoinGameResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_JoinGameResponse.Merge(m, src)
+}
+func (m *JoinGameResponse) XXX_Size() int {
+	return xxx_messageInfo_JoinGameResponse.Size(m)
+}
+func (m *JoinGameResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_JoinGameResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_JoinGameResponse proto.InternalMessageInfo
+
+func (m *JoinGameResponse) GetUserkey() int32 {
+	if m != nil {
+		return m.Userkey
+	}
+	return 0
+}
+
+func init() {
+	proto.RegisterType((*CreateGameRequest)(nil), "auth.CreateGameRequest")
+	proto.RegisterType((*CreateGameResponse)(nil), "auth.CreateGameResponse")
+	proto.RegisterType((*JoinGameRequest)(nil), "auth.JoinGameRequest")
+	proto.RegisterType((*JoinGameResponse)(nil), "auth.JoinGameResponse")
+}
+
 func init() {
 	proto.RegisterFile("auth.proto", fileDescriptor_8bbd6f3875b0e874)
 }
 
 var fileDescriptor_8bbd6f3875b0e874 = []byte{
-	// 52 bytes of a gzipped FileDescriptorProto
+	// 229 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4a, 0x2c, 0x2d, 0xc9,
-	0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x01, 0xb1, 0x9d, 0x38, 0xa2, 0xd8, 0xf4, 0xf4,
-	0x41, 0xac, 0x24, 0x36, 0xb0, 0xb0, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x60, 0x8b, 0xcc, 0x04,
-	0x24, 0x00, 0x00, 0x00,
+	0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x01, 0xb1, 0x95, 0x8c, 0xb9, 0x04, 0x9d, 0x8b,
+	0x52, 0x13, 0x4b, 0x52, 0xdd, 0x13, 0x73, 0x53, 0x83, 0x52, 0x0b, 0x4b, 0x53, 0x8b, 0x4b, 0x84,
+	0xe4, 0xb8, 0xb8, 0x32, 0x53, 0x52, 0xf3, 0x4a, 0x32, 0xd3, 0x32, 0x53, 0x8b, 0x24, 0x18, 0x15,
+	0x18, 0x35, 0x38, 0x83, 0x90, 0x44, 0x94, 0x74, 0xb8, 0x84, 0x90, 0x35, 0x15, 0x17, 0xe4, 0xe7,
+	0x15, 0xa7, 0x0a, 0x89, 0x71, 0xb1, 0xa5, 0x27, 0xe6, 0xa6, 0x66, 0xa6, 0x80, 0x75, 0xb0, 0x06,
+	0x41, 0x79, 0x4a, 0xb6, 0x5c, 0xfc, 0x5e, 0xf9, 0x99, 0x79, 0xc8, 0x16, 0x08, 0x71, 0xb1, 0xe4,
+	0x25, 0xe6, 0xa6, 0x42, 0x8d, 0x06, 0xb3, 0x91, 0xb4, 0x33, 0xa1, 0x68, 0xd7, 0xe1, 0x12, 0x40,
+	0x68, 0x87, 0x5a, 0x25, 0xc1, 0xc5, 0x5e, 0x5a, 0x9c, 0x5a, 0x94, 0x9d, 0x5a, 0x09, 0xb5, 0x0b,
+	0xc6, 0x35, 0xea, 0x65, 0xe4, 0xe2, 0x76, 0x2c, 0x2d, 0xc9, 0x08, 0x4e, 0x2d, 0x2a, 0xcb, 0x4c,
+	0x4e, 0x15, 0x72, 0xe4, 0xe2, 0x42, 0x38, 0x55, 0x48, 0x5c, 0x0f, 0x1c, 0x00, 0x18, 0x3e, 0x96,
+	0x92, 0xc0, 0x94, 0x80, 0x58, 0xa5, 0xc4, 0x20, 0x64, 0xcd, 0xc5, 0x01, 0x73, 0x80, 0x90, 0x28,
+	0x44, 0x1d, 0x9a, 0x7f, 0xa4, 0xc4, 0xd0, 0x85, 0x61, 0x9a, 0x9d, 0x38, 0xa2, 0xd8, 0xf4, 0xf4,
+	0x41, 0x92, 0x49, 0x6c, 0xe0, 0x60, 0x37, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x19, 0x0b, 0x9c,
+	0xde, 0x84, 0x01, 0x00, 0x00,
 }

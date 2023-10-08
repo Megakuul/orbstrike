@@ -93,6 +93,7 @@ class GameBoard extends $pb.GeneratedMessage {
 class Player extends $pb.GeneratedMessage {
   factory Player({
     $core.int? id,
+    $core.String? name,
     $core.double? x,
     $core.double? y,
     $core.double? rad,
@@ -105,6 +106,9 @@ class Player extends $pb.GeneratedMessage {
     final $result = create();
     if (id != null) {
       $result.id = id;
+    }
+    if (name != null) {
+      $result.name = name;
     }
     if (x != null) {
       $result.x = x;
@@ -138,14 +142,15 @@ class Player extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Player', package: const $pb.PackageName(_omitMessageNames ? '' : 'game'), createEmptyInstance: create)
     ..a<$core.int>(1, _omitFieldNames ? '' : 'id', $pb.PbFieldType.O3)
-    ..a<$core.double>(2, _omitFieldNames ? '' : 'x', $pb.PbFieldType.OD)
-    ..a<$core.double>(3, _omitFieldNames ? '' : 'y', $pb.PbFieldType.OD)
-    ..a<$core.double>(4, _omitFieldNames ? '' : 'rad', $pb.PbFieldType.OD)
-    ..a<$core.double>(5, _omitFieldNames ? '' : 'ringrad', $pb.PbFieldType.OD)
-    ..a<$core.int>(6, _omitFieldNames ? '' : 'color', $pb.PbFieldType.O3)
-    ..a<$core.int>(7, _omitFieldNames ? '' : 'kills', $pb.PbFieldType.O3)
-    ..aOB(8, _omitFieldNames ? '' : 'ringEnabled', protoName: 'ringEnabled')
-    ..a<$core.int>(9, _omitFieldNames ? '' : 'speed', $pb.PbFieldType.O3)
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..a<$core.double>(3, _omitFieldNames ? '' : 'x', $pb.PbFieldType.OD)
+    ..a<$core.double>(4, _omitFieldNames ? '' : 'y', $pb.PbFieldType.OD)
+    ..a<$core.double>(5, _omitFieldNames ? '' : 'rad', $pb.PbFieldType.OD)
+    ..a<$core.double>(6, _omitFieldNames ? '' : 'ringrad', $pb.PbFieldType.OD)
+    ..a<$core.int>(7, _omitFieldNames ? '' : 'color', $pb.PbFieldType.O3)
+    ..a<$core.int>(8, _omitFieldNames ? '' : 'kills', $pb.PbFieldType.O3)
+    ..aOB(9, _omitFieldNames ? '' : 'ringEnabled', protoName: 'ringEnabled')
+    ..a<$core.int>(10, _omitFieldNames ? '' : 'speed', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -180,76 +185,85 @@ class Player extends $pb.GeneratedMessage {
   void clearId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.double get x => $_getN(1);
+  $core.String get name => $_getSZ(1);
   @$pb.TagNumber(2)
-  set x($core.double v) { $_setDouble(1, v); }
+  set name($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasX() => $_has(1);
+  $core.bool hasName() => $_has(1);
   @$pb.TagNumber(2)
-  void clearX() => clearField(2);
+  void clearName() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.double get y => $_getN(2);
+  $core.double get x => $_getN(2);
   @$pb.TagNumber(3)
-  set y($core.double v) { $_setDouble(2, v); }
+  set x($core.double v) { $_setDouble(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasY() => $_has(2);
+  $core.bool hasX() => $_has(2);
   @$pb.TagNumber(3)
-  void clearY() => clearField(3);
+  void clearX() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.double get rad => $_getN(3);
+  $core.double get y => $_getN(3);
   @$pb.TagNumber(4)
-  set rad($core.double v) { $_setDouble(3, v); }
+  set y($core.double v) { $_setDouble(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasRad() => $_has(3);
+  $core.bool hasY() => $_has(3);
   @$pb.TagNumber(4)
-  void clearRad() => clearField(4);
+  void clearY() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.double get ringrad => $_getN(4);
+  $core.double get rad => $_getN(4);
   @$pb.TagNumber(5)
-  set ringrad($core.double v) { $_setDouble(4, v); }
+  set rad($core.double v) { $_setDouble(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasRingrad() => $_has(4);
+  $core.bool hasRad() => $_has(4);
   @$pb.TagNumber(5)
-  void clearRingrad() => clearField(5);
+  void clearRad() => clearField(5);
 
   @$pb.TagNumber(6)
-  $core.int get color => $_getIZ(5);
+  $core.double get ringrad => $_getN(5);
   @$pb.TagNumber(6)
-  set color($core.int v) { $_setSignedInt32(5, v); }
+  set ringrad($core.double v) { $_setDouble(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasColor() => $_has(5);
+  $core.bool hasRingrad() => $_has(5);
   @$pb.TagNumber(6)
-  void clearColor() => clearField(6);
+  void clearRingrad() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.int get kills => $_getIZ(6);
+  $core.int get color => $_getIZ(6);
   @$pb.TagNumber(7)
-  set kills($core.int v) { $_setSignedInt32(6, v); }
+  set color($core.int v) { $_setSignedInt32(6, v); }
   @$pb.TagNumber(7)
-  $core.bool hasKills() => $_has(6);
+  $core.bool hasColor() => $_has(6);
   @$pb.TagNumber(7)
-  void clearKills() => clearField(7);
+  void clearColor() => clearField(7);
 
   @$pb.TagNumber(8)
-  $core.bool get ringEnabled => $_getBF(7);
+  $core.int get kills => $_getIZ(7);
   @$pb.TagNumber(8)
-  set ringEnabled($core.bool v) { $_setBool(7, v); }
+  set kills($core.int v) { $_setSignedInt32(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasRingEnabled() => $_has(7);
+  $core.bool hasKills() => $_has(7);
   @$pb.TagNumber(8)
-  void clearRingEnabled() => clearField(8);
+  void clearKills() => clearField(8);
 
   @$pb.TagNumber(9)
-  $core.int get speed => $_getIZ(8);
+  $core.bool get ringEnabled => $_getBF(8);
   @$pb.TagNumber(9)
-  set speed($core.int v) { $_setSignedInt32(8, v); }
+  set ringEnabled($core.bool v) { $_setBool(8, v); }
   @$pb.TagNumber(9)
-  $core.bool hasSpeed() => $_has(8);
+  $core.bool hasRingEnabled() => $_has(8);
   @$pb.TagNumber(9)
-  void clearSpeed() => clearField(9);
+  void clearRingEnabled() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.int get speed => $_getIZ(9);
+  @$pb.TagNumber(10)
+  set speed($core.int v) { $_setSignedInt32(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasSpeed() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearSpeed() => clearField(10);
 }
 
 /// Direction to move

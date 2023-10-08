@@ -81,21 +81,29 @@ protoc --dart_out=grpc:app/lib/$AUTH_PROTO_PATH -Iapi/auth auth.proto
 
 # Generate Go protofiles
 protoc --go_out=server/$GAME_PROTO_PATH \
+ --plugin=protoc-gen-go=$GOPATH/bin/protoc-gen-go \
+ --plugin=protoc-gen-go-grpc=$GOPATH/bin/protoc-gen-go-grpc \
  --go_opt=paths=source_relative \
  --go-grpc_out=server/$GAME_PROTO_PATH \
  --go-grpc_opt=paths=source_relative -Iapi/game game.proto
  
- protoc --go_out=orchestrator/$GAME_PROTO_PATH \
+protoc --go_out=orchestrator/$GAME_PROTO_PATH \
+ --plugin=protoc-gen-go=$GOPATH/bin/protoc-gen-go \
+ --plugin=protoc-gen-go-grpc=$GOPATH/bin/protoc-gen-go-grpc \
  --go_opt=paths=source_relative \
  --go-grpc_out=orchestrator/$GAME_PROTO_PATH \
  --go-grpc_opt=paths=source_relative -Iapi/game game.proto
  
- protoc --go_out=server/$AUTH_PROTO_PATH \
+protoc --go_out=server/$AUTH_PROTO_PATH \
+ --plugin=protoc-gen-go=$GOPATH/bin/protoc-gen-go \
+ --plugin=protoc-gen-go-grpc=$GOPATH/bin/protoc-gen-go-grpc \
  --go_opt=paths=source_relative \
  --go-grpc_out=server/$AUTH_PROTO_PATH \
  --go-grpc_opt=paths=source_relative -Iapi/auth auth.proto
  
-  protoc --go_out=orchestrator/$AUTH_PROTO_PATH \
+protoc --go_out=orchestrator/$AUTH_PROTO_PATH \
+ --plugin=protoc-gen-go=$GOPATH/bin/protoc-gen-go \
+ --plugin=protoc-gen-go-grpc=$GOPATH/bin/protoc-gen-go-grpc \
  --go_opt=paths=source_relative \
  --go-grpc_out=orchestrator/$AUTH_PROTO_PATH \
  --go-grpc_opt=paths=source_relative -Iapi/auth auth.proto

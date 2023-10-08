@@ -3,7 +3,19 @@ port: 8080
 # Deadline for socket connections (minutes)
 timeoutmin: 180
 
-secret: "mysupersecretkey"
+# Foreach shard add one instance of the replication (best is to use the default master)
+## dbshardnodes: "10.100.32.10:6379,10.100.32.20:6379"
+dbshardnodes: "localhost:6379"
+
+# Specify Redis username and password from ACL
+dbusername: "A_REDIS_APIUSR_RW"
+dbpassword: "SuperSecret123"
+
+# Enter your certificate chain as base64 if you want an unencrypted db connection use ""
+db_base64_ssl_certificate: ""
+db_base64_ssl_privatekey: ""
+db_base64_ssl_ca: ""
+
 logfile: "./orbstrike.orchestrator.log"
 logoptions: "ERROR|WARNING|INFORMATION"
 maxlogsizekb: 200

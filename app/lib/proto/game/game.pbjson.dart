@@ -46,23 +46,24 @@ const Player$json = {
   '1': 'Player',
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
-    {'1': 'x', '3': 2, '4': 1, '5': 1, '10': 'x'},
-    {'1': 'y', '3': 3, '4': 1, '5': 1, '10': 'y'},
-    {'1': 'rad', '3': 4, '4': 1, '5': 1, '10': 'rad'},
-    {'1': 'ringrad', '3': 5, '4': 1, '5': 1, '10': 'ringrad'},
-    {'1': 'color', '3': 6, '4': 1, '5': 5, '10': 'color'},
-    {'1': 'kills', '3': 7, '4': 1, '5': 5, '10': 'kills'},
-    {'1': 'ringEnabled', '3': 8, '4': 1, '5': 8, '10': 'ringEnabled'},
-    {'1': 'speed', '3': 9, '4': 1, '5': 5, '10': 'speed'},
+    {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    {'1': 'x', '3': 3, '4': 1, '5': 1, '10': 'x'},
+    {'1': 'y', '3': 4, '4': 1, '5': 1, '10': 'y'},
+    {'1': 'rad', '3': 5, '4': 1, '5': 1, '10': 'rad'},
+    {'1': 'ringrad', '3': 6, '4': 1, '5': 1, '10': 'ringrad'},
+    {'1': 'color', '3': 7, '4': 1, '5': 5, '10': 'color'},
+    {'1': 'kills', '3': 8, '4': 1, '5': 5, '10': 'kills'},
+    {'1': 'ringEnabled', '3': 9, '4': 1, '5': 8, '10': 'ringEnabled'},
+    {'1': 'speed', '3': 10, '4': 1, '5': 5, '10': 'speed'},
   ],
 };
 
 /// Descriptor for `Player`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List playerDescriptor = $convert.base64Decode(
-    'CgZQbGF5ZXISDgoCaWQYASABKAVSAmlkEgwKAXgYAiABKAFSAXgSDAoBeRgDIAEoAVIBeRIQCg'
-    'NyYWQYBCABKAFSA3JhZBIYCgdyaW5ncmFkGAUgASgBUgdyaW5ncmFkEhQKBWNvbG9yGAYgASgF'
-    'UgVjb2xvchIUCgVraWxscxgHIAEoBVIFa2lsbHMSIAoLcmluZ0VuYWJsZWQYCCABKAhSC3Jpbm'
-    'dFbmFibGVkEhQKBXNwZWVkGAkgASgFUgVzcGVlZA==');
+    'CgZQbGF5ZXISDgoCaWQYASABKAVSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWUSDAoBeBgDIAEoAV'
+    'IBeBIMCgF5GAQgASgBUgF5EhAKA3JhZBgFIAEoAVIDcmFkEhgKB3JpbmdyYWQYBiABKAFSB3Jp'
+    'bmdyYWQSFAoFY29sb3IYByABKAVSBWNvbG9yEhQKBWtpbGxzGAggASgFUgVraWxscxIgCgtyaW'
+    '5nRW5hYmxlZBgJIAEoCFILcmluZ0VuYWJsZWQSFAoFc3BlZWQYCiABKAVSBXNwZWVk');
 
 @$core.Deprecated('Use moveDescriptor instead')
 const Move$json = {

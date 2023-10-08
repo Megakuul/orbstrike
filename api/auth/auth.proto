@@ -3,3 +3,25 @@ syntax = "proto3";
 package auth;
 
 option go_package = "./auth";
+
+service AuthService {
+  rpc CreateGame(CreateGameRequest) returns (CreateGameResponse) {}
+  rpc JoinGame(JoinGameRequest) returns (JoinGameResponse) {}
+}
+
+message CreateGameRequest {
+  string identifier = 1;
+}
+
+message CreateGameResponse {
+  int32 gameid = 1;
+}
+
+message JoinGameRequest {
+  string name = 1;
+  int32 gameid = 2;
+}
+
+message JoinGameResponse {
+  int32 userkey = 1;
+}

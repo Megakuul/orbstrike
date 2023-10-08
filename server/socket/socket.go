@@ -7,10 +7,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/megakuul/orbstrike/server/proto/game"
 )
 
 type Server struct {
+	RDB *redis.ClusterClient
 	Boards map[int32]*game.GameBoard
 	SessionRequests map[int64]*game.Move
 	SessionResponses map[int64]error
@@ -37,7 +39,7 @@ func (s *Server) StreamGameboard(stream game.GameService_StreamGameboardServer) 
 
 		curBoard, ok := s.Boards[req.Gameid]
 		if !ok {
-			err = fmt.Errorf("No such game %d\n", req.Gameid)
+			err = fmt.Errorf("No such game %d", req.Gameid)
 			break
 		}
 

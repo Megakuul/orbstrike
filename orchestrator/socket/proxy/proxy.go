@@ -1,4 +1,4 @@
-package socket
+package proxy
 
 import (
 	"context"
@@ -10,14 +10,16 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+	"github.com/go-redis/redis/v8"
 )
 
 const GAMEID_MD_KEY = "gameid"
 
 const METADATA_MISSING_ERRMSG = "Invalid proxy request: Metadata header is missing"
-const GAMEID_MISSING_ERRMSG = "Invalid proxy request: Metadata must contain 'gameid' key"
+const GAMEID_MISSING_ERRMSG = "Invalid proxy request: Metadata must contain 'gameid' key at first position"
 
 type Server struct {
+	RDB *redis.ClusterClient
 	Timeout time.Duration
 	game.UnimplementedGameServiceServer
 }
@@ -29,11 +31,12 @@ func (s *Server) ProxyGameboard(clientStream game.GameService_ProxyGameboardServ
 	}
 
 	gameid:=metaData.Get(GAMEID_MD_KEY)
-	if len(gameid) == 0 {
+	if len(gameid) != 1 {
 		return fmt.Errorf(GAMEID_MISSING_ERRMSG)
 	}
-
-	fmt.Println(gameid)
+	
+	s.RDB.Get(context.Background(), gameid[0]
+	fmt.Println()
 	
 	// Search the server with the gameid that is in req.Gameid
 	address := "localhost:50050"
