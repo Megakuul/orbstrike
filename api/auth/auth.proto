@@ -23,5 +23,5 @@ message JoinGameRequest {
 }
 
 message JoinGameResponse {
-  int32 userkey = 1;
+  bytes userkey = 1;
 }

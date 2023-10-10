@@ -2,19 +2,8 @@
 port: 8080
 # Deadline for socket connections (minutes)
 timeoutmin: 180
-
-# Foreach shard add one instance of the replication (best is to use the default master)
-## dbshardnodes: "10.100.32.10:6379,10.100.32.20:6379"
-dbshardnodes: "localhost:6379"
-
-# Specify Redis username and password from ACL
-dbusername: "A_REDIS_APIUSR_RW"
-dbpassword: "SuperSecret123"
-
-# Enter your certificate chain as base64 if you want an unencrypted db connection use ""
-db_base64_ssl_certificate: ""
-db_base64_ssl_privatekey: ""
-db_base64_ssl_ca: ""
+# Shared secret required on both the Orchestrator and GameServers for validation, similar to a JWT Secret.
+secret: "thismustatleastbe40randomcharsinprod"
 
 logfile: "./orbstrike.orchestrator.log"
 logoptions: "ERROR|WARNING|INFORMATION"
@@ -24,3 +13,26 @@ maxlogsizekb: 200
 base64_ssl_certificate: ""
 base64_ssl_privatekey: ""
 base64_ssl_ca: ""
+
+# Foreach shard add one instance of the replication (best is to use the default master)
+## dbshardnodes: "10.100.32.10:6379,10.100.32.20:6379"
+dbshardnodes: "localhost:6379"
+
+# Specify Redis username and password from ACL
+dbusername: "ORBSTRIKE_APIUSER_RW"
+dbpassword: "SuperSecret123"
+
+# Enter your certificate chain as base64 if you want an unencrypted db connection use ""
+db_base64_ssl_certificate: ""
+db_base64_ssl_privatekey: ""
+db_base64_ssl_ca: ""
+
+# Defines the threshold for the downtime of the focontroller, after this time a new focontroller is defined
+focontrollerdowntimethresholdms: 3000
+
+# Defines the interval in which the FOController will check for failed instances
+failoverintervalms: 1000
+# Defines the lifetime of a game, when this expires, the game is deleted
+gamelifetimemin: 180
+# Defines the maximum games that a user can create per 24 hours
+dailyusergamelimit: 20

@@ -1,16 +1,17 @@
 package responder
 
-import(
+import (
 	"fmt"
 	"math"
-	
-	"github.com/megakuul/orbstrike/server/socket"
+
+	"github.com/megakuul/orbstrike/server/crypto"
 	"github.com/megakuul/orbstrike/server/proto/game"
+	"github.com/megakuul/orbstrike/server/socket/sgame"
 )
 
 const speed = 1
 
-func Respond(sessionRequests map[int64]*game.Move, srv *socket.Server) {
+func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 	for sessionId, Move := range sessionRequests {
 		srv.Mutex.Lock()
 		srv.SessionResponses[sessionId] = nil
@@ -22,10 +23,19 @@ func Respond(sessionRequests map[int64]*game.Move, srv *socket.Server) {
 			srv.Mutex.Unlock()
 			continue
 		}
-		curPlayer := curBoard.Players[Move.Userkey]
+
+		decUserkey, err := crypto.DecryptUserKey(Move.Userkey, srv.ServerSecret)
+		if err!=nil {
+			srv.SessionResponses[sessionId] =
+				fmt.Errorf("UNAUTHORIZED! Userkey is invalid.")
+			srv.Mutex.Unlock()
+			continue	
+		}
+		
+		curPlayer := curBoard.Players[int32(decUserkey)]
 		if curPlayer==nil {
 			srv.SessionResponses[sessionId] =
-				fmt.Errorf("Player is not registered in this game\n")
+				fmt.Errorf("Player is not registered in this game")
 			srv.Mutex.Unlock()
 			continue
 		}

@@ -69,7 +69,7 @@ final $typed_data.Uint8List playerDescriptor = $convert.base64Decode(
 const Move$json = {
   '1': 'Move',
   '2': [
-    {'1': 'userkey', '3': 1, '4': 1, '5': 5, '10': 'userkey'},
+    {'1': 'userkey', '3': 1, '4': 1, '5': 12, '10': 'userkey'},
     {'1': 'gameid', '3': 2, '4': 1, '5': 5, '10': 'gameid'},
     {'1': 'direction', '3': 3, '4': 1, '5': 14, '6': '.game.Move.Direction', '10': 'direction'},
     {'1': 'enableRing', '3': 4, '4': 1, '5': 8, '10': 'enableRing'},
@@ -96,7 +96,7 @@ const Move_Direction$json = {
 
 /// Descriptor for `Move`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List moveDescriptor = $convert.base64Decode(
-    'CgRNb3ZlEhgKB3VzZXJrZXkYASABKAVSB3VzZXJrZXkSFgoGZ2FtZWlkGAIgASgFUgZnYW1laW'
+    'CgRNb3ZlEhgKB3VzZXJrZXkYASABKAxSB3VzZXJrZXkSFgoGZ2FtZWlkGAIgASgFUgZnYW1laW'
     'QSMgoJZGlyZWN0aW9uGAMgASgOMhQuZ2FtZS5Nb3ZlLkRpcmVjdGlvblIJZGlyZWN0aW9uEh4K'
     'CmVuYWJsZVJpbmcYBCABKAhSCmVuYWJsZVJpbmcSHgoKaGl0UGxheWVycxgFIAMoBVIKaGl0UG'
     'xheWVycyJ2CglEaXJlY3Rpb24SCAoETk9ORRAAEgYKAlVQEAESCAoERE9XThACEggKBExFRlQQ'

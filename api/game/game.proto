@@ -42,7 +42,7 @@ message Move {
 	UP_RIGHT = 7;
 	DOWN_RIGHT = 8;
   }
-  int32 userkey = 1;
+  bytes userkey = 1;
   int32 gameid = 2;
   Direction direction = 3;
   bool enableRing = 4;

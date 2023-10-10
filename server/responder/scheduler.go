@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/megakuul/orbstrike/server/proto/game"
-	"github.com/megakuul/orbstrike/server/socket"
+	"github.com/megakuul/orbstrike/server/socket/sgame"
 	"github.com/megakuul/orbstrike/server/conf"
 )
 
-func StartScheduler(srv *socket.Server, config *conf.Config) {
+func StartScheduler(srv *sgame.Server, config *conf.Config) {
 	pool := &Pool{
 		Workers: []PoolWorker{},
 		MaxQueueSize: config.MaxChannelSize,

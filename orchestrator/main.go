@@ -60,6 +60,9 @@ func main() {
 
 	sauthSrv:=&sauth.Server{
 		RDB: rdb,
+		GameLifetime: time.Duration(config.GameLifetimeMin)*time.Minute,
+		DailyUserGameLimit: int64(config.DailyUserGameLimit),
+		ServerSecret: config.Secret,
 	}
 
 	var grpcSrv *grpc.Server

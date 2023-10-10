@@ -7,6 +7,7 @@ import (
 type Config struct {
 	Port int `mapstructure:"port"`
 	TimeoutMin int `mapstructure:"timeoutmin"`
+	Secret string `mapstructure:"secret"`
 
 	DBShardNodes string `mapstructure:"dbshardnodes"`
 	DBUsername string `mapstructure:"dbusername"`
@@ -22,6 +23,12 @@ type Config struct {
 	Base64SSLCertificate string `mapstructure:"base64_ssl_certificate"`
 	Base64SSLPrivateKey string `mapstructure:"base64_ssl_privatekey"`
 	Base64SSLCA string `mapstructure:"base64_ssl_ca"`
+
+	FOControllerDowntimeThresholdMS int `mapstructure:"focontrollerdowntimethresholdms"`
+	
+	FailOverIntervalMS int `mapstructure:"failoverintervalms"`
+	GameLifetimeMin int `mapstructure:"gamelifetimemin"`
+	DailyUserGameLimit int `mapstructure:"dailyusergamelimit"`
 }
 
 func LoadConig(confpath string) (Config, error) {
@@ -47,6 +54,12 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("base64_ssl_certificate", "")
 	viper.SetDefault("base64_ssl_privatekey", "")
 	viper.SetDefault("base64_ssl_ca", "")
+
+	viper.SetDefault("focontrollerdowntimethresholdms", 3000)
+
+	viper.SetDefault("failoverintervalms", 1000)
+	viper.SetDefault("gamelifetimemin", 180)
+	viper.SetDefault("dailyusergamelimit", 999999)
 
 	err := viper.ReadInConfig()
 	if err!=nil {

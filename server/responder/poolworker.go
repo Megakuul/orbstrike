@@ -6,7 +6,7 @@ import (
 	
 	"github.com/megakuul/orbstrike/server/logger"
 	"github.com/megakuul/orbstrike/server/proto/game"
-	"github.com/megakuul/orbstrike/server/socket"
+	"github.com/megakuul/orbstrike/server/socket/sgame"
 )
 
 type Pool struct {
@@ -52,7 +52,7 @@ func InitPoolWorker(maxQueueSize int) *PoolWorker {
 	}
 }
 
-func (p *PoolWorker)AddResponse(sessionRequests map[int64]*game.Move, srv *socket.Server) {
+func (p *PoolWorker)AddResponse(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 	p.Mutex.RLock()
 	if float64(len(p.Queue)) / float64(cap(p.Queue)) > LOAD_FACTOR {
 		go logger.WriteWarningLogger(

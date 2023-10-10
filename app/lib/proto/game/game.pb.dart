@@ -269,7 +269,7 @@ class Player extends $pb.GeneratedMessage {
 /// Direction to move
 class Move extends $pb.GeneratedMessage {
   factory Move({
-    $core.int? userkey,
+    $core.List<$core.int>? userkey,
     $core.int? gameid,
     Move_Direction? direction,
     $core.bool? enableRing,
@@ -298,7 +298,7 @@ class Move extends $pb.GeneratedMessage {
   factory Move.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Move', package: const $pb.PackageName(_omitMessageNames ? '' : 'game'), createEmptyInstance: create)
-    ..a<$core.int>(1, _omitFieldNames ? '' : 'userkey', $pb.PbFieldType.O3)
+    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'userkey', $pb.PbFieldType.OY)
     ..a<$core.int>(2, _omitFieldNames ? '' : 'gameid', $pb.PbFieldType.O3)
     ..e<Move_Direction>(3, _omitFieldNames ? '' : 'direction', $pb.PbFieldType.OE, defaultOrMaker: Move_Direction.NONE, valueOf: Move_Direction.valueOf, enumValues: Move_Direction.values)
     ..aOB(4, _omitFieldNames ? '' : 'enableRing', protoName: 'enableRing')
@@ -328,9 +328,9 @@ class Move extends $pb.GeneratedMessage {
   static Move? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.int get userkey => $_getIZ(0);
+  $core.List<$core.int> get userkey => $_getN(0);
   @$pb.TagNumber(1)
-  set userkey($core.int v) { $_setSignedInt32(0, v); }
+  set userkey($core.List<$core.int> v) { $_setBytes(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasUserkey() => $_has(0);
   @$pb.TagNumber(1)

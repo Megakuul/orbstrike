@@ -1,4 +1,4 @@
-package socket
+package sgame
 
 import (
 	"fmt"
@@ -17,6 +17,7 @@ type Server struct {
 	SessionRequests map[int64]*game.Move
 	SessionResponses map[int64]error
 	Mutex sync.RWMutex
+	ServerSecret string
 	game.UnimplementedGameServiceServer
 }
 

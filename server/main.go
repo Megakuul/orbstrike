@@ -11,7 +11,7 @@ import (
 	"github.com/megakuul/orbstrike/server/logger"
 	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/responder"
-	"github.com/megakuul/orbstrike/server/socket"
+	"github.com/megakuul/orbstrike/server/socket/sgame"
 	"github.com/megakuul/orbstrike/server/ssl"
 
 	"github.com/go-redis/redis/v8"
@@ -49,11 +49,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	server:=&socket.Server{
+	server:=&sgame.Server{
 		RDB: rdb,
 		Boards: map[int32]*game.GameBoard{},
 		SessionRequests: map[int64]*game.Move{},
 		SessionResponses: map[int64]error{},
+		ServerSecret: config.Secret,
 	}
 	
 	var grpcSrv *grpc.Server

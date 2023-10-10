@@ -179,7 +179,7 @@ class JoinGameRequest extends $pb.GeneratedMessage {
 
 class JoinGameResponse extends $pb.GeneratedMessage {
   factory JoinGameResponse({
-    $core.int? userkey,
+    $core.List<$core.int>? userkey,
   }) {
     final $result = create();
     if (userkey != null) {
@@ -192,7 +192,7 @@ class JoinGameResponse extends $pb.GeneratedMessage {
   factory JoinGameResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'JoinGameResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
-    ..a<$core.int>(1, _omitFieldNames ? '' : 'userkey', $pb.PbFieldType.O3)
+    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'userkey', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
@@ -218,9 +218,9 @@ class JoinGameResponse extends $pb.GeneratedMessage {
   static JoinGameResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.int get userkey => $_getIZ(0);
+  $core.List<$core.int> get userkey => $_getN(0);
   @$pb.TagNumber(1)
-  set userkey($core.int v) { $_setSignedInt32(0, v); }
+  set userkey($core.List<$core.int> v) { $_setBytes(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasUserkey() => $_has(0);
   @$pb.TagNumber(1)

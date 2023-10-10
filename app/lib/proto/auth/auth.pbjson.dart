@@ -55,11 +55,11 @@ final $typed_data.Uint8List joinGameRequestDescriptor = $convert.base64Decode(
 const JoinGameResponse$json = {
   '1': 'JoinGameResponse',
   '2': [
-    {'1': 'userkey', '3': 1, '4': 1, '5': 5, '10': 'userkey'},
+    {'1': 'userkey', '3': 1, '4': 1, '5': 12, '10': 'userkey'},
   ],
 };
 
 /// Descriptor for `JoinGameResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List joinGameResponseDescriptor = $convert.base64Decode(
-    'ChBKb2luR2FtZVJlc3BvbnNlEhgKB3VzZXJrZXkYASABKAVSB3VzZXJrZXk=');
+    'ChBKb2luR2FtZVJlc3BvbnNlEhgKB3VzZXJrZXkYASABKAxSB3VzZXJrZXk=');
 

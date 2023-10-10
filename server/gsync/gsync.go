@@ -11,7 +11,7 @@ import (
 	"github.com/megakuul/orbstrike/server/conf"
 	"github.com/megakuul/orbstrike/server/logger"
 	"github.com/megakuul/orbstrike/server/proto/game"
-	"github.com/megakuul/orbstrike/server/socket"
+	"github.com/megakuul/orbstrike/server/socket/sgame"
 
 	"github.com/go-redis/redis/v8"
 	"google.golang.org/protobuf/proto"
@@ -19,7 +19,7 @@ import (
 
 var ctx context.Context = context.Background()
 
-func StartScheduler(srv *socket.Server, config *conf.Config) {
+func StartScheduler(srv *sgame.Server, config *conf.Config) {
 	interval :=
 		time.Duration(config.SyncIntervalMS)*time.Millisecond
 
@@ -66,9 +66,11 @@ func StartScheduler(srv *socket.Server, config *conf.Config) {
 	}
 }
 
-func addPlayers(srv *socket.Server, gserverId int64) error {
+func addPlayers(srv *sgame.Server, gserverId int64) error {
 	queue, err := srv.RDB.HGetAll(ctx, "game:queue").Result()
-	if err!=nil {
+	if err==redis.Nil {
+		return nil 
+	} else if err!=nil {
 		return err
 	}
 
@@ -93,11 +95,12 @@ func addPlayers(srv *socket.Server, gserverId int64) error {
 		}
 		srv.Boards[int32(boardId)].Players[decPlayer.Id] = decPlayer
 	}
+	srv.RDB.Del(ctx, "game:queue")
 	
 	return nil
 }
 
-func syncBoardStates(srv *socket.Server, gserverId int64) error {
+func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 	srv.Mutex.RLock()
 	for k, v := range srv.Boards {
 		if v==nil {
@@ -117,17 +120,23 @@ func syncBoardStates(srv *socket.Server, gserverId int64) error {
 		}
 	}
 	srv.Mutex.RUnlock()
-	
-	klist, err := srv.RDB.LRange(ctx,
-		fmt.Sprintf("gserver:%d:games", gserverId), 0, -1,
+
+	gamesKey := fmt.Sprintf("gserver:%d:games", gserverId)
+	games, err := srv.RDB.LRange(ctx,
+		gamesKey, 0, -1,
 	).Result()
 	if err!=nil {
 		return err
 	}
 
+	err = srv.RDB.SAdd(ctx, "gserver:index:games", gamesKey).Err()
+	if err!=nil {
+		return err
+	} 
+	
 	srv.Mutex.RLock()
 	var boardBuf map[int32]*game.GameBoard
-	for _, strkey := range klist {
+	for _, strkey := range games {
 		key, err := strconv.Atoi(strkey)
 		if err!=nil {
 			logger.WriteWarningLogger(
