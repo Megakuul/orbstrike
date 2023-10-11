@@ -2,46 +2,58 @@ package proxy
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"time"
 
+	"github.com/megakuul/orbstrike/orchestrator/algo"
+	"github.com/megakuul/orbstrike/orchestrator/logger"
 	"github.com/megakuul/orbstrike/orchestrator/proto/game"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 	"github.com/go-redis/redis/v8"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/metadata"
 )
 
 const GAMEID_MD_KEY = "gameid"
 
-const METADATA_MISSING_ERRMSG = "Invalid proxy request: Metadata header is missing"
-const GAMEID_MISSING_ERRMSG = "Invalid proxy request: Metadata must contain 'gameid' key at first position"
-
 type Server struct {
 	RDB *redis.ClusterClient
 	Timeout time.Duration
+	GSCredentials *tls.Config
 	game.UnimplementedGameServiceServer
 }
 
 func (s *Server) ProxyGameboard(clientStream game.GameService_ProxyGameboardServer) error {
 	metaData, ok := metadata.FromIncomingContext(clientStream.Context())
 	if !ok {
-		return fmt.Errorf(METADATA_MISSING_ERRMSG)
+		return fmt.Errorf("Invalid proxy request: Metadata header is missing!")
 	}
 
-	gameid:=metaData.Get(GAMEID_MD_KEY)
-	if len(gameid) != 1 {
-		return fmt.Errorf(GAMEID_MISSING_ERRMSG)
+	gameidStrList:=metaData.Get(GAMEID_MD_KEY)
+	if len(gameidStrList) != 1 {
+		return fmt.Errorf("Invalid proxy request: Metadata must contain 'gameid' key at first position!")
 	}
-	
-	s.RDB.Get(context.Background(), gameid[0]
-	fmt.Println()
-	
-	// Search the server with the gameid that is in req.Gameid
-	address := "localhost:50050"
-	
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+
+	ctx := context.Background()
+	address, err := algo.FindGServer(s.RDB, &ctx, gameidStrList[0])
+	if err!=nil {
+		logger.WriteErrLogger(err)
+		return fmt.Errorf("Internal cluster failure: Something went wrong, try again in 5 minutes!")
+	} else if address=="" {
+		return fmt.Errorf("Invalid proxy request: Game not found!")
+	}
+
+	var conn *grpc.ClientConn
+	if s.GSCredentials!=nil {
+		conn, err = grpc.Dial(address, grpc.WithTransportCredentials(
+			credentials.NewTLS(s.GSCredentials),
+		))
+	} else {
+		conn, err = grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	}
 	if err!=nil {
 		return err
 	}

@@ -122,9 +122,7 @@ func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 	srv.Mutex.RUnlock()
 
 	gamesKey := fmt.Sprintf("gserver:%d:games", gserverId)
-	games, err := srv.RDB.LRange(ctx,
-		gamesKey, 0, -1,
-	).Result()
+	games, err := srv.RDB.HGetAll(ctx, gamesKey).Result()
 	if err!=nil {
 		return err
 	}
@@ -136,7 +134,7 @@ func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 	
 	srv.Mutex.RLock()
 	var boardBuf map[int32]*game.GameBoard
-	for _, strkey := range games {
+	for strkey := range games {
 		key, err := strconv.Atoi(strkey)
 		if err!=nil {
 			logger.WriteWarningLogger(
@@ -151,9 +149,9 @@ func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 			encBoard, err := srv.RDB.Get(ctx,
 				fmt.Sprintf("game:%d", key)).Result()
 			if err==redis.Nil {
-				if err = srv.RDB.LRem(ctx,
+				if err = srv.RDB.HDel(ctx,
 					fmt.Sprintf("gserver:%d:games", gserverId),
-					0, strkey,
+					strkey,
 				).Err(); err!= nil {
 					logger.WriteWarningLogger(err)
 				}

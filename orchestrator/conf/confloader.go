@@ -19,13 +19,15 @@ type Config struct {
 	LogFile string `mapstructure:"logfile"`
 	LogOptions string `mapstructure:"logoptions"`
 	MaxLogSizeKB int `mapstructure:"maxlogsizekb"`
+
+	GSBase64SSLCA string `mapstructure:"gameserver_base64_ssl_ca"`
 	
 	Base64SSLCertificate string `mapstructure:"base64_ssl_certificate"`
 	Base64SSLPrivateKey string `mapstructure:"base64_ssl_privatekey"`
 	Base64SSLCA string `mapstructure:"base64_ssl_ca"`
 
 	FOControllerDowntimeThresholdMS int `mapstructure:"focontrollerdowntimethresholdms"`
-	
+
 	FailOverIntervalMS int `mapstructure:"failoverintervalms"`
 	GameLifetimeMin int `mapstructure:"gamelifetimemin"`
 	DailyUserGameLimit int `mapstructure:"dailyusergamelimit"`
@@ -50,6 +52,8 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("db_base64_ssl_certificate", "")
 	viper.SetDefault("db_base64_ssl_privatekey", "")
 	viper.SetDefault("db_base64_ssl_ca", "")
+
+	viper.SetDefault("gameserver_base64_ssl_ca", "")
 	
 	viper.SetDefault("base64_ssl_certificate", "")
 	viper.SetDefault("base64_ssl_privatekey", "")

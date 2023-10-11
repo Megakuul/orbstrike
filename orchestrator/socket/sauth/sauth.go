@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/megakuul/orbstrike/orchestrator/algo"
 	"github.com/megakuul/orbstrike/orchestrator/crypto"
 	"github.com/megakuul/orbstrike/orchestrator/logger"
 	"github.com/megakuul/orbstrike/orchestrator/proto/auth"
@@ -68,7 +69,7 @@ func (s *Server) CreateGame(ctx context.Context, req *auth.CreateGameRequest) (*
 		return nil, fmt.Errorf("Game creation failed: unable to save the game to the database.")
 	}
 
-	if err = allocateGame(s.RDB, gameid); err!=nil {
+	if err = algo.AllocateGame(s.RDB, &ctx, gameid, ""); err!=nil {
 		logger.WriteErrLogger(err)
 		return nil, fmt.Errorf("Game creation failed: failed to allocate game on a gameserver.")
 	}
@@ -76,35 +77,6 @@ func (s *Server) CreateGame(ctx context.Context, req *auth.CreateGameRequest) (*
 	return &auth.CreateGameResponse{
 		Gameid: int32(gameid),
 	}, nil
-}
-
-func allocateGame(rdb *redis.ClusterClient, gameid int64) error {
-	gserverKeys, err := rdb.SMembers(ctx, "gserver:index:games").Result()
-	if err!=nil {
-		return err
-	}
-
-	curKey := ""
-	var curLoad int64 = -1
-	for _, gsrvKey := range gserverKeys {
-		load, err := rdb.LLen(ctx, gsrvKey).Result()
-		if err!=nil {
-			continue
-		}
-		if curLoad<0 || load < curLoad {
-			curLoad=load
-			curKey=gsrvKey
-			if curLoad==0 { break }
-		} else { continue }
-	}
-	if curKey=="" {
-		return fmt.Errorf("Failed to allocate game [%d]. No gameserver is available...", gameid)
-	}
-	err = rdb.LPush(ctx, curKey, gameid).Err()
-	if err!=nil {
-		return err
-	}
-	return nil
 }
 
 func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth.JoinGameResponse, error) {

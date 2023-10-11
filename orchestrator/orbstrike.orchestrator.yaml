@@ -14,13 +14,16 @@ base64_ssl_certificate: ""
 base64_ssl_privatekey: ""
 base64_ssl_ca: ""
 
-# Foreach shard add one instance of the replication (best is to use the default master)
+# Foreach shard add at least one instance of the replication (best is to use the default master)
 ## dbshardnodes: "10.100.32.10:6379,10.100.32.20:6379"
 dbshardnodes: "localhost:6379"
 
 # Specify Redis username and password from ACL
 dbusername: "ORBSTRIKE_APIUSER_RW"
 dbpassword: "SuperSecret123"
+
+# CA certificate for game servers. Leave as "" to disable SSL on the tunnel if SSL isn't used between proxy and game servers.
+gameserver_base64_ssl_ca: ""
 
 # Enter your certificate chain as base64 if you want an unencrypted db connection use ""
 db_base64_ssl_certificate: ""

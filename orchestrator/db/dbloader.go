@@ -11,7 +11,7 @@ import (
 
 
 func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
-	tlsConf, err := ssl.GetTLSClient(
+	tlsConf, err := ssl.GetTLSClientMutual(
 		config.DBBase64SSLCertificate,
 		config.DBBase64SSLPrivateKey,
 		config.DBBase64SSLCA,

@@ -16,29 +16,30 @@ import 'package:orbstrike/GameBoard.helper.dart';
 
 // This will be somewhere else
 const playerID = 34234;
-const gameID = 187;
 
 class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final String host;
   final int port;
+  final int gameID;
 
   final World world = World();
   final Map<int, PlayerO> playerComponents = {};
   late final CameraComponent mainCamera;
 
-  static ClientChannel? apiChan;
-  static GameServiceClient? apiClient;
-  static BehaviorSubject<Move> apiReqStream = BehaviorSubject<Move>();
+  List<int>? userKey;
+  ClientChannel? apiChan;
+  GameServiceClient? apiClient;
+  BehaviorSubject<Move> apiReqStream = BehaviorSubject<Move>();
 
   // Border size is loaded when connected to the gRPC endpoint
-  static GameBoard board = GameBoard();
-  static WorldBorder? border;
-  static PlayerC? mainPlayerComponent;
-  static Move_Direction mainPlayerDirection = Move_Direction.NONE;
-  static bool mainPlayerRingState = false;
-  static List<int> mainPlayerCollided = [];
+  GameBoard board = GameBoard();
+  WorldBorder? border;
+  PlayerC? mainPlayerComponent;
+  Move_Direction mainPlayerDirection = Move_Direction.NONE;
+  bool mainPlayerRingState = false;
+  List<int> mainPlayerCollided = [];
 
-  GameField({required this.host, required this.port});
+  GameField(this.gameID, this.mainCamera, {required this.host, required this.port});
 
   @override
   Color backgroundColor() => Colors.black12;
@@ -70,7 +71,7 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
           direction: mainPlayerDirection,
           enableRing: mainPlayerRingState,
           hitPlayers: mainPlayerCollided,
-          gameid: gameID, userkey: playerID
+          gameid: gameID, userkey: userKey
       ));
       keystrokeAccumulator -= keystrokeUpdateInterval;
     }
@@ -87,7 +88,7 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
     _startGrpcConnection();
 
-    apiReqStream.add(Move(direction: Move_Direction.NONE, enableRing: false, gameid: gameID, userkey: playerID));
+    apiReqStream.add(Move(direction: Move_Direction.NONE, enableRing: false, gameid: gameID, userkey: userKey));
   }
 
   void _startGrpcConnection() {

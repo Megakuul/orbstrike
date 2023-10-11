@@ -24,17 +24,21 @@ var rdb *redis.ClusterClient
 func main() {
 	config, err := conf.LoadConig("orbstrike.server")
 	if err!=nil {
+		fmt.Println("Failed to load configuration!")
 		fmt.Println(err)
 	}
 	
 	err = logger.InitLogger(config.LogFile, config.LogOptions, config.MaxLogSizeKB)
 	if err!=nil {
+		fmt.Println("Failed to initialize logger!")
 		fmt.Println(err)
 	}
 
 	rdb, err = db.StartClient(&config)
 	if err!=nil {
-		logger.WriteErrLogger(err)
+		logger.WriteErrLogger(
+			fmt.Errorf("Failed to connect to redis cluster!\n%v", err),
+		)
 		os.Exit(1)
 	}
 	defer rdb.Close()
@@ -45,7 +49,9 @@ func main() {
 		config.Base64SSLCA,
 	)
 	if err!=nil {
-		logger.WriteErrLogger(err)
+		logger.WriteErrLogger(
+			fmt.Errorf("Failed to get TLS certificate information!\n%v", err),
+		)
 		os.Exit(1)
 	}
 
@@ -77,10 +83,14 @@ func main() {
 	
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err!=nil {
-		logger.WriteErrLogger(err)
+		logger.WriteErrLogger(
+			fmt.Errorf("Failed to launch tcp-socket on %d\n%v", config.Port, err),
+		)
 	}
 	logger.WriteInformationLogger("Listening to port %d", config.Port) 
 	if err := grpcSrv.Serve(lis); err != nil {
-		logger.WriteErrLogger(err)
+		logger.WriteErrLogger(
+			fmt.Errorf("Failed to launch gRPC endpoint!\n%v", err),
+		)
 	}
 }

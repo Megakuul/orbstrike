@@ -25,37 +25,39 @@ var rdb *redis.ClusterClient
 func main() {
 	config, err := conf.LoadConig("orbstrike.orchestrator")
 	if err!=nil {
+		fmt.Println("Failed to load configuration!")
 		fmt.Println(err)
 		os.Exit(1)
 	}
 	
 	err = logger.InitLogger(config.LogFile, config.LogOptions, config.MaxLogSizeKB)
 	if err!=nil {
+		fmt.Println("Failed to initialize logger!")
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	rdb, err = db.StartClient(&config)
 	if err!=nil {
-		logger.WriteErrLogger(err)
+		logger.WriteErrLogger(
+			fmt.Errorf("Failed to connect to redis cluster!\n%v", err),
+		)
 		os.Exit(1)
 	}
 	defer rdb.Close()
 
-	
-	tlscred, err := ssl.GetAuthCredentials(
-		config.Base64SSLCertificate,
-		config.Base64SSLPrivateKey,
-		config.Base64SSLCA,
-	)
+	gstlscred, err := ssl.GetTLSClientCA(config.GSBase64SSLCA)
 	if err!=nil {
-		logger.WriteErrLogger(err)
+		logger.WriteErrLogger(
+			fmt.Errorf("Failed to get GameServer TLS certificate information!\n%v", err),
+		)
 		os.Exit(1)
 	}
-
+	
 	proxySrv:=&proxy.Server{
 		RDB: rdb,
 		Timeout: time.Minute*time.Duration(config.TimeoutMin),
+		GSCredentials: gstlscred,
 	}
 
 	sauthSrv:=&sauth.Server{
@@ -63,6 +65,18 @@ func main() {
 		GameLifetime: time.Duration(config.GameLifetimeMin)*time.Minute,
 		DailyUserGameLimit: int64(config.DailyUserGameLimit),
 		ServerSecret: config.Secret,
+	}
+
+	tlscred, err := ssl.GetAuthCredentials(
+		config.Base64SSLCertificate,
+		config.Base64SSLPrivateKey,
+		config.Base64SSLCA,
+	)
+	if err!=nil {
+		logger.WriteErrLogger(
+			fmt.Errorf("Failed to get Proxy TLS certificate information!\n%v", err),
+		)
+		os.Exit(1)
 	}
 
 	var grpcSrv *grpc.Server

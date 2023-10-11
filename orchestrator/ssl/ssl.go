@@ -38,7 +38,7 @@ func GetAuthCredentials(cert string, key string, ca string) (credentials.Transpo
 	return creds, nil
 }
 
-func GetTLSClient(cert string, key string, ca string) (*tls.Config, error) {
+func GetTLSClientMutual(cert string, key string, ca string) (*tls.Config, error) {
 	if cert==""||key==""||ca=="" {
 		return nil, nil
 	}
@@ -60,6 +60,23 @@ func GetTLSClient(cert string, key string, ca string) (*tls.Config, error) {
 	return &tls.Config{
 		MinVersion: tls.VersionTLS12,
 		Certificates: []tls.Certificate{certPair},
+		RootCAs: caPool,
+	}, nil
+}
+
+func GetTLSClientCA(ca string) (*tls.Config, error) {
+	if ca=="" {
+		return nil, nil
+	}
+
+	decCa, _ := base64.StdEncoding.DecodeString(ca)
+
+	caPool := x509.NewCertPool()
+	if !caPool.AppendCertsFromPEM(decCa) {
+		return nil, fmt.Errorf("Failed to add CA to certificate pool!")
+	}
+
+	return &tls.Config{
 		RootCAs: caPool,
 	}, nil
 }
