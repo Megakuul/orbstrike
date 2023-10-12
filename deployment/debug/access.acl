@@ -1,5 +1,2 @@
-# Admin user
 user u_orbstrike_admin_full +@all ~* on >SuperMegaSecret123$
-
-# Server user
-user u_orbstrike_api_rw +@all -@dangerous ~* on >SuperSecret123
+user u_orbstrike_api_rw +@all -@dangerous +CLUSTER ~* on >SuperSecret123

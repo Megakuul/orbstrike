@@ -1,0 +1,24 @@
+2023/10/12 22:37:03 
+[ ORBSTRIKE ORCHESTRATOR Panic ]:
+Failed to connect to redis cluster!
+dial tcp 127.0.0.1:7001: connect: connection refused
+
+2023/10/12 22:39:32 
+[ ORBSTRIKE ORCHESTRATOR Panic ]:
+Failed to connect to redis cluster!
+NOPERM this user has no permissions to run the 'cluster' command or its subcommand
+
+2023/10/12 22:40:33 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/12 22:40:33 
+[ ORBSTRIKE ORCHESTRATOR Information ]:
+Listening to port 8080
+2023/10/12 22:45:14 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/12 22:45:14 
+[ ORBSTRIKE ORCHESTRATOR Information ]:
+Listening to port 8080

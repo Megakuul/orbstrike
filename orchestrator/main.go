@@ -3,20 +3,21 @@ package main
 import (
 	"fmt"
 	"net"
-	"time"
 	"os"
+	"time"
 
 	"github.com/megakuul/orbstrike/orchestrator/conf"
+	"github.com/megakuul/orbstrike/orchestrator/db"
+	"github.com/megakuul/orbstrike/orchestrator/focontroller"
 	"github.com/megakuul/orbstrike/orchestrator/logger"
 	"github.com/megakuul/orbstrike/orchestrator/proto/auth"
 	"github.com/megakuul/orbstrike/orchestrator/proto/game"
 	"github.com/megakuul/orbstrike/orchestrator/socket/proxy"
 	"github.com/megakuul/orbstrike/orchestrator/socket/sauth"
 	"github.com/megakuul/orbstrike/orchestrator/ssl"
-	"github.com/megakuul/orbstrike/orchestrator/db"
 
-	"google.golang.org/grpc"
 	"github.com/go-redis/redis/v8"
+	"google.golang.org/grpc"
 )
 
 var config conf.Config
@@ -101,6 +102,8 @@ func main() {
 	game.RegisterGameServiceServer(grpcSrv, proxySrv)
 
 	auth.RegisterAuthServiceServer(grpcSrv, sauthSrv)
+
+	go focontroller.StartScheduler(rdb, &config)
 	
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err!=nil {

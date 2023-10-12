@@ -1,4 +1,5 @@
 nodes.conf
+node*.conf
 appendonly.aof
 debug.server.log
 debug.orchestrator.log

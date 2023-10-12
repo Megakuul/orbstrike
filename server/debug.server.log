@@ -1,0 +1,33 @@
+2023/10/12 22:46:06 
+[ ORBSTRIKE Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/12 22:46:06 
+[ ORBSTRIKE Information ]:
+Listening to port 50050
+2023/10/12 22:46:06 
+[ ORBSTRIKE Panic ]:
+CLUSTERDOWN Hash slot not served
+
+2023/10/12 22:51:50 
+[ ORBSTRIKE Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/12 22:51:50 
+[ ORBSTRIKE Information ]:
+Listening to port 50050
+2023/10/12 22:51:50 
+[ ORBSTRIKE Panic ]:
+CLUSTERDOWN Hash slot not served
+
+2023/10/12 23:45:57 
+[ ORBSTRIKE Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/12 23:45:57 
+[ ORBSTRIKE Information ]:
+Listening to port 50050
+2023/10/12 23:46:23 
+[ ORBSTRIKE Panic ]:
+dial tcp 127.0.0.1:7003: connect: connection refused
+
