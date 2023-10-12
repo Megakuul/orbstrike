@@ -1,0 +1,11 @@
+nodes.conf
+appendonly.aof
+debug.server.log
+debug.orchestrator.log
+
+server
+orchestrator
+*.exe
+
+*.crt
+*.key

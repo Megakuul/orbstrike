@@ -1,0 +1,41 @@
+# This is an example config, those options can also be configured with ENV-Variables
+port: 8080
+# Deadline for socket connections (minutes)
+timeoutmin: 180
+# Shared secret required on both the Orchestrator and GameServers for validation, similar to a JWT Secret.
+secret: "thismustatleastbe40randomcharsinprod"
+
+logfile: "./debug.orchestrator.log"
+logoptions: "ERROR|WARNING|INFORMATION"
+maxlogsizekb: 200
+
+# Enter your certificate chain as base64 if you want an unencrypted TCP Socket use ""
+base64_ssl_certificate: ""
+base64_ssl_privatekey: ""
+base64_ssl_ca: ""
+
+# Foreach shard add at least one instance of the replication (best is to use the default master)
+## dbshardnodes: "10.100.32.10:6379,10.100.32.20:6379"
+dbshardnodes: "localhost:6379"
+
+# Specify Redis username and password from ACL
+dbusername: "u_orbstrike_api_rw"
+dbpassword: "SuperSecret123"
+
+# CA certificate for game servers. Leave as "" to disable SSL on the tunnel if SSL isn't used between proxy and game servers.
+gameserver_base64_ssl_ca: ""
+
+# Enter your certificate chain as base64 if you want an unencrypted db connection use ""
+db_base64_ssl_certificate: ""
+db_base64_ssl_privatekey: ""
+db_base64_ssl_ca: ""
+
+# Defines the threshold for the downtime of the focontroller, after this time a new focontroller is defined
+focontrollerdowntimethresholdms: 3000
+
+# Defines the interval in which the FOController will check for failed instances
+failoverintervalms: 1000
+# Defines the lifetime of a game, when this expires, the game is deleted
+gamelifetimemin: 180
+# Defines the maximum games that a user can create per 24 hours
+dailyusergamelimit: 20

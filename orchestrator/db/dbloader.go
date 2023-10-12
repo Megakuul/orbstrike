@@ -19,7 +19,7 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 	if err!=nil {
 		return nil, err
 	}
-	
+
 	rdb:=redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs: strings.Split(config.DBShardNodes, ","),
 		Username: config.DBUsername,
@@ -27,12 +27,10 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 		TLSConfig: tlsConf,
 	})
 
-	_, err = rdb.Ping(context.Background()).Result()
+	err = rdb.Ping(context.Background()).Err()
 	if err!=nil {
 		return nil, err
 	}
 
 	return rdb, nil
 }
-
-

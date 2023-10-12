@@ -23,7 +23,14 @@ var config conf.Config
 var rdb *redis.ClusterClient
 
 func main() {
-	config, err := conf.LoadConig("orbstrike.orchestrator")
+	var cfgFile string
+	if len(os.Args) > 1 {
+		cfgFile = os.Args[1]
+	} else {
+		cfgFile = "orbstrike.orchestrator"
+	}
+	
+	config, err := conf.LoadConig(cfgFile)
 	if err!=nil {
 		fmt.Println("Failed to load configuration!")
 		fmt.Println(err)
