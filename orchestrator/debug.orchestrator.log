@@ -22,3 +22,155 @@ gRPC socket does not run with TLS and is not encrypted!
 2023/10/12 22:45:14 
 [ ORBSTRIKE ORCHESTRATOR Information ]:
 Listening to port 8080
+2023/10/13 20:05:39 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/13 20:05:39 
+[ ORBSTRIKE ORCHESTRATOR Information ]:
+Listening to port 8080
+2023/10/13 20:05:39 
+[ ORBSTRIKE ORCHESTRATOR Panic ]:
+No gameserver is online. Failover-Controller cannot reallocate games!
+
+2023/10/13 20:06:11 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/13 20:06:11 
+[ ORBSTRIKE ORCHESTRATOR Information ]:
+Listening to port 8080
+2023/10/13 20:08:13 
+[ ORBSTRIKE ORCHESTRATOR Panic ]:
+No gameserver is online. Failover-Controller cannot reallocate games!
+
+2023/10/13 20:08:23 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/13 20:08:23 
+[ ORBSTRIKE ORCHESTRATOR Information ]:
+Listening to port 8080
+2023/10/13 20:09:14 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 20:44:41 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 21:00:43 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 21:19:31 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 21:19:47 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 21:43:54 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:00:44 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:05:48 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:13:32 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:18:12 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:19:16 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:19:47 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:21:24 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:31:47 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:32:09 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:35:25 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:38:14 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:47:27 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 22:50:46 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 23:14:32 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 23:14:42 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 23:27:38 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 23:29:12 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 23:31:40 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 23:34:01 
+[ ORBSTRIKE ORCHESTRATOR Panic ]:
+No gameserver is online. Failover-Controller cannot reallocate games!
+
+2023/10/13 23:39:40 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/13 23:39:40 
+[ ORBSTRIKE ORCHESTRATOR Information ]:
+Listening to port 8080
+2023/10/13 23:43:37 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 23:45:11 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/13 23:46:51 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 00:15:15 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+

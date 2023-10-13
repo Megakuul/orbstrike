@@ -133,7 +133,7 @@ func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 	} 
 	
 	srv.Mutex.RLock()
-	var boardBuf map[int32]*game.GameBoard
+	boardBuf := make(map[int32]*game.GameBoard)
 	for strkey := range games {
 		key, err := strconv.Atoi(strkey)
 		if err!=nil {

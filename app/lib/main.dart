@@ -1,20 +1,6 @@
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'GameBoard.dart';
 
-class GameConfiguration {
-  GameConfiguration({required this.hostname, required this.port, required this.gameID});
-
-  String? hostname;
-  int? port;
-  int? gameID;
-}
-
-GameConfiguration gameConfig = GameConfiguration(
-    hostname: "localhost",
-    port: 8080,
-    gameID: 0
-);
+import 'MainPage.dart';
 
 void main() {
   runApp(const App());
@@ -46,60 +32,12 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primaryColor: createCustomSwatch(const Color.fromARGB(255, 20, 30, 48)),
       ),
-      home: const MainPage(title: "Orbstrike"),
-    );
-  }
-}
-
-class MainPage extends StatefulWidget {
-  final String title;
-  const MainPage({Key? key, required this.title}) : super(key: key);
-
-  @override
-  State<MainPage> createState() => _MainPage();
-}
-
-class _MainPage extends State<MainPage> {
-  Widget curPage = Home();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: curPage,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-
-        },
-        child: const Icon(Icons.ac_unit_sharp),
-      ),
-    );
-  }
-}
-
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
-
-  @override
-  State<Home> createState() => _Home();
-}
-
-class _Home extends State<Home> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextButton(
-            onPressed: onPressed,
-            child: child
-        ),
-        TextButton(
-            onPressed: onPressed,
-            child: child
-        ),
-        TextField(
-
-        ),
-      ],
+      home: MainPage(title: "Orbstrike", gameConfig: GameConfiguration(
+        hostname: "",
+        port: 54331,
+        gameID: 0,
+        latestGameIDs: []
+      )),
     );
   }
 }

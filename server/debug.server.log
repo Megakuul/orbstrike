@@ -31,3 +31,24 @@ Listening to port 50050
 [ ORBSTRIKE Panic ]:
 dial tcp 127.0.0.1:7003: connect: connection refused
 
+2023/10/13 20:06:07 
+[ ORBSTRIKE Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/13 20:06:07 
+[ ORBSTRIKE Information ]:
+Listening to port 50050
+2023/10/13 20:08:20 
+[ ORBSTRIKE Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/13 20:08:20 
+[ ORBSTRIKE Information ]:
+Listening to port 50050
+2023/10/13 23:39:36 
+[ ORBSTRIKE Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/13 23:39:36 
+[ ORBSTRIKE Information ]:
+Listening to port 50050

@@ -9,10 +9,10 @@ import 'package:grpc/grpc.dart';
 import 'package:orbstrike/proto/game/game.pbgrpc.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:orbstrike/KeyboardHandler.dart';
-import 'package:orbstrike/PlayerC.dart';
-import 'package:orbstrike/WorldBorder.dart';
-import 'package:orbstrike/GameBoard.helper.dart';
+import 'package:orbstrike/Game/KeyboardHandler.dart';
+import 'package:orbstrike/Game/PlayerC.dart';
+import 'package:orbstrike/Game/WorldBorder.dart';
+import 'package:orbstrike/Game/GameBoard.helper.dart';
 
 // This will be somewhere else
 const playerID = 34234;
@@ -21,9 +21,13 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final String host;
   final int port;
   final int gameID;
+  final BuildContext hudContext;
 
   final World world = World();
   final Map<int, PlayerO> playerComponents = {};
+
+  GameField({required this.hudContext, required this.gameID, required this.host, required this.port});
+
   late final CameraComponent mainCamera;
 
   List<int>? userKey;
@@ -38,8 +42,6 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   Move_Direction mainPlayerDirection = Move_Direction.NONE;
   bool mainPlayerRingState = false;
   List<int> mainPlayerCollided = [];
-
-  GameField(this.gameID, this.mainCamera, {required this.host, required this.port});
 
   @override
   Color backgroundColor() => Colors.black12;
