@@ -52,3 +52,10 @@ gRPC socket does not run with TLS and is not encrypted!
 2023/10/13 23:39:36 
 [ ORBSTRIKE Information ]:
 Listening to port 50050
+2023/10/14 12:19:20 
+[ ORBSTRIKE Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/14 12:19:20 
+[ ORBSTRIKE Information ]:
+Listening to port 50050

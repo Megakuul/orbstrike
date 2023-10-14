@@ -174,3 +174,486 @@ redis: nil
 [ ORBSTRIKE ORCHESTRATOR Warning ]:
 redis: nil
 
+2023/10/14 12:19:23 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+gRPC socket does not run with TLS and is not encrypted!
+
+2023/10/14 12:19:23 
+[ ORBSTRIKE ORCHESTRATOR Information ]:
+Listening to port 8080
+2023/10/14 12:21:41 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:22:21 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:23:19 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:25:23 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:30:37 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:43:31 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:49:51 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:52:22 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:54:11 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 12:55:12 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:00:29 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:01:12 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:02:10 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:10:11 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:12:09 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:12:28 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:19:00 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:28:40 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:32:05 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:32:54 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:40:04 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:40:23 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:45:34 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:47:11 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 13:50:03 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:03:30 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:04:59 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:09:39 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:13:51 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:15:52 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:22:24 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:25:07 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:37:20 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:37:51 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:41:05 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:42:33 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:44:47 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 14:46:28 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 15:05:42 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 15:09:07 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 15:19:58 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 15:46:51 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 15:48:04 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 15:50:02 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 15:54:32 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 15:55:03 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:02:59 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:03:06 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:04:58 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:15:21 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:16:01 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:18:17 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:21:36 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:31:15 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:44:17 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 16:47:15 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 17:10:31 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 17:21:30 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 17:24:55 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 17:38:25 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 17:40:08 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 17:44:19 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 17:46:38 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 17:48:54 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 18:04:14 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 18:04:18 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 18:21:27 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 18:28:53 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 19:20:28 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 19:22:05 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 19:24:13 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 19:34:43 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 19:44:30 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:08:07 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:17:14 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:24:05 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:24:36 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:35:31 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:42:13 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:53:06 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:53:16 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:55:09 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 20:56:04 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:04:29 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:09:07 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:12:26 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:19:13 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:23:00 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:27:57 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:28:38 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:32:57 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:37:47 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:41:16 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:41:38 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:45:55 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:47:56 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:57:09 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 21:59:35 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:06:27 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:16:18 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:20:53 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:25:00 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:33:10 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:40:11 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:41:48 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:43:32 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:46:27 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:46:31 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:46:59 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 22:58:46 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 23:03:32 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 23:09:21 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 23:23:54 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 23:49:11 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 23:52:28 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/14 23:53:41 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/15 00:17:13 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/15 00:26:55 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+
+2023/10/15 00:27:23 
+[ ORBSTRIKE ORCHESTRATOR Warning ]:
+redis: nil
+

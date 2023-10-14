@@ -27,15 +27,17 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Colors.white60;
+
     return MaterialApp(
       title: "Orbstrike",
       theme: ThemeData(
-        primaryColor: createCustomSwatch(const Color.fromARGB(255, 20, 30, 48)),
+        primarySwatch: createCustomSwatch(primaryColor),
       ),
       home: MainPage(title: "Orbstrike", gameConfig: GameConfiguration(
         hostname: "",
         port: 54331,
-        gameID: 0,
+        gameID: -1,
         latestGameIDs: []
       )),
     );

@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "web" "\0"
+            VALUE "CompanyName", "megakuul.ch" "\0"
+            VALUE "FileDescription", "orbstrike" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "web" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "web.exe" "\0"
-            VALUE "ProductName", "web" "\0"
+            VALUE "InternalName", "orbstrike" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 megakuul.ch All rights reserved." "\0"
+            VALUE "OriginalFilename", "orbstrike.exe" "\0"
+            VALUE "ProductName", "orbstrike" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
