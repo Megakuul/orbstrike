@@ -29,6 +29,10 @@ class AuthServiceClient extends $grpc.Client {
       '/auth.AuthService/JoinGame',
       ($0.JoinGameRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.JoinGameResponse.fromBuffer(value));
+  static final _$exitGame = $grpc.ClientMethod<$0.ExitGameRequest, $0.ExitGameResponse>(
+      '/auth.AuthService/ExitGame',
+      ($0.ExitGameRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.ExitGameResponse.fromBuffer(value));
 
   AuthServiceClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -42,6 +46,10 @@ class AuthServiceClient extends $grpc.Client {
 
   $grpc.ResponseFuture<$0.JoinGameResponse> joinGame($0.JoinGameRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$joinGame, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.ExitGameResponse> exitGame($0.ExitGameRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$exitGame, request, options: options);
   }
 }
 
@@ -64,6 +72,13 @@ abstract class AuthServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.JoinGameRequest.fromBuffer(value),
         ($0.JoinGameResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.ExitGameRequest, $0.ExitGameResponse>(
+        'ExitGame',
+        exitGame_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.ExitGameRequest.fromBuffer(value),
+        ($0.ExitGameResponse value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.CreateGameResponse> createGame_Pre($grpc.ServiceCall call, $async.Future<$0.CreateGameRequest> request) async {
@@ -74,6 +89,11 @@ abstract class AuthServiceBase extends $grpc.Service {
     return joinGame(call, await request);
   }
 
+  $async.Future<$0.ExitGameResponse> exitGame_Pre($grpc.ServiceCall call, $async.Future<$0.ExitGameRequest> request) async {
+    return exitGame(call, await request);
+  }
+
   $async.Future<$0.CreateGameResponse> createGame($grpc.ServiceCall call, $0.CreateGameRequest request);
   $async.Future<$0.JoinGameResponse> joinGame($grpc.ServiceCall call, $0.JoinGameRequest request);
+  $async.Future<$0.ExitGameResponse> exitGame($grpc.ServiceCall call, $0.ExitGameRequest request);
 }

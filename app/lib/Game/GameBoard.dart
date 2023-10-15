@@ -1,47 +1,45 @@
 import 'dart:async';
 
 import 'package:flame/events.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:grpc/grpc.dart';
+import 'package:orbstrike/Components/GameErrorDialog.dart';
 import 'package:orbstrike/proto/game/game.pbgrpc.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'package:orbstrike/Game/KeyboardHandler.dart';
-import 'package:orbstrike/Game/PlayerC.dart';
-import 'package:orbstrike/Game/WorldBorder.dart';
 import 'package:orbstrike/Game/GameBoard.helper.dart';
-
-// This will be somewhere else
-const playerID = 34234;
 
 class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final String host;
   final int port;
-  final int gameID;
-  final BuildContext hudContext;
+  final int gameId;
+  final String name;
+  final ChannelCredentials? credentials;
+  final MainUICallbacks mCallbacks;
 
-  final World world = World();
-  final Map<int, PlayerO> playerComponents = {};
+  GameField({
+    required this.gameId,
+    required this.name,
+    required this.credentials,
+    required this.host,
+    required this.port,
+    required this.mCallbacks,
+  });
 
-  GameField({required this.hudContext, required this.gameID, required this.host, required this.port});
+  final GameCoreApi coreApi = GameCoreApi(
+    stream: BehaviorSubject<Move>(),
+  );
 
-  late final CameraComponent mainCamera;
-
-  List<int>? userKey;
-  ClientChannel? apiChan;
-  GameServiceClient? apiClient;
-  BehaviorSubject<Move> apiReqStream = BehaviorSubject<Move>();
-
-  // Border size is loaded when connected to the gRPC endpoint
-  GameBoard board = GameBoard();
-  WorldBorder? border;
-  PlayerC? mainPlayerComponent;
-  Move_Direction mainPlayerDirection = Move_Direction.NONE;
-  bool mainPlayerRingState = false;
-  List<int> mainPlayerCollided = [];
+  final GameCoreComponents coreComp = GameCoreComponents(
+    board: GameBoard(),
+    mainPlayerDirection: Move_Direction.NONE,
+    mainPlayerRingState: false,
+  );
 
   @override
   Color backgroundColor() => Colors.black12;
@@ -51,12 +49,12 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
     RawKeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
-    mainPlayerRingState = getRingState();
+    coreComp.mainPlayerRingState = getRingState();
     final dirBuf = getMovementInput();
     if (dirBuf==null) {
       return KeyEventResult.ignored;
     }
-    mainPlayerDirection = dirBuf;
+    coreComp.mainPlayerDirection = dirBuf;
     return KeyEventResult.handled;
   }
 
@@ -69,87 +67,55 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
     keystrokeAccumulator += dt;
     while (keystrokeAccumulator >= keystrokeUpdateInterval) {
-      apiReqStream.add(Move(
-          direction: mainPlayerDirection,
-          enableRing: mainPlayerRingState,
-          hitPlayers: mainPlayerCollided,
-          gameid: gameID, userkey: userKey
+      coreApi.stream.add(Move(
+          direction: coreComp.mainPlayerDirection,
+          enableRing: coreComp.mainPlayerRingState,
+          hitPlayers: coreComp.mainPlayerCollided,
+          gameid: gameId, userkey: coreComp.mainPlayerCreds?.key
       ));
       keystrokeAccumulator -= keystrokeUpdateInterval;
     }
 
-    if (mainPlayerComponent!=null) {
-      mainCamera.follow(mainPlayerComponent!);
+    if (coreComp.mainPlayerComponent!=null) {
+      coreComp.mainCamera.follow(coreComp.mainPlayerComponent!);
     }
   }
 
   @override
   Future<void> onLoad() async {
-    mainCamera = CameraComponent(world: world);
-    addAll([mainCamera, world]);
+    coreComp.mainCamera = CameraComponent(world: world);
+    addAll([coreComp.mainCamera, world]);
 
-    _startGrpcConnection();
-
-    apiReqStream.add(Move(direction: Move_Direction.NONE, enableRing: false, gameid: gameID, userkey: userKey));
-  }
-
-  void _startGrpcConnection() {
-    bool isExpectedDone = false;
-
-    if (apiChan != null) {
-      apiChan!.shutdown();
+    print("Der Bizepts schrumpft vom salat");
+    try {
+      coreComp.mainPlayerCreds = await joinGame(gameId, name, host, port, credentials);
+      startGameSocket(coreApi, coreComp, mCallbacks, gameId, host, port);
+    } catch (err) {
+      mCallbacks.showDial(err.toString(), Colors.red);
+      mCallbacks.closeGame();
     }
 
-    apiChan = ClientChannel(
-      host,
-      port: port,
-      options: const ChannelOptions(
-        credentials: ChannelCredentials.insecure(),
-      ),
-    );
+    coreApi.stream.add(Move(
+        direction: Move_Direction.NONE,
+        enableRing: false,
+        gameid: gameId,
+        userkey: coreComp.mainPlayerCreds?.key
+    ));
+  }
 
-    apiClient = GameServiceClient(apiChan!);
+  @override
+  Future<void> onDispose() async {
+    super.onDispose();
 
-    final Map<String, String> streamHeaders = {
-      "gameid": "187",
-    };
-
-    final callOptions = CallOptions(metadata: streamHeaders);
-
-    apiClient!.proxyGameboard(apiReqStream.stream, options: callOptions)
-        .listen((game) {
-      board = game;
-      if (mainPlayerComponent==null && board.players[playerID]!=null) {
-        mainPlayerComponent = PlayerC(pPlayer: board.players[playerID]!, collided: mainPlayerCollided);
-        world.add(mainPlayerComponent!);
+    try {
+      if (coreComp.mainPlayerCreds!=null) {
+        await exitGame(gameId, coreComp.mainPlayerCreds, host, port, credentials);
       }
-      updateGameBoard(board, playerComponents, playerID, mainPlayerComponent).forEach((key, value) {
-        if (value) {
-          world.add(key);
-        } else {
-          world.remove(key);
-        }
-      });
-
-      if (border==null) {
-        border = WorldBorder(colors: [Colors.orange, Colors.red], radius: board.rad, stroke: 10);
-        world.add(border!);
+    } catch (err) {
+      if (kDebugMode) {
+        print("$err");
       }
-    }, onError: (error) {
-      // gRPC endpoint sends errors for things like "Game Over", "Game not found" etc. -> 400 Errors
-      // TODO: These things are displayed with widgets using the context from the top level ui (but this is not implemented right now).
-      print('Error encountered: ${error.message}');
-      isExpectedDone = true;
-    }, onDone: () {
-      if (!isExpectedDone) {
-        // gRPC endpoint closes connection when facing a unexpected issue (e.g. read EOF, major failure etc.) -> 500 Errors
-        // Wait around 5 seconds, on major failures this gives the cluster time to rebuild pods without being spammed.
-        print("Server closed connection unexpected");
-        Future.delayed(const Duration(seconds: 5), () {
-          _startGrpcConnection();
-        });
-      }
-    });
+    }
   }
 }
 

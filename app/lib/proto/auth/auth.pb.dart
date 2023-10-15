@@ -19,6 +19,8 @@ class CreateGameRequest extends $pb.GeneratedMessage {
     $core.double? radius,
     $core.int? maxplayers,
     $core.double? speed,
+    $core.double? playerradius,
+    $core.double? playerringradius,
   }) {
     final $result = create();
     if (identifier != null) {
@@ -33,6 +35,12 @@ class CreateGameRequest extends $pb.GeneratedMessage {
     if (speed != null) {
       $result.speed = speed;
     }
+    if (playerradius != null) {
+      $result.playerradius = playerradius;
+    }
+    if (playerringradius != null) {
+      $result.playerringradius = playerringradius;
+    }
     return $result;
   }
   CreateGameRequest._() : super();
@@ -44,6 +52,8 @@ class CreateGameRequest extends $pb.GeneratedMessage {
     ..a<$core.double>(2, _omitFieldNames ? '' : 'radius', $pb.PbFieldType.OD)
     ..a<$core.int>(3, _omitFieldNames ? '' : 'maxplayers', $pb.PbFieldType.O3)
     ..a<$core.double>(4, _omitFieldNames ? '' : 'speed', $pb.PbFieldType.OD)
+    ..a<$core.double>(5, _omitFieldNames ? '' : 'playerradius', $pb.PbFieldType.OD)
+    ..a<$core.double>(6, _omitFieldNames ? '' : 'playerringradius', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -103,6 +113,24 @@ class CreateGameRequest extends $pb.GeneratedMessage {
   $core.bool hasSpeed() => $_has(3);
   @$pb.TagNumber(4)
   void clearSpeed() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.double get playerradius => $_getN(4);
+  @$pb.TagNumber(5)
+  set playerradius($core.double v) { $_setDouble(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasPlayerradius() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearPlayerradius() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.double get playerringradius => $_getN(5);
+  @$pb.TagNumber(6)
+  set playerringradius($core.double v) { $_setDouble(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasPlayerringradius() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearPlayerringradius() => clearField(6);
 }
 
 class CreateGameResponse extends $pb.GeneratedMessage {
@@ -221,9 +249,13 @@ class JoinGameRequest extends $pb.GeneratedMessage {
 
 class JoinGameResponse extends $pb.GeneratedMessage {
   factory JoinGameResponse({
+    $core.int? userid,
     $core.List<$core.int>? userkey,
   }) {
     final $result = create();
+    if (userid != null) {
+      $result.userid = userid;
+    }
     if (userkey != null) {
       $result.userkey = userkey;
     }
@@ -234,7 +266,8 @@ class JoinGameResponse extends $pb.GeneratedMessage {
   factory JoinGameResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'JoinGameResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'userkey', $pb.PbFieldType.OY)
+    ..a<$core.int>(1, _omitFieldNames ? '' : 'userid', $pb.PbFieldType.O3)
+    ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'userkey', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
@@ -260,13 +293,118 @@ class JoinGameResponse extends $pb.GeneratedMessage {
   static JoinGameResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get userkey => $_getN(0);
+  $core.int get userid => $_getIZ(0);
   @$pb.TagNumber(1)
-  set userkey($core.List<$core.int> v) { $_setBytes(0, v); }
+  set userid($core.int v) { $_setSignedInt32(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasUserkey() => $_has(0);
+  $core.bool hasUserid() => $_has(0);
   @$pb.TagNumber(1)
-  void clearUserkey() => clearField(1);
+  void clearUserid() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get userkey => $_getN(1);
+  @$pb.TagNumber(2)
+  set userkey($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUserkey() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUserkey() => clearField(2);
+}
+
+class ExitGameRequest extends $pb.GeneratedMessage {
+  factory ExitGameRequest({
+    $core.int? gameid,
+    $core.List<$core.int>? userkey,
+  }) {
+    final $result = create();
+    if (gameid != null) {
+      $result.gameid = gameid;
+    }
+    if (userkey != null) {
+      $result.userkey = userkey;
+    }
+    return $result;
+  }
+  ExitGameRequest._() : super();
+  factory ExitGameRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ExitGameRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ExitGameRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
+    ..a<$core.int>(1, _omitFieldNames ? '' : 'gameid', $pb.PbFieldType.O3)
+    ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'userkey', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ExitGameRequest clone() => ExitGameRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ExitGameRequest copyWith(void Function(ExitGameRequest) updates) => super.copyWith((message) => updates(message as ExitGameRequest)) as ExitGameRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ExitGameRequest create() => ExitGameRequest._();
+  ExitGameRequest createEmptyInstance() => create();
+  static $pb.PbList<ExitGameRequest> createRepeated() => $pb.PbList<ExitGameRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ExitGameRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ExitGameRequest>(create);
+  static ExitGameRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get gameid => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set gameid($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasGameid() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGameid() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get userkey => $_getN(1);
+  @$pb.TagNumber(2)
+  set userkey($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUserkey() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUserkey() => clearField(2);
+}
+
+class ExitGameResponse extends $pb.GeneratedMessage {
+  factory ExitGameResponse() => create();
+  ExitGameResponse._() : super();
+  factory ExitGameResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ExitGameResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ExitGameResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ExitGameResponse clone() => ExitGameResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ExitGameResponse copyWith(void Function(ExitGameResponse) updates) => super.copyWith((message) => updates(message as ExitGameResponse)) as ExitGameResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ExitGameResponse create() => ExitGameResponse._();
+  ExitGameResponse createEmptyInstance() => create();
+  static $pb.PbList<ExitGameResponse> createRepeated() => $pb.PbList<ExitGameResponse>();
+  @$core.pragma('dart2js:noInline')
+  static ExitGameResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ExitGameResponse>(create);
+  static ExitGameResponse? _defaultInstance;
 }
 
 

@@ -3,9 +3,18 @@ import 'package:orbstrike/Components/InputField.dart';
 
 class CreateGameDialog extends StatelessWidget {
   final TextEditingController radiusController;
+  final TextEditingController plRadiusController;
+  final TextEditingController plRingRadiusController;
+  final TextEditingController speedController;
   final TextEditingController maxPlayerController;
 
-  const CreateGameDialog({Key? key, required this.radiusController, required this.maxPlayerController}) : super(key: key);
+  const CreateGameDialog({Key? key,
+    required this.radiusController,
+    required this.maxPlayerController,
+    required this.plRadiusController,
+    required this.plRingRadiusController,
+    required this.speedController
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +32,28 @@ class CreateGameDialog extends StatelessWidget {
         children: [
           InputField(
             controller: radiusController,
-            hint: "Map Radius",
+            hint: "Map Size",
+            keyboardType: TextInputType.number,
+            my: 5,
+            radius: 12,
+          ),
+          InputField(
+            controller: plRadiusController,
+            hint: "Player Size",
+            keyboardType: TextInputType.number,
+            my: 5,
+            radius: 12,
+          ),
+          InputField(
+            controller: plRingRadiusController,
+            hint: "Player Ring Size",
+            keyboardType: TextInputType.number,
+            my: 5,
+            radius: 12,
+          ),
+          InputField(
+            controller: speedController,
+            hint: "Speed",
             keyboardType: TextInputType.number,
             my: 5,
             radius: 12,

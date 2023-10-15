@@ -23,6 +23,10 @@ class GameBoard extends $pb.GeneratedMessage {
     $core.Map<$core.int, Player>? players,
     $core.int? id,
     $core.double? rad,
+    $core.int? maxPlayers,
+    $core.double? speed,
+    $core.double? playerRad,
+    $core.double? playerRingRad,
   }) {
     final $result = create();
     if (players != null) {
@@ -34,6 +38,18 @@ class GameBoard extends $pb.GeneratedMessage {
     if (rad != null) {
       $result.rad = rad;
     }
+    if (maxPlayers != null) {
+      $result.maxPlayers = maxPlayers;
+    }
+    if (speed != null) {
+      $result.speed = speed;
+    }
+    if (playerRad != null) {
+      $result.playerRad = playerRad;
+    }
+    if (playerRingRad != null) {
+      $result.playerRingRad = playerRingRad;
+    }
     return $result;
   }
   GameBoard._() : super();
@@ -44,6 +60,10 @@ class GameBoard extends $pb.GeneratedMessage {
     ..m<$core.int, Player>(1, _omitFieldNames ? '' : 'players', entryClassName: 'GameBoard.PlayersEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.OM, valueCreator: Player.create, valueDefaultOrMaker: Player.getDefault, packageName: const $pb.PackageName('game'))
     ..a<$core.int>(2, _omitFieldNames ? '' : 'id', $pb.PbFieldType.O3)
     ..a<$core.double>(3, _omitFieldNames ? '' : 'rad', $pb.PbFieldType.OD)
+    ..a<$core.int>(4, _omitFieldNames ? '' : 'maxPlayers', $pb.PbFieldType.O3, protoName: 'maxPlayers')
+    ..a<$core.double>(5, _omitFieldNames ? '' : 'speed', $pb.PbFieldType.OD)
+    ..a<$core.double>(6, _omitFieldNames ? '' : 'playerRad', $pb.PbFieldType.OD, protoName: 'playerRad')
+    ..a<$core.double>(7, _omitFieldNames ? '' : 'playerRingRad', $pb.PbFieldType.OD, protoName: 'playerRingRad')
     ..hasRequiredFields = false
   ;
 
@@ -88,6 +108,42 @@ class GameBoard extends $pb.GeneratedMessage {
   $core.bool hasRad() => $_has(2);
   @$pb.TagNumber(3)
   void clearRad() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.int get maxPlayers => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set maxPlayers($core.int v) { $_setSignedInt32(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasMaxPlayers() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearMaxPlayers() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.double get speed => $_getN(4);
+  @$pb.TagNumber(5)
+  set speed($core.double v) { $_setDouble(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSpeed() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSpeed() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.double get playerRad => $_getN(5);
+  @$pb.TagNumber(6)
+  set playerRad($core.double v) { $_setDouble(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasPlayerRad() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearPlayerRad() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.double get playerRingRad => $_getN(6);
+  @$pb.TagNumber(7)
+  set playerRingRad($core.double v) { $_setDouble(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasPlayerRingRad() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearPlayerRingRad() => clearField(7);
 }
 
 class Player extends $pb.GeneratedMessage {
@@ -101,7 +157,7 @@ class Player extends $pb.GeneratedMessage {
     $core.int? color,
     $core.int? kills,
     $core.bool? ringEnabled,
-    $core.int? speed,
+    $core.double? speed,
   }) {
     final $result = create();
     if (id != null) {
@@ -150,7 +206,7 @@ class Player extends $pb.GeneratedMessage {
     ..a<$core.int>(7, _omitFieldNames ? '' : 'color', $pb.PbFieldType.O3)
     ..a<$core.int>(8, _omitFieldNames ? '' : 'kills', $pb.PbFieldType.O3)
     ..aOB(9, _omitFieldNames ? '' : 'ringEnabled', protoName: 'ringEnabled')
-    ..a<$core.int>(10, _omitFieldNames ? '' : 'speed', $pb.PbFieldType.O3)
+    ..a<$core.double>(10, _omitFieldNames ? '' : 'speed', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -257,9 +313,9 @@ class Player extends $pb.GeneratedMessage {
   void clearRingEnabled() => clearField(9);
 
   @$pb.TagNumber(10)
-  $core.int get speed => $_getIZ(9);
+  $core.double get speed => $_getN(9);
   @$pb.TagNumber(10)
-  set speed($core.int v) { $_setSignedInt32(9, v); }
+  set speed($core.double v) { $_setDouble(9, v); }
   @$pb.TagNumber(10)
   $core.bool hasSpeed() => $_has(9);
   @$pb.TagNumber(10)

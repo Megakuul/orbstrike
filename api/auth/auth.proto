@@ -7,6 +7,7 @@ option go_package = "./auth";
 service AuthService {
   rpc CreateGame(CreateGameRequest) returns (CreateGameResponse) {}
   rpc JoinGame(JoinGameRequest) returns (JoinGameResponse) {}
+  rpc ExitGame(ExitGameRequest) returns(ExitGameResponse) {}
 }
 
 message CreateGameRequest {
@@ -14,6 +15,8 @@ message CreateGameRequest {
   double radius = 2;
   int32 maxplayers = 3;
   double speed = 4;
+  double playerradius = 5;
+  double playerringradius = 6;
 }
 
 message CreateGameResponse {
@@ -26,5 +29,13 @@ message JoinGameRequest {
 }
 
 message JoinGameResponse {
-  bytes userkey = 1;
+  int32 userid = 1;
+  bytes userkey = 2;
 }
+
+message ExitGameRequest {
+  int32 gameid = 1;
+  bytes userkey = 2;
+}
+
+message ExitGameResponse { }

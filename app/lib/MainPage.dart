@@ -1,46 +1,79 @@
-import 'dart:math';
-
 import 'package:grpc/grpc.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:orbstrike/Components/CreateGameDialog.dart';
 import 'package:orbstrike/Components/ElevatedIconButton.dart';
+import 'package:orbstrike/Components/GameErrorDialog.dart';
 import 'package:orbstrike/Components/GradientText.dart';
 import 'package:orbstrike/Components/InputField.dart';
+import 'package:orbstrike/Game/GameBoard.helper.dart';
 import 'package:orbstrike/proto/auth/auth.pbgrpc.dart';
 
 import 'Game/GameBoard.dart';
 
+final GlobalKey gameKey = GlobalKey();
+
 class GameConfiguration {
-  GameConfiguration({required this.hostname, required this.port, required this.gameID, required this.latestGameIDs});
+  GameConfiguration({required this.hostname, required this.port, required this.gameID, required this.latestGameIDs, required this.credentials});
   String hostname;
   int port;
   int gameID;
+  ChannelCredentials? credentials;
   List<int> latestGameIDs;
 }
 
-Future<int> createGame(GameConfiguration conf, double radius, int maxPlayers) async {
+Future<int> createGame(GameConfiguration conf,
+    double radius,
+    double plRadius,
+    double plRingRadius,
+    double speed,
+    int maxPlayers,
+    ) async {
   final client = AuthServiceClient(
     ClientChannel(
       conf.hostname,
       port: conf.port,
-      options: const ChannelOptions(credentials: ChannelCredentials.insecure())
+      options: ChannelOptions(credentials: conf.credentials ?? const ChannelCredentials.insecure())
     )
   );
 
-  final req = CreateGameRequest(identifier: "serialnumber");
+  final req = CreateGameRequest(
+    identifier: "serialnumber",
+    radius: radius,
+    playerradius: plRadius,
+    playerringradius: plRingRadius,
+    speed: speed,
+    maxplayers: maxPlayers,
+  );
   final res = await client.createGame(req);
   return res.gameid;
 }
 
-void joinGame(BuildContext context, GameConfiguration conf) {
+void joinGame(BuildContext context, GameConfiguration conf, String name) {
   Navigator.of(context).push(
       MaterialPageRoute(
           builder: (context) => GameWidget(game: GameField(
-            gameID: conf.gameID,
-            hudContext: context,
+            gameId: conf.gameID,
+            name: name,
             host: conf.hostname,
             port: conf.port,
+            credentials: conf.credentials,
+            mCallbacks: MainUICallbacks(
+              showDial: (message, color) {
+                showDialog (
+                  context: context,
+                  builder: (context) {
+                    return GameErrorDialog(
+                      message: message,
+                      color: color,
+                    );
+                  }
+                );
+              },
+              closeGame: () {
+                Navigator.of(context).pop();
+              }
+            )
           ))
       )
   );
@@ -61,7 +94,12 @@ class _MainPage extends State<MainPage> {
   final portController = TextEditingController();
 
   final gameRadiusController = TextEditingController();
+  final gamePlayerRadiusController = TextEditingController();
+  final gamePlayerRingRadiusController = TextEditingController();
+  final gameSpeedController = TextEditingController();
   final gameMaxPlayerController = TextEditingController();
+
+  final playerName = TextEditingController();
 
   @override
   void initState() {
@@ -149,6 +187,9 @@ class _MainPage extends State<MainPage> {
                         builder: (BuildContext context) {
                           return CreateGameDialog(
                             radiusController: gameRadiusController,
+                            plRadiusController: gamePlayerRadiusController,
+                            plRingRadiusController: gamePlayerRingRadiusController,
+                            speedController: gameSpeedController,
                             maxPlayerController: gameMaxPlayerController,
                           );
                         }
@@ -159,7 +200,22 @@ class _MainPage extends State<MainPage> {
                       final double? radius =
                         double.tryParse(gameRadiusController.text);
                       if (radius==null) {
-                        throw Exception("Map Radius must be a number!");
+                        throw Exception("Map Size must be a number!");
+                      }
+                      final double? plRadius =
+                      double.tryParse(gamePlayerRadiusController.text);
+                      if (plRadius==null) {
+                        throw Exception("Player Size must be a number!");
+                      }
+                      final double? plRingRadius =
+                      double.tryParse(gamePlayerRingRadiusController.text);
+                      if (plRingRadius==null) {
+                        throw Exception("Player Ring Size must be a number!");
+                      }
+                      final double? speed =
+                      double.tryParse(gameSpeedController.text);
+                      if (speed==null) {
+                        throw Exception("Speed must be a number!");
                       }
                       final int? maxPlayers =
                         int.tryParse(gameMaxPlayerController.text);
@@ -170,6 +226,9 @@ class _MainPage extends State<MainPage> {
                       final gameId = await createGame(
                           widget.gameConfig,
                           radius,
+                          plRadius,
+                          plRingRadius,
+                          speed,
                           maxPlayers
                       );
 
@@ -201,7 +260,7 @@ class _MainPage extends State<MainPage> {
                   ),
                   onPressed: () {
                     widget.gameConfig.gameID = int.tryParse(gameIdController.text) ?? 0;
-                    joinGame(context, widget.gameConfig);
+                    joinGame(context, widget.gameConfig, playerName.text);
                   },
                 ),
               ],

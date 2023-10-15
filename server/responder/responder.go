@@ -9,8 +9,6 @@ import (
 	"github.com/megakuul/orbstrike/server/socket/sgame"
 )
 
-const speed = 1
-
 func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 	for sessionId, Move := range sessionRequests {
 		srv.Mutex.Lock()
@@ -77,25 +75,25 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 		} else {
 			switch (Move.Direction) {
 			case game.Move_UP:
-				curPlayer.Y -= speed
+				curPlayer.Y -= curPlayer.Speed
 			case game.Move_UP_LEFT:
-				curPlayer.Y -= speed
-				curPlayer.X -= speed
+				curPlayer.Y -= curPlayer.Speed
+				curPlayer.X -= curPlayer.Speed
 			case game.Move_UP_RIGHT:
-				curPlayer.X += speed
-				curPlayer.Y -= speed
+				curPlayer.X += curPlayer.Speed
+				curPlayer.Y -= curPlayer.Speed
 			case game.Move_DOWN:
-				curPlayer.Y += speed
+				curPlayer.Y += curPlayer.Speed
 			case game.Move_DOWN_LEFT:
-				curPlayer.Y += speed
-				curPlayer.X -= speed
+				curPlayer.Y += curPlayer.Speed
+				curPlayer.X -= curPlayer.Speed
 			case game.Move_DOWN_RIGHT:
-				curPlayer.Y += speed
-				curPlayer.X += speed			
+				curPlayer.Y += curPlayer.Speed
+				curPlayer.X += curPlayer.Speed			
 			case game.Move_LEFT:
-				curPlayer.X -= speed
+				curPlayer.X -= curPlayer.Speed
 			case game.Move_RIGHT:
-				curPlayer.X += speed
+				curPlayer.X += curPlayer.Speed
 			}
 		}
 		srv.Mutex.Unlock()

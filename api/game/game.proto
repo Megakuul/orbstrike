@@ -14,6 +14,10 @@ message GameBoard {
   map<int32, Player> players = 1;
   int32 id = 2;
   double rad = 3;
+  int32 maxPlayers = 4;
+  double speed = 5;
+  double playerRad = 6;
+  double playerRingRad = 7;
 }
 
 message Player {
@@ -26,7 +30,7 @@ message Player {
   int32 color = 7;
   int32 kills = 8;
   bool ringEnabled = 9;
-  int32 speed = 10;
+  double speed = 10;
 }
 
 // Direction to move

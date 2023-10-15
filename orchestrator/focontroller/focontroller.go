@@ -39,7 +39,6 @@ func StartScheduler(rdb *redis.ClusterClient, config *conf.Config) {
 
 		orchIdStr, err := rdb.Get(ctx, "orchestrator:focontroller").Result()
 		if err!=nil {
-			logger.WriteWarningLogger(err)
 			awaitInterval(start)
 			continue
 		}

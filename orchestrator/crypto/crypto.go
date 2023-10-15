@@ -1,15 +1,16 @@
 package crypto
 
 import (
+	"fmt"
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/sha512"
+	"crypto/sha256"
 	"encoding/binary"
 	"math/rand"
 )
 
 func EncryptUserKey(id int64, secret string) ([]byte, error) {
-	hash:=sha512.Sum512([]byte(secret))
+	hash:=sha256.Sum256([]byte(secret))
 	block, err := aes.NewCipher(hash[:])
 	if err!=nil {
 		return nil, err
@@ -30,4 +31,31 @@ func EncryptUserKey(id int64, secret string) ([]byte, error) {
 
 	enc:=gcm.Seal(nil, nonce, bId, nil)
 	return append(nonce, enc...), nil
+}
+
+
+func DecryptUserKey(userkey []byte, secret string) (int64, error) {
+	hash:=sha256.Sum256([]byte(secret))
+	block, err := aes.NewCipher(hash[:])
+	if err!=nil {
+		return -1, err
+	}
+
+	gcm, err := cipher.NewGCM(block)
+	if err!=nil {
+		return -1, err
+	}
+
+	if len(userkey)<gcm.NonceSize()+1 {
+		return -1, fmt.Errorf("User key length is too short to process.")
+	}
+	nonce := userkey[:gcm.NonceSize()]
+	key := userkey[gcm.NonceSize():]
+
+	dec, err:=gcm.Open(nil, nonce, key, nil)
+	if err!=nil {
+		return -1, err
+	}
+	
+	return int64(binary.BigEndian.Uint64(dec)), nil
 }

@@ -53,6 +53,11 @@ func StartScheduler(srv *sgame.Server, config *conf.Config) {
 		if err!=nil {
 			logger.WriteErrLogger(err)
 		}
+
+		err = removePlayers(srv, gserverId)
+		if err!=nil {
+			logger.WriteErrLogger(err)
+		}
 		
 		err = syncBoardStates(srv, gserverId)
 		if err!=nil {
@@ -87,6 +92,10 @@ func addPlayers(srv *sgame.Server, gserverId int64) error {
 			continue
 		}
 
+		if srv.Boards[int32(boardId)].Players == nil {
+            srv.Boards[int32(boardId)].Players = make(map[int32]*game.Player)
+        }
+
 		decPlayer := &game.Player{}
 		err = proto.Unmarshal([]byte(playerStr), decPlayer)
 		if err!=nil {
@@ -96,6 +105,46 @@ func addPlayers(srv *sgame.Server, gserverId int64) error {
 		srv.Boards[int32(boardId)].Players[decPlayer.Id] = decPlayer
 	}
 	srv.RDB.Del(ctx, "game:queue")
+	
+	return nil
+}
+
+func removePlayers(srv *sgame.Server, gserverId int64) error {
+	exitqueue, err := srv.RDB.HGetAll(ctx, "game:exitqueue").Result()
+	if err==redis.Nil {
+		return nil 
+	} else if err!=nil {
+		return err
+	}
+
+	for playerIdStr, boardIdStr := range exitqueue {
+		
+		boardId, err := strconv.Atoi(boardIdStr)
+		if err!=nil {
+			logger.WriteWarningLogger(
+				fmt.Errorf("Invalid key format in game:exitqueue"),
+			)
+			continue
+		}
+		_, exists := srv.Boards[int32(boardId)]
+		if !exists {
+			continue
+		}
+		
+		playerId, err := strconv.Atoi(playerIdStr)
+		if err!=nil {
+			logger.WriteWarningLogger(
+				fmt.Errorf("Invalid value format in game:exitqueue"),
+			)
+			continue
+		}
+		if _,exists = srv.Boards[int32(boardId)].Players[int32(playerId)]; !exists {
+			continue
+		}
+		
+		delete(srv.Boards[int32(boardId)].Players, int32(playerId))
+	}
+	srv.RDB.Del(ctx, "game:exitqueue")
 	
 	return nil
 }
@@ -160,7 +209,7 @@ func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 				continue
 			}
 
-			decBoard := game.GameBoard{}
+			var decBoard game.GameBoard
 			err = proto.Unmarshal([]byte(encBoard), &decBoard)
 			if err!=nil {
 				logger.WriteWarningLogger(err)

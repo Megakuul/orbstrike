@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/sha512"
+	"crypto/sha256"
 	"encoding/binary"
 )
 
 func DecryptUserKey(userkey []byte, secret string) (int64, error) {
-	hash:=sha512.Sum512([]byte(secret))
+	hash:=sha256.Sum256([]byte(secret))
 	block, err := aes.NewCipher(hash[:])
 	if err!=nil {
 		return -1, err

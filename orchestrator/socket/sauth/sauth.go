@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"math/rand"
 
 	"github.com/megakuul/orbstrike/orchestrator/algo"
 	"github.com/megakuul/orbstrike/orchestrator/crypto"
@@ -14,6 +15,11 @@ import (
 	"github.com/go-redis/redis/v8"
 	"google.golang.org/protobuf/proto"
 )
+
+const MAX_MAP_RADIUS = 10000
+const MAX_PLAYERS = 100
+const MAX_SPEED = 50
+const MAX_PL_RAD = 250
 
 var ctx context.Context = context.Background()
 
@@ -48,9 +54,38 @@ func (s *Server) CreateGame(ctx context.Context, req *auth.CreateGameRequest) (*
 		return nil, fmt.Errorf("Game creation failed: unable to increment Game-Counter.")
 	}
 
+	if req.Maxplayers > MAX_PLAYERS {
+		return nil,
+			fmt.Errorf("Game creation failed: Game cannot have more than %d players", MAX_PLAYERS)
+	}
+
+	if req.Radius > MAX_MAP_RADIUS {
+		return nil,
+			fmt.Errorf("Game creation failed: Map radius must be below %d", MAX_MAP_RADIUS)
+	}
+
+	if req.Speed > MAX_SPEED {
+		return nil,
+			fmt.Errorf("Game creation failed: Speed must be below %d", MAX_SPEED)
+	}
+
+	if req.Playerradius > req.Playerringradius {
+		return nil,
+			fmt.Errorf("Game creation failed: Player ring cannot be smaller then the player")
+	}
+
+	if req.Playerradius > MAX_PL_RAD||req.Playerradius > MAX_PL_RAD {
+		return nil,
+			fmt.Errorf("Game creation failed: Player radius must be below %d", MAX_PL_RAD)
+	}
+
 	defPlayer := &game.GameBoard{
 		Id: int32(gameid),
-		Rad: 600,
+		Rad: req.Radius,
+		MaxPlayers: req.Maxplayers,
+		Speed: req.Speed,
+		PlayerRad: req.Playerradius,
+		PlayerRingRad: req.Playerringradius,
 		Players: map[int32]*game.Player{},
 	}
 
@@ -85,31 +120,39 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 		logger.WriteErrLogger(err)
 		return nil, fmt.Errorf("Player creation failed: unable to increment Player-Counter.")
 	}
+	encGame, err := s.RDB.Get(ctx,
+		fmt.Sprintf("game:%d", req.Gameid)).Result()
+	if err==redis.Nil {
+		return nil, fmt.Errorf("Player creation failed: Game with ID %d does not exist.")
+	} else if err!=nil {
+		logger.WriteErrLogger(err)
+		return nil, fmt.Errorf("Player creation failed: Internal database failure, try again in 5 minutes")
+	}
 
-	// TODO: For a better user experience, here I could check if the game exists
 
-	// TODO: Dont hardcode the players specifications
+	var decGame game.GameBoard
+	err = proto.Unmarshal([]byte(encGame), &decGame)
+	if err!=nil {
+		logger.WriteErrLogger(err)
+		return nil, fmt.Errorf("Player creation failed: Failed to load Game")
+	}
+
+	// TODO: Implement algorithm for spawning players not always in the center
 	encPlayer, err := proto.Marshal(&game.Player{
 		Id: int32(playerid),
 		Name: req.Name,
 		X: 0,
 		Y: 0,
-		Rad: 50,
-		Ringrad: 70,
-		Color: 1,
+		Rad: decGame.PlayerRad,
+		Ringrad: decGame.PlayerRingRad,
+		Color: int32(rand.Intn(8)),
 		Kills: 0,
 		RingEnabled: true,
-		Speed: 2,
+		Speed: decGame.Speed,
 	})
 	if err!=nil {
 		logger.WriteErrLogger(err)
 		return nil, fmt.Errorf("Failed to create player template.")
-	}
-
-	err = s.RDB.HSet(ctx, "game:queue", encPlayer, req.Gameid).Err()
-	if err!=nil {
-		logger.WriteErrLogger(err)
-		return nil, fmt.Errorf("Failed to add player to queue.")
 	}
 
 	userkey, err := crypto.EncryptUserKey(playerid, s.ServerSecret)
@@ -117,8 +160,32 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 		logger.WriteErrLogger(err)
 		return nil, fmt.Errorf("Failed to generate userkey.")
 	}
+
+	err = s.RDB.HSet(ctx, "game:queue", encPlayer, req.Gameid).Err()
+	if err!=nil {
+		logger.WriteErrLogger(err)
+		return nil, fmt.Errorf("Failed to add player to queue.")
+	}
 	
 	return &auth.JoinGameResponse{
 		Userkey: userkey,
 	}, nil
+}
+
+func (s *Server) ExitGame(ctx context.Context, req *auth.ExitGameRequest) (*auth.ExitGameResponse, error) {
+	userid, err := crypto.DecryptUserKey(req.Userkey, s.ServerSecret)
+	if userid==-1 {
+		return nil, fmt.Errorf("Failed to exit game, invalid userkey provided!")
+	} else if err!=nil {
+		logger.WriteErrLogger(
+			fmt.Errorf("Failed to delete user %d\n%v", userid, err),
+		)
+		return nil, nil
+	}
+	err = s.RDB.HSet(ctx, "game:exitqueue", userid, req.Gameid).Err()
+	if err!=nil {
+		logger.WriteErrLogger(err)
+		return nil, fmt.Errorf("Failed to exit game. Try again!")
+	}
+	return &auth.ExitGameResponse{}, nil
 }

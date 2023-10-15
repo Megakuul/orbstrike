@@ -21,6 +21,8 @@ const CreateGameRequest$json = {
     {'1': 'radius', '3': 2, '4': 1, '5': 1, '10': 'radius'},
     {'1': 'maxplayers', '3': 3, '4': 1, '5': 5, '10': 'maxplayers'},
     {'1': 'speed', '3': 4, '4': 1, '5': 1, '10': 'speed'},
+    {'1': 'playerradius', '3': 5, '4': 1, '5': 1, '10': 'playerradius'},
+    {'1': 'playerringradius', '3': 6, '4': 1, '5': 1, '10': 'playerringradius'},
   ],
 };
 
@@ -28,7 +30,8 @@ const CreateGameRequest$json = {
 final $typed_data.Uint8List createGameRequestDescriptor = $convert.base64Decode(
     'ChFDcmVhdGVHYW1lUmVxdWVzdBIeCgppZGVudGlmaWVyGAEgASgJUgppZGVudGlmaWVyEhYKBn'
     'JhZGl1cxgCIAEoAVIGcmFkaXVzEh4KCm1heHBsYXllcnMYAyABKAVSCm1heHBsYXllcnMSFAoF'
-    'c3BlZWQYBCABKAFSBXNwZWVk');
+    'c3BlZWQYBCABKAFSBXNwZWVkEiIKDHBsYXllcnJhZGl1cxgFIAEoAVIMcGxheWVycmFkaXVzEi'
+    'oKEHBsYXllcnJpbmdyYWRpdXMYBiABKAFSEHBsYXllcnJpbmdyYWRpdXM=');
 
 @$core.Deprecated('Use createGameResponseDescriptor instead')
 const CreateGameResponse$json = {
@@ -60,11 +63,36 @@ final $typed_data.Uint8List joinGameRequestDescriptor = $convert.base64Decode(
 const JoinGameResponse$json = {
   '1': 'JoinGameResponse',
   '2': [
-    {'1': 'userkey', '3': 1, '4': 1, '5': 12, '10': 'userkey'},
+    {'1': 'userid', '3': 1, '4': 1, '5': 5, '10': 'userid'},
+    {'1': 'userkey', '3': 2, '4': 1, '5': 12, '10': 'userkey'},
   ],
 };
 
 /// Descriptor for `JoinGameResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List joinGameResponseDescriptor = $convert.base64Decode(
-    'ChBKb2luR2FtZVJlc3BvbnNlEhgKB3VzZXJrZXkYASABKAxSB3VzZXJrZXk=');
+    'ChBKb2luR2FtZVJlc3BvbnNlEhYKBnVzZXJpZBgBIAEoBVIGdXNlcmlkEhgKB3VzZXJrZXkYAi'
+    'ABKAxSB3VzZXJrZXk=');
+
+@$core.Deprecated('Use exitGameRequestDescriptor instead')
+const ExitGameRequest$json = {
+  '1': 'ExitGameRequest',
+  '2': [
+    {'1': 'gameid', '3': 1, '4': 1, '5': 5, '10': 'gameid'},
+    {'1': 'userkey', '3': 2, '4': 1, '5': 12, '10': 'userkey'},
+  ],
+};
+
+/// Descriptor for `ExitGameRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List exitGameRequestDescriptor = $convert.base64Decode(
+    'Cg9FeGl0R2FtZVJlcXVlc3QSFgoGZ2FtZWlkGAEgASgFUgZnYW1laWQSGAoHdXNlcmtleRgCIA'
+    'EoDFIHdXNlcmtleQ==');
+
+@$core.Deprecated('Use exitGameResponseDescriptor instead')
+const ExitGameResponse$json = {
+  '1': 'ExitGameResponse',
+};
+
+/// Descriptor for `ExitGameResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List exitGameResponseDescriptor = $convert.base64Decode(
+    'ChBFeGl0R2FtZVJlc3BvbnNl');
 

@@ -38,6 +38,7 @@ class App extends StatelessWidget {
         hostname: "",
         port: 54331,
         gameID: -1,
+        credentials: null,
         latestGameIDs: []
       )),
     );
