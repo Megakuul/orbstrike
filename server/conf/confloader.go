@@ -19,6 +19,7 @@ type Config struct {
 	LogFile string `mapstructure:"logfile"`
 	LogOptions string `mapstructure:"logoptions"`
 	MaxLogSizeKB int `mapstructure:"maxlogsizekb"`
+	LogStdout bool `mapstructure:"logstdout"`
 
 	MaxChannelSize int `mapstructure:"maxchannelsize"`
 	RequestPerWorker int `mapstructure:"requestsperworker"`
@@ -44,6 +45,7 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("logfile", "orbstrike.log")
 	viper.SetDefault("maxlogsizekb", 500)
 	viper.SetDefault("maxchannelsize", 15)
+	viper.SetDefault("logstdout", true)
 	viper.SetDefault("requestsperworker", 10)
 	viper.SetDefault("responseintervalms", 15)
 	viper.SetDefault("syncintervalms", 1000)

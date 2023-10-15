@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"strings"
+	"runtime"
+	"path/filepath"
 )
 
 var (
@@ -13,7 +15,7 @@ var (
 	INFORMATION bool
 )
 
-func InitLogger(logname string, loglevel string, maxlogsize int) error {
+func InitLogger(logname string, loglevel string, maxlogsize int, logconsole bool) error {
 
 	file, err := os.OpenFile(logname, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
@@ -25,7 +27,12 @@ func InitLogger(logname string, loglevel string, maxlogsize int) error {
 		return err
 	}
 
-	mOutWriter := io.MultiWriter(os.Stdout, file)
+	var mOutWriter io.Writer
+	if logconsole {
+		mOutWriter = io.MultiWriter(os.Stdout, file)
+	} else {
+		mOutWriter = io.MultiWriter(file)
+	}
 
 	log.SetOutput(mOutWriter)
 
@@ -64,18 +71,30 @@ func clearLog(maxLogSize int, file *os.File) error {
 
 func WriteInformationLogger(format string, v ...interface{}) {
 	if INFORMATION {
-		log.Printf("\n[ ORBSTRIKE Information ]:\n"+format+"\n", v...)
+		log.Printf("\n[ ORBSTRIKE Information ]:\n"+format+"\n\n", v...)
 	}
 }
 
 func WriteWarningLogger(err error) {
 	if WARNING {
-		log.Printf("\n[ ORBSTRIKE Warning ]:\n%s\n\n", err)
+		_, file, line, ok := runtime.Caller(1)
+		if ok {
+			log.Printf("\n[ ORBSTRIKE Warning ]:\n%s\n(file: %s, line: %d)\n\n",
+				err, filepath.Base(file), line)
+		} else {
+			log.Printf("\n[ ORBSTRIKE Warning ]:\n%s\n\n", err)
+		}
 	}
 }
 
 func WriteErrLogger(err error) {
 	if ERROR {
-		log.Fatalf("\n[ ORBSTRIKE Panic ]:\n%s\n\n", err)
+		_, file, line, ok := runtime.Caller(1)
+		if ok {
+			log.Fatalf("\n[ ORBSTRIKE Panic ]:\n%s\n(file: %s, line: %d)\n\n",
+				err, filepath.Base(file), line)
+		} else {
+			log.Fatalf("\n[ ORBSTRIKE Panic ]:\n%s\n\n", err)
+		}
 	}
 }

@@ -3,5 +3,5 @@
 \#*\#
 .\#*
 
-server/orbstrike.server.log
-orchestrator/orbstrike.orchestrator.log
+server/*.log
+orchestrator/*.log

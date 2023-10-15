@@ -11,6 +11,9 @@ service AuthService {
 
 message CreateGameRequest {
   string identifier = 1;
+  double radius = 2;
+  int32 maxplayers = 3;
+  double speed = 4;
 }
 
 message CreateGameResponse {

@@ -19,6 +19,7 @@ type Config struct {
 	LogFile string `mapstructure:"logfile"`
 	LogOptions string `mapstructure:"logoptions"`
 	MaxLogSizeKB int `mapstructure:"maxlogsizekb"`
+	LogStdout bool `mapstructure:"logstdout"`
 
 	GSBase64SSLCA string `mapstructure:"gameserver_base64_ssl_ca"`
 	
@@ -45,6 +46,7 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("logoptions", "ERROR|WARNING")
 	viper.SetDefault("logfile", "orbstrike.log")
 	viper.SetDefault("maxlogsizekb", 500)
+	viper.SetDefault("logstdout", true)
 	viper.SetDefault("maxchannelsize", 15)
 	viper.SetDefault("requestsperworker", 10)
 	viper.SetDefault("responseintervalms", 15)

@@ -16,10 +16,22 @@ import 'package:protobuf/protobuf.dart' as $pb;
 class CreateGameRequest extends $pb.GeneratedMessage {
   factory CreateGameRequest({
     $core.String? identifier,
+    $core.double? radius,
+    $core.int? maxplayers,
+    $core.double? speed,
   }) {
     final $result = create();
     if (identifier != null) {
       $result.identifier = identifier;
+    }
+    if (radius != null) {
+      $result.radius = radius;
+    }
+    if (maxplayers != null) {
+      $result.maxplayers = maxplayers;
+    }
+    if (speed != null) {
+      $result.speed = speed;
     }
     return $result;
   }
@@ -29,6 +41,9 @@ class CreateGameRequest extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CreateGameRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'identifier')
+    ..a<$core.double>(2, _omitFieldNames ? '' : 'radius', $pb.PbFieldType.OD)
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'maxplayers', $pb.PbFieldType.O3)
+    ..a<$core.double>(4, _omitFieldNames ? '' : 'speed', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -61,6 +76,33 @@ class CreateGameRequest extends $pb.GeneratedMessage {
   $core.bool hasIdentifier() => $_has(0);
   @$pb.TagNumber(1)
   void clearIdentifier() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.double get radius => $_getN(1);
+  @$pb.TagNumber(2)
+  set radius($core.double v) { $_setDouble(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasRadius() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRadius() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get maxplayers => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set maxplayers($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasMaxplayers() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMaxplayers() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.double get speed => $_getN(3);
+  @$pb.TagNumber(4)
+  set speed($core.double v) { $_setDouble(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasSpeed() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSpeed() => clearField(4);
 }
 
 class CreateGameResponse extends $pb.GeneratedMessage {

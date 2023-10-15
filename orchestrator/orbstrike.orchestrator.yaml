@@ -8,6 +8,7 @@ secret: "thismustatleastbe40randomcharsinprod"
 logfile: "./orbstrike.orchestrator.log"
 logoptions: "ERROR|WARNING|INFORMATION"
 maxlogsizekb: 200
+logstdout: true
 
 # Enter your certificate chain as base64 if you want an unencrypted TCP Socket use ""
 base64_ssl_certificate: ""

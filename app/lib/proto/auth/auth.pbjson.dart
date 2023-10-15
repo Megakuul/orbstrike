@@ -18,12 +18,17 @@ const CreateGameRequest$json = {
   '1': 'CreateGameRequest',
   '2': [
     {'1': 'identifier', '3': 1, '4': 1, '5': 9, '10': 'identifier'},
+    {'1': 'radius', '3': 2, '4': 1, '5': 1, '10': 'radius'},
+    {'1': 'maxplayers', '3': 3, '4': 1, '5': 5, '10': 'maxplayers'},
+    {'1': 'speed', '3': 4, '4': 1, '5': 1, '10': 'speed'},
   ],
 };
 
 /// Descriptor for `CreateGameRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createGameRequestDescriptor = $convert.base64Decode(
-    'ChFDcmVhdGVHYW1lUmVxdWVzdBIeCgppZGVudGlmaWVyGAEgASgJUgppZGVudGlmaWVy');
+    'ChFDcmVhdGVHYW1lUmVxdWVzdBIeCgppZGVudGlmaWVyGAEgASgJUgppZGVudGlmaWVyEhYKBn'
+    'JhZGl1cxgCIAEoAVIGcmFkaXVzEh4KCm1heHBsYXllcnMYAyABKAVSCm1heHBsYXllcnMSFAoF'
+    'c3BlZWQYBCABKAFSBXNwZWVk');
 
 @$core.Deprecated('Use createGameResponseDescriptor instead')
 const CreateGameResponse$json = {

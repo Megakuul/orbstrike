@@ -38,7 +38,12 @@ func main() {
 		os.Exit(1)
 	}
 	
-	err = logger.InitLogger(config.LogFile, config.LogOptions, config.MaxLogSizeKB)
+	err = logger.InitLogger(
+		config.LogFile,
+		config.LogOptions,
+		config.MaxLogSizeKB,
+		config.LogStdout,
+	)
 	if err!=nil {
 		fmt.Println("Failed to initialize logger!")
 		fmt.Println(err)
