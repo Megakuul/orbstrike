@@ -91,10 +91,10 @@ func WriteErrLogger(err error) {
 	if ERROR {
 		_, file, line, ok := runtime.Caller(1)
 		if ok {
-			log.Fatalf("\n[ ORBSTRIKE Panic ]:\n%s\n(file: %s, line: %d)\n\n",
+			log.Printf("\n[ ORBSTRIKE Panic ]:\n%s\n(file: %s, line: %d)\n\n",
 				err, filepath.Base(file), line)
 		} else {
-			log.Fatalf("\n[ ORBSTRIKE Panic ]:\n%s\n\n", err)
+			log.Printf("\n[ ORBSTRIKE Panic ]:\n%s\n\n", err)
 		}
 	}
 }

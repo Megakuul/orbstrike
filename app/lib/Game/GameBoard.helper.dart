@@ -101,7 +101,7 @@ void startGameSocket(GameCoreApi api, GameCoreComponents coreComponents, MainUIC
   }
 
   if (coreComponents.mainPlayerCreds==null) {
-    // Happens only when wrong developed, so thats why I throw a exception that is catched by flutter
+    // Happens only when wrong developed, so that's why I throw a exception that is caught by flutter
     throw Exception("Main Player Credentials are not initialized!");
   }
 

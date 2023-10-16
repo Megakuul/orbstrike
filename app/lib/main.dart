@@ -35,8 +35,8 @@ class App extends StatelessWidget {
         primarySwatch: createCustomSwatch(primaryColor),
       ),
       home: MainPage(title: "Orbstrike", gameConfig: GameConfiguration(
-        hostname: "",
-        port: 54331,
+        hostname: "127.0.0.1",
+        port: 8080,
         gameID: -1,
         credentials: null,
         latestGameIDs: []

@@ -83,10 +83,10 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
-    coreComp.mainCamera = CameraComponent(world: world);
-    addAll([coreComp.mainCamera, world]);
+    super.onLoad();
+    coreComp.mainCamera = CameraComponent(world: coreComp.world);
+    addAll([coreComp.mainCamera, coreComp.world]);
 
-    print("Der Bizepts schrumpft vom salat");
     try {
       coreComp.mainPlayerCreds = await joinGame(gameId, name, host, port, credentials);
       startGameSocket(coreApi, coreComp, mCallbacks, gameId, host, port);

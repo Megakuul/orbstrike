@@ -25,7 +25,9 @@ func FindGServer(rdb *redis.ClusterClient, ctx *context.Context, gameid string) 
 			addr, err:=rdb.Get(*ctx,
 				fmt.Sprintf("gserver:%s:addr", instanceid),
 			).Result()
-			if err!=nil {
+			if err==redis.Nil {
+				return "", nil
+			} else if err!=nil {
 				return "", err
 			}
 

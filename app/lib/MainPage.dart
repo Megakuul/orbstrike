@@ -60,6 +60,8 @@ void joinGame(BuildContext context, GameConfiguration conf, String name) {
             credentials: conf.credentials,
             mCallbacks: MainUICallbacks(
               showDial: (message, color) {
+                Navigator.of(context).pop();
+                print("$message");
                 showDialog (
                   context: context,
                   builder: (context) {
@@ -71,6 +73,7 @@ void joinGame(BuildContext context, GameConfiguration conf, String name) {
                 );
               },
               closeGame: () {
+                print("Haay2");
                 Navigator.of(context).pop();
               }
             )
