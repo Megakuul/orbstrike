@@ -74,7 +74,7 @@ func (s *Server) CreateGame(ctx context.Context, req *auth.CreateGameRequest) (*
 			fmt.Errorf("Game creation failed: Player ring cannot be smaller then the player")
 	}
 
-	if req.Playerradius > MAX_PL_RAD||req.Playerradius > MAX_PL_RAD {
+	if req.Playerradius > MAX_PL_RAD {
 		return nil,
 			fmt.Errorf("Game creation failed: Player radius must be below %d", MAX_PL_RAD)
 	}
@@ -123,7 +123,7 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 	encGame, err := s.RDB.Get(ctx,
 		fmt.Sprintf("game:%d", req.Gameid)).Result()
 	if err==redis.Nil {
-		return nil, fmt.Errorf("Player creation failed: Game with ID %d does not exist.")
+		return nil, fmt.Errorf("Player creation failed: Game with ID %d does not exist.", req.Gameid)
 	} else if err!=nil {
 		logger.WriteErrLogger(err)
 		return nil, fmt.Errorf("Player creation failed: Internal database failure, try again in 5 minutes")

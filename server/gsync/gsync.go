@@ -48,7 +48,7 @@ func StartScheduler(srv *sgame.Server, config *conf.Config) {
 		if err!=nil {
 			logger.WriteErrLogger(err)
 		}
-		
+
 		err = addPlayers(srv, gserverId)
 		if err!=nil {
 			logger.WriteErrLogger(err)
@@ -87,8 +87,10 @@ func addPlayers(srv *sgame.Server, gserverId int64) error {
 			)
 			continue
 		}
+		srv.Mutex.Lock()
 		_, exists := srv.Boards[int32(boardId)]
 		if !exists {
+			srv.Mutex.Unlock()
 			continue
 		}
 
@@ -99,10 +101,12 @@ func addPlayers(srv *sgame.Server, gserverId int64) error {
 		decPlayer := &game.Player{}
 		err = proto.Unmarshal([]byte(playerStr), decPlayer)
 		if err!=nil {
+			srv.Mutex.Unlock()
 			logger.WriteWarningLogger(err)
 			continue
 		}
 		srv.Boards[int32(boardId)].Players[decPlayer.Id] = decPlayer
+		srv.Mutex.Unlock()
 	}
 	srv.RDB.Del(ctx, "game:queue")
 	
@@ -126,23 +130,32 @@ func removePlayers(srv *sgame.Server, gserverId int64) error {
 			)
 			continue
 		}
+
+		srv.Mutex.RLock()
 		_, exists := srv.Boards[int32(boardId)]
 		if !exists {
+			srv.Mutex.RUnlock()
 			continue
 		}
 		
 		playerId, err := strconv.Atoi(playerIdStr)
 		if err!=nil {
+			srv.Mutex.RUnlock()
 			logger.WriteWarningLogger(
 				fmt.Errorf("Invalid value format in game:exitqueue"),
 			)
 			continue
 		}
 		if _,exists = srv.Boards[int32(boardId)].Players[int32(playerId)]; !exists {
+			srv.Mutex.RUnlock()
 			continue
 		}
+
 		
+		srv.Mutex.RUnlock()
+		srv.Mutex.Lock()
 		delete(srv.Boards[int32(boardId)].Players, int32(playerId))
+		srv.Mutex.Unlock()
 	}
 	srv.RDB.Del(ctx, "game:exitqueue")
 	
@@ -151,6 +164,7 @@ func removePlayers(srv *sgame.Server, gserverId int64) error {
 
 func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 	srv.Mutex.RLock()
+
 	for k, v := range srv.Boards {
 		if v==nil {
 			continue
@@ -180,7 +194,7 @@ func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 	if err!=nil {
 		return err
 	} 
-	
+
 	srv.Mutex.RLock()
 	boardBuf := make(map[int32]*game.GameBoard)
 	for strkey := range games {

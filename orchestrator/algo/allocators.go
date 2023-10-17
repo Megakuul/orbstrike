@@ -10,7 +10,7 @@ import (
 )
 
 
-func AllocateGame(rdb *redis.ClusterClient, ctx *context.Context, gameid int64, offlinekey string) error {
+func AllocateGame(rdb *redis.ClusterClient, ctx *context.Context, gameid int64, unhandledkey string) error {
 	gserverKeys, err := rdb.SMembers(*ctx, "gserver:index:games").Result()
 	if err!=nil {
 		return err
@@ -19,7 +19,7 @@ func AllocateGame(rdb *redis.ClusterClient, ctx *context.Context, gameid int64, 
 	curKey := ""
 	var curLoad int64 = -1
 	for _, gsrvKey := range gserverKeys {
-		if gsrvKey==offlinekey { continue }
+		if gsrvKey==unhandledkey { continue }
 		load, err := rdb.HLen(*ctx, gsrvKey).Result()
 		if err!=nil {
 			continue
@@ -37,7 +37,8 @@ func AllocateGame(rdb *redis.ClusterClient, ctx *context.Context, gameid int64, 
 	var instanceid int64
 	_, err = fmt.Sscanf(curKey, "gserver:%d:games", &instanceid)
 	if err!=nil {
-		return fmt.Errorf("Failure while allocating game: Invalid gserver:x:games key")
+		rdb.SRem(*ctx, curKey)
+		return fmt.Errorf("Failure while allocating game: Invalid gserver:x:games key. Game was emergency shutdown to prevent a panic loop!")
 	}
 	
 	err = rdb.HSet(*ctx, curKey, gameid, instanceid).Err()
@@ -48,8 +49,8 @@ func AllocateGame(rdb *redis.ClusterClient, ctx *context.Context, gameid int64, 
 }
 
 
-func ReallocateGames(rdb *redis.ClusterClient, ctx *context.Context, offlineSrvIds []int64) error {
-	for _, id := range offlineSrvIds {
+func ReallocateGames(rdb *redis.ClusterClient, ctx *context.Context, unhandledSrvIds []int64) error {
+	for _, id := range unhandledSrvIds {
 		gamesKey := fmt.Sprintf("gserver:%d:games", id)
 
 		games, err := rdb.HGetAll(*ctx, gamesKey).Result()
@@ -61,6 +62,8 @@ func ReallocateGames(rdb *redis.ClusterClient, ctx *context.Context, offlineSrvI
 			continue
 		}
 
+		failedAlloc := false
+		
 		for gameKeyStr := range games {
 			key, err := strconv.Atoi(gameKeyStr)
 			if err!=nil {
@@ -72,9 +75,13 @@ func ReallocateGames(rdb *redis.ClusterClient, ctx *context.Context, offlineSrvI
 			err = AllocateGame(rdb, ctx, int64(key), gamesKey)
 			if err!=nil {
 				logger.WriteWarningLogger(err)
-				continue
+				failedAlloc = true
+				break
 			}
 		}
+
+		// Don't continue on allocfailure, this can lead to loss of prod games
+		if failedAlloc { continue }
 		
 		err = rdb.SRem(*ctx,
 			"gserver:index:games",

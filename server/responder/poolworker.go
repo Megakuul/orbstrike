@@ -2,9 +2,9 @@ package responder
 
 import (
 	"fmt"
-	"sync"
-	
+
 	"github.com/megakuul/orbstrike/server/logger"
+	"github.com/megakuul/orbstrike/server/mutex"
 	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/socket/sgame"
 )
@@ -42,13 +42,13 @@ type RespondType func()
 
 type PoolWorker struct {
 	Queue chan RespondType
-	Mutex *sync.RWMutex
+	Mutex *mutex.RWMutex
 }
 
 func InitPoolWorker(maxQueueSize int) *PoolWorker {
 	return &PoolWorker{
 		Queue: make(chan RespondType, maxQueueSize),
-		Mutex: &sync.RWMutex{},
+		Mutex: &mutex.RWMutex{},
 	}
 }
 

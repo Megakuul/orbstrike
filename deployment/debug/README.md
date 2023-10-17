@@ -59,7 +59,7 @@ Now you can run start the server/orchestrator with the debug config
 ```
 
 ```bash
-(cd ../../server && go run main.go ../deployment/debug/debug.server.yaml)
+(cd ../../server && go run -tags debug main.go ../deployment/debug/debug.server.yaml)
 ```
 
 ### Run Client Application

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
-	"sync"
 	"time"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/megakuul/orbstrike/server/proto/game"
+	"github.com/megakuul/orbstrike/server/mutex"
 )
 
 type Server struct {
@@ -16,7 +16,7 @@ type Server struct {
 	Boards map[int32]*game.GameBoard
 	SessionRequests map[int64]*game.Move
 	SessionResponses map[int64]error
-	Mutex sync.RWMutex
+	Mutex mutex.RWMutex
 	ServerSecret string
 	game.UnimplementedGameServiceServer
 }
@@ -51,6 +51,7 @@ func (s *Server) StreamGameboard(stream game.GameService_StreamGameboardServer) 
 		s.Mutex.RLock()
 		if s.SessionResponses[sessionId]!=nil {
 			err = s.SessionResponses[sessionId]
+			s.Mutex.RUnlock()
 			break
 		}
 		s.Mutex.RUnlock()

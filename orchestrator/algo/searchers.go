@@ -38,8 +38,8 @@ func FindGServer(rdb *redis.ClusterClient, ctx *context.Context, gameid string) 
 	return "", nil
 }
 
-func FindOfflineServers(rdb *redis.ClusterClient, ctx *context.Context, gserverKeys []string) (offlineIds []int64) {
-	offlineIdsBuf := []int64{}
+func FindUnhandledGameMaps(rdb *redis.ClusterClient, ctx *context.Context, gserverKeys []string) (unhandledIds []int64) {
+	unhandledIdsBuf := []int64{}
 	for _, key := range gserverKeys {
 		var instanceid int64
 		_, err := fmt.Sscanf(key, "gserver:%d:game", &instanceid)
@@ -52,13 +52,13 @@ func FindOfflineServers(rdb *redis.ClusterClient, ctx *context.Context, gserverK
 			fmt.Sprintf("gserver:%d:addr", instanceid),
 		).Err()
 		if err==redis.Nil {
-			offlineIdsBuf = append(offlineIdsBuf, instanceid)
+			unhandledIdsBuf = append(unhandledIdsBuf, instanceid)
 			continue
 		} else if err!=nil {
 			logger.WriteWarningLogger(err)
 			continue
 		}
 	}
-	return offlineIdsBuf
+	return unhandledIdsBuf
 }
 
