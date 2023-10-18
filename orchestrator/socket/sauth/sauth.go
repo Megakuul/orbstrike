@@ -148,7 +148,7 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 		Ringrad: decGame.PlayerRingRad,
 		Color: int32(rand.Intn(8)),
 		Kills: 0,
-		RingEnabled: true,
+		RingEnabled: false,
 		Speed: decGame.Speed,
 	})
 	if err!=nil {

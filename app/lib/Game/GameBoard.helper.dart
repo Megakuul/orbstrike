@@ -1,9 +1,8 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
-import 'package:orbstrike/Components/GameErrorDialog.dart';
 
-import 'package:orbstrike/Game/PlayerC.dart';
+import 'package:orbstrike/Game/Player.dart';
 import 'package:orbstrike/Game/WorldBorder.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -39,12 +38,12 @@ class GameCoreComponents {
   GameBoard board;
   final World world = World();
   WorldBorder? border;
-  PlayerC? mainPlayerComponent;
+  MainPlayer? mainPlayerComponent;
   Move_Direction mainPlayerDirection;
   UserCredentials? mainPlayerCreds;
   bool mainPlayerRingState;
   final List<int> mainPlayerCollided = [];
-  final Map<int, PlayerO> playerComponents = {};
+  final Map<int, EnemyPlayer> playerComponents = {};
 
   GameCoreComponents({
     required this.board,
@@ -100,11 +99,6 @@ void startGameSocket(GameCoreApi api, GameCoreComponents coreComponents, MainUIC
     api.chan!.shutdown();
   }
 
-  if (coreComponents.mainPlayerCreds==null) {
-    // Happens only when wrong developed, so that's why I throw a exception that is caught by flutter
-    throw Exception("Main Player Credentials are not initialized!");
-  }
-
   api.chan = ClientChannel(
     host,
     port: port,
@@ -124,35 +118,14 @@ void startGameSocket(GameCoreApi api, GameCoreComponents coreComponents, MainUIC
   api.client!.proxyGameboard(api.stream.stream, options: callOptions)
       .listen((game) {
     coreComponents.board = game;
-    print(game.players.length);
-    try {
-      print("${game.players[0]!.x}");
-    } catch (e){}
 
-
-    if (coreComponents.mainPlayerComponent==null && coreComponents.board.players[coreComponents.mainPlayerCreds!.id]!=null) {
-      coreComponents.mainPlayerComponent
-          = PlayerC(pPlayer: coreComponents.board.players[coreComponents.mainPlayerCreds!.id]!, collided: coreComponents.mainPlayerCollided);
-
-      coreComponents.world.add(coreComponents.mainPlayerComponent!);
-    }
-    updateGameBoard(
-        coreComponents.board,
-        coreComponents.playerComponents,
-        coreComponents.mainPlayerCreds!.id,
-        coreComponents.mainPlayerComponent
-    ).forEach((key, value) {
+    updateGameBoard(coreComponents).forEach((key, value) {
       if (value) {
         coreComponents.world.add(key);
       } else {
         coreComponents.world.remove(key);
       }
     });
-
-    if (coreComponents.border==null) {
-      coreComponents.border = WorldBorder(colors: [Colors.orange, Colors.red], radius: coreComponents.board.rad, stroke: 10);
-      coreComponents.world.add(coreComponents.border!);
-    }
   }, onError: (error) {
     // gRPC endpoint sends errors for things like "Game Over", "Game not found" etc. -> 400 Errors
     mCallbacks.showDial(error.message, Colors.red);
@@ -173,35 +146,51 @@ void startGameSocket(GameCoreApi api, GameCoreComponents coreComponents, MainUIC
 /// Changes the state of the playerComponents and the mainPlayerComponent based on the new GameBoard
 ///
 /// Returns a Map containing Components to add (true) and remove (false) from the world
-Map<Component, bool> updateGameBoard(final GameBoard board, final Map<int, PlayerO> playerComps, final int playerID, PlayerC? mainPlayerComponent) {
+Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
   Map<Component, bool> componentBuffer = {};
 
-  final player = board.players[playerID];
-  if (player!=null && mainPlayerComponent!=null) {
-    mainPlayerComponent.pPlayer.x = player.x;
-    mainPlayerComponent.pPlayer.y = player.y;
-    mainPlayerComponent.pPlayer.kills = player.kills;
-    mainPlayerComponent.pPlayer.color = player.color;
-    mainPlayerComponent.pPlayer.ringEnabled = player.ringEnabled;
+  // Create main component if not existent
+  if (coreComp.mainPlayerComponent==null && coreComp.board.players[coreComp.mainPlayerCreds?.id]!=null) {
+    coreComp.mainPlayerComponent
+      = MainPlayer(networkPlayerRep: coreComp.board.players[coreComp.mainPlayerCreds?.id]!, collided: coreComp.mainPlayerCollided);
+
+    coreComp.world.add(coreComp.mainPlayerComponent!);
+  }
+
+  // Update main component
+  final player = coreComp.board.players[coreComp.mainPlayerCreds?.id];
+  if (player!=null && coreComp.mainPlayerComponent!=null) {
+    coreComp.mainPlayerComponent?.networkPlayerRep = player;
   }
 
   // Remove players that are not existent anymore
-  playerComps.removeWhere((id, component) {
-    if (!board.players.containsKey(id)) {
+  coreComp.playerComponents.removeWhere((id, component) {
+    if (!coreComp.board.players.containsKey(id)) {
       componentBuffer.putIfAbsent(component, () => false);
       return true;
     }
     return false;
   });
 
-  for (var pPlayer in board.players.values) {
-    if (!playerComps.containsKey(pPlayer.id)) {
-      final player = PlayerO(pPlayer: pPlayer);
-      if (pPlayer.id!=playerID) {
-        playerComps[pPlayer.id] = player;
+  // Add players that were added and update the existing
+  for (var networkPlayerRep in coreComp.board.players.values) {
+    if (!coreComp.playerComponents.containsKey(networkPlayerRep.id)) {
+      final player = EnemyPlayer(networkPlayerRep: networkPlayerRep);
+      if (networkPlayerRep.id!=coreComp.mainPlayerCreds?.id) {
+        coreComp.playerComponents[networkPlayerRep.id] = player;
         componentBuffer.putIfAbsent(player, () => true);
       }
+    } else {
+      if (networkPlayerRep.id!=coreComp.mainPlayerCreds?.id) {
+        coreComp.playerComponents[networkPlayerRep.id]?.networkPlayerRep = networkPlayerRep;
+      }
     }
+  }
+
+  // Update Game border if necessary
+  if (coreComp.border==null) {
+    coreComp.border = WorldBorder(colors: [Colors.orange, Colors.red], radius: coreComp.board.rad, stroke: 10);
+    coreComp.world.add(coreComp.border!);
   }
 
   return componentBuffer;

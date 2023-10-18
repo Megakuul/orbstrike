@@ -3,35 +3,33 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:orbstrike/proto/game/game.pb.dart';
 
-/// Current player
-class PlayerC extends PositionComponent with CollisionCallbacks {
-  // This variable is a pointer to the player object
-  final Player pPlayer;
+class MainPlayer extends PositionComponent with CollisionCallbacks {
+  Player networkPlayerRep;
   final List<int> collided;
   late ShapeHitbox hitbox;
 
-  PlayerC({required this.pPlayer, required this.collided});
+  MainPlayer({required this.networkPlayerRep, required this.collided});
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
-    if (other is PlayerO) {
-      collided.add(other.pPlayer.id);
+    if (other is EnemyPlayer) {
+      collided.add(other.networkPlayerRep.id);
     }
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
     super.onCollisionEnd(other);
-    if (other is PlayerO) {
-      collided.remove(other.pPlayer.id);
+    if (other is EnemyPlayer) {
+      collided.remove(other.networkPlayerRep.id);
     }
   }
 
   @override
   void onLoad() {
     hitbox = CircleHitbox(
-        radius: pPlayer.rad,
+        radius: networkPlayerRep.rad,
         position: Vector2.all(0),
         anchor: Anchor.center
     )..renderShape = false;
@@ -43,14 +41,14 @@ class PlayerC extends PositionComponent with CollisionCallbacks {
     super.render(canvas);
 
     final paint = Paint()..color = Colors.red;
-    canvas.drawCircle(const Offset(0, 0), pPlayer.rad, paint);
+    canvas.drawCircle(const Offset(0, 0), networkPlayerRep.rad, paint);
 
-    if (pPlayer.ringEnabled) {
+    if (networkPlayerRep.ringEnabled) {
       final ringpnt = Paint()
         ..color = const Color(0xFF000000)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 3;
-      canvas.drawCircle(const Offset(0,0), pPlayer.ringrad, ringpnt);
+      canvas.drawCircle(const Offset(0,0), networkPlayerRep.ringrad, ringpnt);
     }
   }
 
@@ -58,26 +56,24 @@ class PlayerC extends PositionComponent with CollisionCallbacks {
   void update(double dt) {
     super.update(dt);
 
-    if (x!=pPlayer.x || y!=pPlayer.y) {
-      x = pPlayer.x;
-      y = pPlayer.y;
+    if (x!=networkPlayerRep.x || y!=networkPlayerRep.y) {
+      x = networkPlayerRep.x;
+      y = networkPlayerRep.y;
     }
   }
 
 }
 
-/// Other Players
-class PlayerO extends PositionComponent {
-  // This variable is a pointer to the player object
-  final Player pPlayer;
+class EnemyPlayer extends PositionComponent {
+  Player networkPlayerRep;
   late ShapeHitbox hitbox;
 
-  PlayerO({required this.pPlayer});
+  EnemyPlayer({required this.networkPlayerRep});
 
   @override
   void onLoad() {
     hitbox = CircleHitbox(
-        radius: pPlayer.rad,
+        radius: networkPlayerRep.rad,
         position: Vector2.all(0),
         anchor: Anchor.center
     )..renderShape = false;
@@ -89,14 +85,14 @@ class PlayerO extends PositionComponent {
     super.render(canvas);
 
     final paint = Paint()..color = Colors.red;
-    canvas.drawCircle(const Offset(0, 0), pPlayer.rad, paint);
+    canvas.drawCircle(const Offset(0, 0), networkPlayerRep.rad, paint);
 
-    if (pPlayer.ringEnabled) {
+    if (networkPlayerRep.ringEnabled) {
       final ringpnt = Paint()
         ..color = const Color(0xFF000000)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 3;
-      canvas.drawCircle(const Offset(0,0), pPlayer.ringrad, ringpnt);
+      canvas.drawCircle(const Offset(0,0), networkPlayerRep.ringrad, ringpnt);
     }
   }
 
@@ -104,9 +100,9 @@ class PlayerO extends PositionComponent {
   void update(double dt) {
     super.update(dt);
 
-    if (x!=pPlayer.x || y!=pPlayer.y) {
-      x = pPlayer.x;
-      y = pPlayer.y;
+    if (x!=networkPlayerRep.x || y!=networkPlayerRep.y) {
+      x = networkPlayerRep.x;
+      y = networkPlayerRep.y;
     }
   }
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flame/events.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +7,6 @@ import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:grpc/grpc.dart';
-import 'package:orbstrike/Components/GameErrorDialog.dart';
 import 'package:orbstrike/proto/game/game.pbgrpc.dart';
 import 'package:rxdart/rxdart.dart';
 

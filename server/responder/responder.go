@@ -12,6 +12,12 @@ import (
 func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 	for sessionId, Move := range sessionRequests {
 		srv.Mutex.Lock()
+		// Those sessions wait to be collected and handled by the socket and can be skipped
+		if srv.SessionResponses[sessionId]!=nil {
+			srv.Mutex.Unlock()
+			continue
+		}
+		
 		srv.SessionResponses[sessionId] = nil
 		
 		curBoard, ok := srv.Boards[Move.Gameid]
