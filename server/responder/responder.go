@@ -33,7 +33,7 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 		curPlayer := curBoard.Players[int32(decUserkey)]
 		if curPlayer==nil {
 			srv.SessionResponses[sessionId] =
-				fmt.Errorf("Player is not registered in this game")
+				fmt.Errorf("Player is not registered in this game! This issue can occur when the orbstrike gsync scheduler didn't handle the player in time.")
 			srv.Mutex.Unlock()
 			continue
 		}

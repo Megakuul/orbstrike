@@ -77,6 +77,7 @@ func main() {
 		RDB: rdb,
 		GameLifetime: time.Duration(config.GameLifetimeMin)*time.Minute,
 		DailyUserGameLimit: int64(config.DailyUserGameLimit),
+		GameJoinTimeoutSec: int64(config.GameJoinTimeoutSec),
 		ServerSecret: config.Secret,
 	}
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flame/events.dart';
 import 'package:flutter/foundation.dart';
@@ -111,6 +112,8 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
       if (coreComp.mainPlayerCreds!=null) {
         await exitGame(gameId, coreComp.mainPlayerCreds, host, port, credentials);
       }
+      coreApi.stream.close();
+      coreApi.chan?.shutdown();
     } catch (err) {
       if (kDebugMode) {
         print("$err");

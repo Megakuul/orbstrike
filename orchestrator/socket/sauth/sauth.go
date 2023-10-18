@@ -27,6 +27,7 @@ type Server struct {
 	RDB *redis.ClusterClient
 	GameLifetime time.Duration
 	DailyUserGameLimit int64
+	GameJoinTimeoutSec int64
 	ServerSecret string
 	auth.UnimplementedAuthServiceServer
 }
@@ -166,7 +167,32 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 		logger.WriteErrLogger(err)
 		return nil, fmt.Errorf("Failed to add player to queue.")
 	}
+
+	// The part below checks if the player has been handled (taken out of the queue) and responds the client if either the player was handled or the timeout is reached.
+	// TODO: If redis once implements a really simple to use key monitor feature, use this instead of this workaround implementation
+	checkCount := s.GameJoinTimeoutSec
+	checkTick := time.NewTicker(1 * time.Second)
+	defer checkTick.Stop()
 	
+	for range checkTick.C {
+		exists, err := s.RDB.HExists(ctx, "game:queue", string(encPlayer)).Result()
+		if err==redis.Nil || !exists {
+			break
+		} else if err!=nil {
+			logger.WriteErrLogger(err)
+			return nil, fmt.Errorf("Failed to get game queue state.")
+		}
+		if checkCount <= 0 {
+			err := s.RDB.HDel(ctx, "game:queue", string(encPlayer)).Err()
+			if err!=nil {
+				logger.WriteErrLogger(err)
+			}
+			return nil,
+				fmt.Errorf("Timeout while adding player to the game! This issue can occur when the orbstrike gsync scheduler didn't handle the player in time.")
+		}
+		checkCount--
+	}
+
 	return &auth.JoinGameResponse{
 		Userkey: userkey,
 	}, nil

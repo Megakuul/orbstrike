@@ -38,5 +38,7 @@ focontrollerdowntimethresholdms: 3000
 failoverintervalms: 1000
 # Defines the lifetime of a game, when this expires, the game is deleted
 gamelifetimemin: 180
+# Defines after which time the player is removed from the queue (gamejoin is cancelled) when the gsync scheduler doesn't allocate the game.
+gamejointimeoutsec: 10
 # Defines the maximum games that a user can create per 24 hours
 dailyusergamelimit: 20

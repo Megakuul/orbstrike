@@ -30,6 +30,8 @@ type Config struct {
 	FOControllerDowntimeThresholdMS int `mapstructure:"focontrollerdowntimethresholdms"`
 
 	FailOverIntervalMS int `mapstructure:"failoverintervalms"`
+
+	GameJoinTimeoutSec int `mapstructure:"gamejointimeoutsec"`
 	GameLifetimeMin int `mapstructure:"gamelifetimemin"`
 	DailyUserGameLimit int `mapstructure:"dailyusergamelimit"`
 }
@@ -66,6 +68,7 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("failoverintervalms", 1000)
 	viper.SetDefault("gamelifetimemin", 180)
 	viper.SetDefault("dailyusergamelimit", 999999)
+	viper.SetDefault("gamejointimeoutsec", 10)
 
 	err := viper.ReadInConfig()
 	if err!=nil {

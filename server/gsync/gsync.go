@@ -53,7 +53,7 @@ func StartScheduler(srv *sgame.Server, config *conf.Config) {
 		if err!=nil {
 			logger.WriteErrLogger(err)
 		}
-
+		
 		err = removePlayers(srv, gserverId)
 		if err!=nil {
 			logger.WriteErrLogger(err)

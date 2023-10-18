@@ -73,7 +73,6 @@ void joinGame(BuildContext context, GameConfiguration conf, String name) {
                 );
               },
               closeGame: () {
-                print("Haay2");
                 Navigator.of(context).pop();
               }
             )

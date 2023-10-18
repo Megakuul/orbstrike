@@ -124,6 +124,12 @@ void startGameSocket(GameCoreApi api, GameCoreComponents coreComponents, MainUIC
   api.client!.proxyGameboard(api.stream.stream, options: callOptions)
       .listen((game) {
     coreComponents.board = game;
+    print(game.players.length);
+    try {
+      print("${game.players[0]!.x}");
+    } catch (e){}
+
+
     if (coreComponents.mainPlayerComponent==null && coreComponents.board.players[coreComponents.mainPlayerCreds!.id]!=null) {
       coreComponents.mainPlayerComponent
           = PlayerC(pPlayer: coreComponents.board.players[coreComponents.mainPlayerCreds!.id]!, collided: coreComponents.mainPlayerCollided);
