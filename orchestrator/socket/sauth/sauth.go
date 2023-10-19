@@ -130,12 +130,15 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 		return nil, fmt.Errorf("Player creation failed: Internal database failure, try again in 5 minutes")
 	}
 
-
 	var decGame game.GameBoard
 	err = proto.Unmarshal([]byte(encGame), &decGame)
 	if err!=nil {
 		logger.WriteErrLogger(err)
 		return nil, fmt.Errorf("Player creation failed: Failed to load Game")
+	}
+
+	if decGame.MaxPlayers<int32(len(decGame.Players)+1) {
+		return nil, fmt.Errorf("Player creation failed: Game full, no available slots.")
 	}
 
 	// TODO: Implement algorithm for spawning players not always in the center

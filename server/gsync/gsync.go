@@ -26,6 +26,9 @@ func StartScheduler(srv *sgame.Server, config *conf.Config) {
 	// TODO: If the application scales to 100+ instances this may not be enough uniqueness
 	gserverId := time.Now().UnixNano() * int64(rand.Intn(255)) % 10000
 
+	logger.WriteInformationLogger(
+		"Initiating GSync Scheduler...",
+	)
 	var gserverAddr string
 	if config.Addr == "" {
 		hostname, err := os.Hostname()
@@ -196,6 +199,7 @@ func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 	} 
 
 	srv.Mutex.RLock()
+	boardCount := len(srv.Boards)
 	boardBuf := make(map[int32]*game.GameBoard)
 	for strkey := range games {
 		key, err := strconv.Atoi(strkey)
@@ -232,6 +236,13 @@ func syncBoardStates(srv *sgame.Server, gserverId int64) error {
 			boardBuf[int32(key)] = &decBoard
 		}
 	}
+
+	if boardCount!=len(boardBuf) {
+		logger.WriteInformationLogger(
+			"Loaded Games have been adjusted. There are now %d loaded Games.", len(boardBuf),
+		)
+	}
+	
 	srv.Mutex.RUnlock()
 
 	srv.Mutex.Lock()

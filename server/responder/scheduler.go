@@ -3,6 +3,7 @@ package responder
 import (
 	"time"
 
+	"github.com/megakuul/orbstrike/server/logger"
 	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/socket/sgame"
 )
@@ -14,7 +15,10 @@ func StartScheduler(srv *sgame.Server) {
 	}
 	interval :=
 		time.Duration(srv.ResponseIntervalMS)*time.Millisecond
-	
+
+	logger.WriteInformationLogger(
+		"Initiating Response Scheduler...",
+	)
 	for {
 		start := time.Now()
 		workerCount :=

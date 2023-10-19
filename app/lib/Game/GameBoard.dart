@@ -13,6 +13,66 @@ import 'package:rxdart/rxdart.dart';
 import 'package:orbstrike/Game/KeyboardHandler.dart';
 import 'package:orbstrike/Game/GameBoard.helper.dart';
 
+import '../Components/GameErrorDialog.dart';
+
+class GameOverlay extends StatefulWidget {
+  final String host;
+  final int port;
+  final int gameId;
+  final String name;
+  final ChannelCredentials? credentials;
+  const GameOverlay({super.key,
+    required this.host,
+    required this.port,
+    required this.gameId,
+    required this.name,
+    required this.credentials
+  });
+
+  @override
+  State<GameOverlay> createState() => _GameOverlay();
+}
+
+class _GameOverlay extends State<GameOverlay> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+
+      body: GameWidget(
+          game: GameField(
+              gameId: widget.gameId,
+              name: widget.name,
+              host: widget.host,
+              port: widget.port,
+              credentials: widget.credentials,
+              mCallbacks: MainUICallbacks(
+                  showDial: (message, color) {
+                    showDialog (
+                        context: context,
+                        builder: (context) {
+                          return GameErrorDialog(
+                            message: message,
+                            color: color,
+                          );
+                        }
+                    );
+                  },
+                  closeGame: () {
+                    Navigator.of(context).pop();
+                  }
+              )
+          )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+
+        },
+      ),
+    );
+  }
+}
+
+
 class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final String host;
   final int port;
@@ -39,6 +99,7 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
     mainPlayerDirection: Move_Direction.NONE,
     mainPlayerRingState: false,
   );
+
 
   @override
   Color backgroundColor() => Colors.black12;
@@ -83,6 +144,7 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
     coreComp.mainCamera = CameraComponent(world: coreComp.world);
     addAll([coreComp.mainCamera, coreComp.world]);
 

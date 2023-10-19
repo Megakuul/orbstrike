@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 
 import 'package:orbstrike/Game/Player.dart';
+import 'package:orbstrike/Game/WorldBackground.dart';
 import 'package:orbstrike/Game/WorldBorder.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -38,6 +39,7 @@ class GameCoreComponents {
   GameBoard board;
   final World world = World();
   WorldBorder? border;
+  WorldBackground? background;
   MainPlayer? mainPlayerComponent;
   Move_Direction mainPlayerDirection;
   UserCredentials? mainPlayerCreds;
@@ -49,7 +51,6 @@ class GameCoreComponents {
     required this.board,
     required this.mainPlayerDirection,
     required this.mainPlayerRingState,
-    this.border,
     this.mainPlayerCreds,
   });
 }
@@ -190,6 +191,12 @@ Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
   if (coreComp.border==null) {
     coreComp.border = WorldBorder(colors: [Colors.orange, Colors.red], radius: coreComp.board.rad, stroke: 10);
     coreComp.world.add(coreComp.border!);
+  }
+
+  // Update Game background if necessary
+  if (coreComp.background==null) {
+    coreComp.background = WorldBackground(radius: coreComp.board.rad);
+    coreComp.world.add(coreComp.background!);
   }
 
   return componentBuffer;

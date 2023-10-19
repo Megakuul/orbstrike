@@ -34,6 +34,10 @@ func (p *Pool)AdjustWorkers(desiredCount uint) {
 		}
 		p.Workers = p.Workers[:len(p.Workers)+adjustCount]
 	}
+	logger.WriteInformationLogger(
+		"Response Worker Pool has been adjusted. There are now %d workers running.",
+		len(p.Workers),
+	)
 }
 
 const LOAD_FACTOR = 0.8
@@ -72,6 +76,7 @@ func (p *PoolWorker)StopPoolWorker() {
 }
 
 func (p *PoolWorker)StartPoolWorker() {
+	
 	for {
 		select {
 		case task, ok := <-p.Queue:

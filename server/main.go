@@ -46,6 +46,9 @@ func main() {
 		fmt.Println(err)
 	}
 
+	logger.WriteInformationLogger(
+		"Connecting to database cluster...",
+	)
 	rdb, err = db.StartClient(&config)
 	if err!=nil {
 		logger.WriteErrLogger(
@@ -78,7 +81,7 @@ func main() {
 		ResponseIntervalMS: config.ResponseIntervalMS,
 		RequestPerWorker: config.RequestPerWorker,
 	}
-	
+
 	var grpcSrv *grpc.Server
 	if tlscred!=nil {
 		// Encrypted Socket
@@ -96,7 +99,7 @@ func main() {
 	go gsync.StartScheduler(server, &config)
 	
 	go responder.StartScheduler(server)
-	
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err!=nil {
 		logger.WriteErrLogger(

@@ -1,12 +1,9 @@
 import 'package:grpc/grpc.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:orbstrike/Components/CreateGameDialog.dart';
 import 'package:orbstrike/Components/ElevatedIconButton.dart';
-import 'package:orbstrike/Components/GameErrorDialog.dart';
 import 'package:orbstrike/Components/GradientText.dart';
 import 'package:orbstrike/Components/InputField.dart';
-import 'package:orbstrike/Game/GameBoard.helper.dart';
 import 'package:orbstrike/proto/auth/auth.pbgrpc.dart';
 
 import 'Game/GameBoard.dart';
@@ -51,33 +48,15 @@ Future<int> createGame(GameConfiguration conf,
 
 void joinGame(BuildContext context, GameConfiguration conf, String name) {
   Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => GameWidget(game: GameField(
-            gameId: conf.gameID,
-            name: name,
-            host: conf.hostname,
-            port: conf.port,
-            credentials: conf.credentials,
-            mCallbacks: MainUICallbacks(
-              showDial: (message, color) {
-                Navigator.of(context).pop();
-                print("$message");
-                showDialog (
-                  context: context,
-                  builder: (context) {
-                    return GameErrorDialog(
-                      message: message,
-                      color: color,
-                    );
-                  }
-                );
-              },
-              closeGame: () {
-                Navigator.of(context).pop();
-              }
-            )
-          ))
+    MaterialPageRoute(
+      builder: (context) => GameOverlay(
+        host: conf.hostname,
+        port: conf.port,
+        gameId: conf.gameID,
+        name: name,
+        credentials: conf.credentials,
       )
+    )
   );
 }
 
