@@ -32,8 +32,8 @@ db_base64_ssl_ca: ""
 maxchannelsize: 10
 # Defines how much requests are processed synchron per worker
 requestperworker: 15
-# Defines the interval in which responses are sent to the clients
-responseintervalms: 15
+# Defines the interval in which responses are sent to the clients (do not use 0 as this would execute as fast as possible, what makes the speed of players based on the speed of the instance)
+responseintervalms: 10
 # Defines the interval in which game is synchronized with the database
 syncintervalms: 1000
 # Defines the offline-threshold until the orchestrator will panic and reallocate the games

@@ -79,27 +79,28 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 				}
 			}
 		} else {
+			speed := curPlayer.Speed * float64(srv.ResponseIntervalMS) / 100;
 			switch (Move.Direction) {
 			case game.Move_UP:
-				curPlayer.Y -= curPlayer.Speed
+				curPlayer.Y -= speed
 			case game.Move_UP_LEFT:
-				curPlayer.Y -= curPlayer.Speed
-				curPlayer.X -= curPlayer.Speed
+				curPlayer.Y -= speed
+				curPlayer.X -= speed
 			case game.Move_UP_RIGHT:
-				curPlayer.X += curPlayer.Speed
-				curPlayer.Y -= curPlayer.Speed
+				curPlayer.X += speed
+				curPlayer.Y -= speed
 			case game.Move_DOWN:
-				curPlayer.Y += curPlayer.Speed
+				curPlayer.Y += speed
 			case game.Move_DOWN_LEFT:
-				curPlayer.Y += curPlayer.Speed
-				curPlayer.X -= curPlayer.Speed
+				curPlayer.Y += speed
+				curPlayer.X -= speed
 			case game.Move_DOWN_RIGHT:
-				curPlayer.Y += curPlayer.Speed
-				curPlayer.X += curPlayer.Speed			
+				curPlayer.Y += speed
+				curPlayer.X += speed			
 			case game.Move_LEFT:
-				curPlayer.X -= curPlayer.Speed
+				curPlayer.X -= speed
 			case game.Move_RIGHT:
-				curPlayer.X += curPlayer.Speed
+				curPlayer.X += speed
 			}
 		}
 		srv.Mutex.Unlock()

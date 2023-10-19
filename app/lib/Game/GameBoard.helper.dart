@@ -50,7 +50,6 @@ class GameCoreComponents {
     required this.mainPlayerDirection,
     required this.mainPlayerRingState,
     this.border,
-    this.mainPlayerComponent,
     this.mainPlayerCreds,
   });
 }

@@ -5,21 +5,20 @@ import (
 
 	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/socket/sgame"
-	"github.com/megakuul/orbstrike/server/conf"
 )
 
-func StartScheduler(srv *sgame.Server, config *conf.Config) {
+func StartScheduler(srv *sgame.Server) {
 	pool := &Pool{
 		Workers: []PoolWorker{},
-		MaxQueueSize: config.MaxChannelSize,
+		MaxQueueSize: srv.MaxChannelSize,
 	}
 	interval :=
-		time.Duration(config.ResponseIntervalMS)*time.Millisecond
+		time.Duration(srv.ResponseIntervalMS)*time.Millisecond
 	
 	for {
 		start := time.Now()
 		workerCount :=
-			(len(srv.SessionRequests) + config.RequestPerWorker -1) / config.RequestPerWorker
+			(len(srv.SessionRequests) + srv.RequestPerWorker -1) / srv.RequestPerWorker
 		
 		pool.AdjustWorkers(uint(workerCount))
 

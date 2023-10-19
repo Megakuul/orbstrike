@@ -18,6 +18,10 @@ type Server struct {
 	SessionResponses map[int64]error
 	Mutex mutex.RWMutex
 	ServerSecret string
+
+	MaxChannelSize int
+	ResponseIntervalMS int
+	RequestPerWorker int
 	game.UnimplementedGameServiceServer
 }
 

@@ -195,6 +195,7 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 
 	return &auth.JoinGameResponse{
 		Userkey: userkey,
+		Userid: int32(playerid),
 	}, nil
 }
 

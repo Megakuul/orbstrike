@@ -73,6 +73,10 @@ func main() {
 		SessionRequests: map[int64]*game.Move{},
 		SessionResponses: map[int64]error{},
 		ServerSecret: config.Secret,
+
+		MaxChannelSize: config.MaxChannelSize,
+		ResponseIntervalMS: config.ResponseIntervalMS,
+		RequestPerWorker: config.RequestPerWorker,
 	}
 	
 	var grpcSrv *grpc.Server
@@ -91,7 +95,7 @@ func main() {
 
 	go gsync.StartScheduler(server, &config)
 	
-	go responder.StartScheduler(server, &config)
+	go responder.StartScheduler(server)
 	
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err!=nil {
