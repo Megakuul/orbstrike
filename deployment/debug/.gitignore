@@ -4,6 +4,9 @@ appendonly.aof
 debug.server.log
 debug.orchestrator.log
 
+appendonly.*
+*.aof
+
 server
 orchestrator
 *.exe

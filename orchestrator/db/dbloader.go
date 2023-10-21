@@ -1,10 +1,11 @@
 package db
 
 import (
+	"fmt"
 	"context"
 	"strings"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/megakuul/orbstrike/orchestrator/conf"
 	"github.com/megakuul/orbstrike/orchestrator/ssl"
 )
@@ -19,6 +20,8 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 	if err!=nil {
 		return nil, err
 	}
+
+	fmt.Println(len(strings.Split(config.DBShardNodes, ",")))
 
 	rdb:=redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs: strings.Split(config.DBShardNodes, ","),

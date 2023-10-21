@@ -12,7 +12,7 @@ import (
 	"github.com/megakuul/orbstrike/orchestrator/proto/auth"
 	"github.com/megakuul/orbstrike/orchestrator/proto/game"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -96,7 +96,7 @@ func (s *Server) CreateGame(ctx context.Context, req *auth.CreateGameRequest) (*
 		return nil, fmt.Errorf("Game creation failed: unable to parse game-template.")
 	}
 
-	err = s.RDB.SetEX(ctx,
+	err = s.RDB.Set(ctx,
 		fmt.Sprintf("game:%d", gameid),
 		encGameBoard, s.GameLifetime,
 	).Err()

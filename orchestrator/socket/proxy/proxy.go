@@ -11,7 +11,7 @@ import (
 	"github.com/megakuul/orbstrike/orchestrator/logger"
 	"github.com/megakuul/orbstrike/orchestrator/proto/game"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"

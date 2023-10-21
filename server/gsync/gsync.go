@@ -13,7 +13,7 @@ import (
 	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/socket/sgame"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -44,7 +44,7 @@ func StartScheduler(srv *sgame.Server, config *conf.Config) {
 	for {
 		start:=time.Now()
 	
-		err := srv.RDB.SetEX(ctx,
+		err := srv.RDB.Set(ctx,
 			fmt.Sprintf("gserver:%d:addr", gserverId),
 			gserverAddr,
 			time.Duration(config.DowntimeThresholdMS)*time.Millisecond).Err();

@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/mutex"
 )

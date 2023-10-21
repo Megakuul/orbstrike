@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/megakuul/orbstrike/server/conf"
 	"github.com/megakuul/orbstrike/server/ssl"
 )

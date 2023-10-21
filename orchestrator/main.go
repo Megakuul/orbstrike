@@ -16,7 +16,7 @@ import (
 	"github.com/megakuul/orbstrike/orchestrator/socket/sauth"
 	"github.com/megakuul/orbstrike/orchestrator/ssl"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 )
 

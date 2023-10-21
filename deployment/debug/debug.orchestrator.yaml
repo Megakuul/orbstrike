@@ -17,7 +17,7 @@ base64_ssl_ca: ""
 
 # Foreach shard add at least one instance of the replication (best is to use the default master)
 ## dbshardnodes: "10.100.32.10:6379,10.100.32.20:6379"
-dbshardnodes: "localhost:7001"
+dbshardnodes: "127.0.0.1:7001,127.0.0.1:7002,127.0.0.1:7003"
 
 # Specify Redis username and password from ACL
 dbusername: "u_orbstrike_api_rw"
