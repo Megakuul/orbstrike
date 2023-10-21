@@ -13,3 +13,5 @@ orchestrator
 
 *.crt
 *.key
+
+*.rdb
