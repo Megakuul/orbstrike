@@ -31,7 +31,7 @@ func StartScheduler(srv *sgame.Server) {
 			pool.Workers[i].AddResponse(slice, srv)
 		}
 		srv.Mutex.RUnlock()
-		
+
 		elapsed := time.Since(start)
         if elapsed < interval {
             time.Sleep(interval - elapsed)

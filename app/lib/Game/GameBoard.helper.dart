@@ -195,7 +195,13 @@ Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
 
   // Update Game background if necessary
   if (coreComp.background==null) {
-    coreComp.background = WorldBackground(radius: coreComp.board.rad);
+    coreComp.background = WorldBackground(
+      radius: coreComp.board.rad,
+      rectSize: 5,
+      rectBorderRadius: 12,
+      rectPaint: Paint()..color=const Color.fromRGBO(54,57,62, 0.7),
+      rectSpacing: 50,
+    );
     coreComp.world.add(coreComp.background!);
   }
 

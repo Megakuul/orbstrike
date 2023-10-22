@@ -1,15 +1,50 @@
+import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 
-// TODO: Do something else, its absolutely ugly and not what i expected + its in foreground
 class WorldBackground extends PositionComponent {
   final double radius;
-  static const offset = Offset(0, 0);
-  Paint paint = Paint()
-      ..color=Colors.orange;
+  final double rectSize;
+  final double rectSpacing;
+  final double rectBorderRadius;
+  final Paint rectPaint;
 
-  WorldBackground({required this.radius});
+  ui.Picture? bgPicture;
+  ui.Image? bgImage;
+  ui.PictureRecorder bgRecorder = ui.PictureRecorder();
+
+  WorldBackground({required this.radius, required this.rectSize, required this.rectSpacing, required this.rectBorderRadius, required this.rectPaint}) {
+    bgPicture = prerenderBackground(
+      bgRecorder,
+      radius,
+      rectSize,
+      rectSpacing,
+      rectBorderRadius
+    );
+  }
+
+  /// Prerender Background matrix
+  ///
+  /// Background matrix is prerendered, as it is static,
+  /// we don't want it to be calculated on every render frame of the screen
+  ui.Picture prerenderBackground(ui.PictureRecorder rec, double radius, double rectSize, double spacing, double borderRadius) {
+    final offscreenCanvas = Canvas(rec);
+    final size = radius*2;
+
+    for (double x = 0; x <= size; x += rectSize+spacing) {
+      for (double y = 0; y <= size; y += rectSize+spacing) {
+        if ((Offset(x, y) - Offset(radius, radius)).distance <= radius) {
+          final rect = RRect.fromLTRBR(
+              x, y, x + rectSize, y + rectSize,
+              Radius.circular(borderRadius)
+          );
+          offscreenCanvas.drawRRect(rect, rectPaint);
+        }
+      }
+    }
+    return rec.endRecording();
+  }
 
   @override
   double get z => -1000;
@@ -18,20 +53,15 @@ class WorldBackground extends PositionComponent {
   bool get isHud => false;
 
   @override
-  void render(Canvas canvas) {
-    const double rectSize = 20;  // Adjust size as needed
-    const double borderRadius = 5;
+  int get priority => -1000;
 
-    for (double x = -radius; x <= radius; x += rectSize) {
-      for (double y = -radius; y <= radius; y += rectSize) {
-        if ((Offset(x, y) - offset).distance <= radius) {
-          final rect = RRect.fromLTRBR(
-              x, y, x + rectSize, y + rectSize,
-              const Radius.circular(borderRadius)
-          );
-          canvas.drawRRect(rect, paint);
-        }
-      }
+  @override
+  void render(Canvas canvas) async {
+    if (bgImage==null) {
+      final size = (radius*2).toInt() + 1;
+      bgImage = await bgPicture?.toImage(size, size);
+    } else {
+      canvas.drawImage(bgImage!, Offset(-radius, -radius), Paint());
     }
   }
 }

@@ -37,7 +37,7 @@ class _GameOverlay extends State<GameOverlay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      backgroundColor: const Color.fromRGBO(30,33,36, 1),
       body: GameWidget(
           game: GameField(
               gameId: widget.gameId,
@@ -64,8 +64,10 @@ class _GameOverlay extends State<GameOverlay> {
           )
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: "Leave the game",
+        child: const Icon(Icons.exit_to_app_outlined),
         onPressed: () {
-
+          Navigator.of(context).pop();
         },
       ),
     );
@@ -167,6 +169,8 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   @override
   Future<void> onDispose() async {
     super.onDispose();
+
+    print("Disposed");
 
     try {
       if (coreComp.mainPlayerCreds!=null) {

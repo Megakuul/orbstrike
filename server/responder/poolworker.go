@@ -83,7 +83,7 @@ func (p *PoolWorker)StartPoolWorker() {
 			if ok {
 				task()
 			} else {
-				break
+				return
 			}
 		}
 	}

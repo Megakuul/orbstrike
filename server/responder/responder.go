@@ -57,11 +57,11 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 			continue
 		}
 
-		curPlayer.RingEnabled = sessionRequests[sessionId].EnableRing
+		curPlayer.RingEnabled = Move.EnableRing
 		
 
 		if (curPlayer.RingEnabled) {	
-			for _,pid := range sessionRequests[sessionId].HitPlayers {
+			for _,pid := range Move.HitPlayers {
 				curTar, ok := curBoard.Players[pid]
 				if !ok {
 					continue
