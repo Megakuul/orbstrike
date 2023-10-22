@@ -20,6 +20,9 @@ const MAX_MAP_RADIUS = 10000
 const MAX_PLAYERS = 100
 const MAX_SPEED = 50
 const MAX_PL_RAD = 250
+const MAX_USERNAME_CHARS = 50
+
+const PLAYER_COLORS = 8
 
 var ctx context.Context = context.Background()
 
@@ -116,6 +119,10 @@ func (s *Server) CreateGame(ctx context.Context, req *auth.CreateGameRequest) (*
 }
 
 func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth.JoinGameResponse, error) {
+	if len(req.Name)>MAX_USERNAME_CHARS {
+		return nil, fmt.Errorf("Player creation failed: Username is too long.")
+	}
+	
 	playerid, err := s.RDB.Incr(ctx, "player:counter").Result()
 	if err!=nil {
 		logger.WriteErrLogger(err)
@@ -136,7 +143,7 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 		logger.WriteErrLogger(err)
 		return nil, fmt.Errorf("Player creation failed: Failed to load Game")
 	}
-
+	
 	if decGame.MaxPlayers<int32(len(decGame.Players)+1) {
 		return nil, fmt.Errorf("Player creation failed: Game full, no available slots.")
 	}
@@ -149,7 +156,7 @@ func (s *Server) JoinGame(ctx context.Context, req *auth.JoinGameRequest) (*auth
 		Y: 0,
 		Rad: decGame.PlayerRad,
 		Ringrad: decGame.PlayerRingRad,
-		Color: int32(rand.Intn(8)),
+		Color: int32(rand.Intn(PLAYER_COLORS)),
 		Kills: 0,
 		RingEnabled: false,
 		Speed: decGame.Speed,

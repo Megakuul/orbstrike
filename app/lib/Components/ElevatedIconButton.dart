@@ -34,7 +34,6 @@ class ElevatedIconButton extends StatelessWidget {
           shadowColor: Colors.transparent,
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [text, icon],
         )

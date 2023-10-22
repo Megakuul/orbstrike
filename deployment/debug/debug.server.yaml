@@ -1,5 +1,5 @@
 # This is an example config, those options can also be configured with ENV-Variables
-port: 50050
+port: 10187
 # Defines the address to which the orchestrator will connect, when left on "" it will take the hostname instead, this is usually used with Container-Engines with built-in DNS support
 addr: ""
 # Shared secret required on both the Orchestrator and GameServers for validation, similar to a JWT Secret.

@@ -15,15 +15,27 @@ class GameErrorDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: const Text(
         "Game Error",
-        style: TextStyle(color: Colors.white60),
+        style: TextStyle(color: Colors.white60, fontSize: 15),
         textAlign: TextAlign.center,
       ),
       insetPadding: const EdgeInsets.all(12),
-      backgroundColor: const Color.fromRGBO(46,49,54, 1),
-      content: Text(message),
+      backgroundColor: color,
+      content: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Text(
+          message,
+          style: TextStyle(
+            color: Colors.white60,
+            fontSize: message.length<20 ? 40 : 15,
+            fontWeight: FontWeight.w600
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
       actions: [
         TextButton(
           onPressed: () {
+            Navigator.pop(context);
             Navigator.pop(context);
           },
           child: const Text("Exit"),

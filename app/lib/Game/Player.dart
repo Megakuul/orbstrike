@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
@@ -61,12 +63,13 @@ class MainPlayer extends PositionComponent with CollisionCallbacks {
       y = networkPlayerRep.y;
     }
   }
-
 }
 
 class EnemyPlayer extends PositionComponent {
   Player networkPlayerRep;
   late ShapeHitbox hitbox;
+
+  final TextPainter textPainter = TextPainter();
 
   EnemyPlayer({required this.networkPlayerRep});
 
@@ -85,6 +88,7 @@ class EnemyPlayer extends PositionComponent {
     super.render(canvas);
 
     final paint = Paint()..color = Colors.red;
+
     canvas.drawCircle(const Offset(0, 0), networkPlayerRep.rad, paint);
 
     if (networkPlayerRep.ringEnabled) {
@@ -94,6 +98,17 @@ class EnemyPlayer extends PositionComponent {
         ..strokeWidth = 3;
       canvas.drawCircle(const Offset(0,0), networkPlayerRep.ringrad, ringpnt);
     }
+
+    // Draw text
+    textPainter
+      ..text = TextSpan(
+        text: networkPlayerRep.name,
+        style: const TextStyle(color: Colors.white, fontSize: 12),
+      )
+      ..textDirection = TextDirection.ltr
+      ..textAlign = TextAlign.center
+      ..layout()
+      ..paint(canvas, Offset(-(textPainter.width / 2), networkPlayerRep.rad+10));
   }
 
   @override

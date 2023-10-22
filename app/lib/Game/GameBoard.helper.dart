@@ -19,9 +19,10 @@ class UserCredentials {
 
 class MainUICallbacks {
   final void Function(String message, Color color) showDial;
-  final void Function() closeGame;
+  final void Function(String message, Color color) showSnack;
+  final void Function(bool loading) setProgress;
 
-  MainUICallbacks({required this.showDial, required this.closeGame});
+  MainUICallbacks({required this.showDial, required this.showSnack, required this.setProgress});
 }
 
 class GameCoreApi {
@@ -29,6 +30,7 @@ class GameCoreApi {
   GameServiceClient? client;
   BehaviorSubject<Move> stream;
   ChannelCredentials? credentials;
+  bool shutdown = false;
 
   GameCoreApi({required this.stream, this.chan, this.client, this.credentials});
 }
@@ -77,11 +79,11 @@ Future<UserCredentials> joinGame(int gameId, String name, String host, int port,
 
 Future<void> exitGame(int gameId, UserCredentials? userCreds, String host, int port, ChannelCredentials? credentials) async {
   final client = AuthServiceClient(
-      ClientChannel(
-          host,
-          port: port,
-          options: ChannelOptions(credentials: credentials ?? const ChannelCredentials.insecure())
-      )
+    ClientChannel(
+      host,
+      port: port,
+      options: ChannelOptions(credentials: credentials ?? const ChannelCredentials.insecure())
+    )
   );
 
   final req = ExitGameRequest(
@@ -93,7 +95,7 @@ Future<void> exitGame(int gameId, UserCredentials? userCreds, String host, int p
 
 void startGameSocket(GameCoreApi api, GameCoreComponents coreComponents, MainUICallbacks mCallbacks, int gameId, String host, int port) {
   bool isExpectedDone = false;
-  int reconnectTimeout = 5;
+  int reconnectTimeout = 3;
 
   if (api.chan != null) {
     api.chan!.shutdown();
@@ -128,14 +130,13 @@ void startGameSocket(GameCoreApi api, GameCoreComponents coreComponents, MainUIC
     });
   }, onError: (error) {
     // gRPC endpoint sends errors for things like "Game Over", "Game not found" etc. -> 400 Errors
-    mCallbacks.showDial(error.message, Colors.red);
-    mCallbacks.closeGame();
-    isExpectedDone = true;
+    mCallbacks.showDial(error.message, const Color.fromRGBO(222, 4, 4, 1));
+    api.shutdown = true;
   }, onDone: () {
-    if (!isExpectedDone) {
-      mCallbacks.showDial("Reconnecting...", Colors.red);
+    if (!api.shutdown) {
+      mCallbacks.showSnack("Reconnecting...", Colors.red);
       // gRPC endpoint closes connection when facing a unexpected issue (e.g. read EOF, major failure etc.) -> 500 Errors
-      // Wait 5 seconds, on major failures this gives the cluster time to rebuild pods without being spammed.
+      // Wait {reconnectTimeout} seconds, on major failures this gives the cluster time to rebuild pods without being spammed.
       Future.delayed(Duration(seconds: reconnectTimeout), () {
         startGameSocket(api, coreComponents, mCallbacks, gameId, host, port);
       });

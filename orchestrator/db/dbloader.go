@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"context"
 	"strings"
 
@@ -20,8 +19,6 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 	if err!=nil {
 		return nil, err
 	}
-
-	fmt.Println(len(strings.Split(config.DBShardNodes, ",")))
 
 	rdb:=redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs: strings.Split(config.DBShardNodes, ","),

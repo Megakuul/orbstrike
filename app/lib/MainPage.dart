@@ -74,13 +74,13 @@ class _MainPage extends State<MainPage> {
   final hostController = TextEditingController();
   final portController = TextEditingController();
 
-  final gameRadiusController = TextEditingController();
-  final gamePlayerRadiusController = TextEditingController();
-  final gamePlayerRingRadiusController = TextEditingController();
-  final gameSpeedController = TextEditingController();
-  final gameMaxPlayerController = TextEditingController();
+  final gameRadiusController = TextEditingController(text: "2000");
+  final gamePlayerRadiusController = TextEditingController(text: "50");
+  final gamePlayerRingRadiusController = TextEditingController(text: "70");
+  final gameSpeedController = TextEditingController(text: "10");
+  final gameMaxPlayerController = TextEditingController(text: "20");
 
-  final playerName = TextEditingController();
+  final playerNameController = TextEditingController();
 
   @override
   void initState() {
@@ -128,31 +128,48 @@ class _MainPage extends State<MainPage> {
               ],
             ),
           ),
-
           Container(
             alignment: Alignment.center,
-            width: 250,
-            child: InputField(
-              mx: 5, my: 5,
-              hint: "Game Identifier",
-              controller: gameIdController,
-              radius: 12,
-              onChanged: (_) {
-                widget.gameConfig.gameID =
-                    int.tryParse(gameIdController.text) ?? widget.gameConfig.gameID;
-              },
+            width: 500,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: InputField(
+                    mx: 5, my: 5,
+                    hint: "Game Identifier",
+                    controller: gameIdController,
+                    radius: 12,
+                    onChanged: (_) {
+                      widget.gameConfig.gameID =
+                          int.tryParse(gameIdController.text) ?? widget.gameConfig.gameID;
+                    },
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: InputField(
+                    mx: 5, my: 5,
+                    hint: "Username",
+                    controller: playerNameController,
+                    radius: 12
+                  ),
+                ),
+              ],
             ),
           ),
           Container(
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: Alignment.center,
+            width: 500,
+            child: Row(
               children: [
-                ElevatedIconButton(
-                  text: const Text("Create Game", style: TextStyle(fontSize: 25)),
-                  icon: const Icon(Icons.create),
-                  mx: 20, my: 20,
-                  gradient: const LinearGradient(
+                Expanded(
+                  flex: 5,
+                  child: ElevatedIconButton(
+                    text: const Text("Create Game", style: TextStyle(fontSize: 25)),
+                    icon: const Icon(Icons.create),
+                    mx: 20, my: 5,
+                    gradient: const LinearGradient(
                       colors: [
                         Color.fromRGBO(54,57,62, 0.7),
                         Color.fromRGBO(46,49,54, 0.7),
@@ -160,77 +177,80 @@ class _MainPage extends State<MainPage> {
                       ],
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight
-                  ),
-                  onPressed: () async {
-                    try {
-                      final res = await showDialog<String>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CreateGameDialog(
-                            radiusController: gameRadiusController,
-                            plRadiusController: gamePlayerRadiusController,
-                            plRingRadiusController: gamePlayerRingRadiusController,
-                            speedController: gameSpeedController,
-                            maxPlayerController: gameMaxPlayerController,
-                          );
-                        }
-                      );
+                    ),
+                    onPressed: () async {
+                      try {
+                        final res = await showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CreateGameDialog(
+                              radiusController: gameRadiusController,
+                              plRadiusController: gamePlayerRadiusController,
+                              plRingRadiusController: gamePlayerRingRadiusController,
+                              speedController: gameSpeedController,
+                              maxPlayerController: gameMaxPlayerController,
+                            );
+                          }
+                        );
 
-                      if (res!="Create") { return; }
+                        if (res!="Create") { return; }
 
-                      final double? radius =
+                        final double? radius =
                         double.tryParse(gameRadiusController.text);
-                      if (radius==null) {
-                        throw Exception("Map Size must be a number!");
-                      }
-                      final double? plRadius =
-                      double.tryParse(gamePlayerRadiusController.text);
-                      if (plRadius==null) {
-                        throw Exception("Player Size must be a number!");
-                      }
-                      final double? plRingRadius =
-                      double.tryParse(gamePlayerRingRadiusController.text);
-                      if (plRingRadius==null) {
-                        throw Exception("Player Ring Size must be a number!");
-                      }
-                      final double? speed =
-                      double.tryParse(gameSpeedController.text);
-                      if (speed==null) {
-                        throw Exception("Speed must be a number!");
-                      }
-                      final int? maxPlayers =
+                        if (radius==null) {
+                          throw Exception("Map Size must be a number!");
+                        }
+                        final double? plRadius =
+                        double.tryParse(gamePlayerRadiusController.text);
+                        if (plRadius==null) {
+                          throw Exception("Player Size must be a number!");
+                        }
+                        final double? plRingRadius =
+                        double.tryParse(gamePlayerRingRadiusController.text);
+                        if (plRingRadius==null) {
+                          throw Exception("Player Ring Size must be a number!");
+                        }
+                        final double? speed =
+                        double.tryParse(gameSpeedController.text);
+                        if (speed==null) {
+                          throw Exception("Speed must be a number!");
+                        }
+                        final int? maxPlayers =
                         int.tryParse(gameMaxPlayerController.text);
-                      if (maxPlayers==null) {
-                        throw Exception("Max Players must be a number!");
-                      }
+                        if (maxPlayers==null) {
+                          throw Exception("Max Players must be a number!");
+                        }
 
-                      final gameId = await createGame(
+                        final gameId = await createGame(
                           widget.gameConfig,
                           radius,
                           plRadius,
                           plRingRadius,
                           speed,
                           maxPlayers
-                      );
+                        );
 
-                      setState(() {
-                        widget.gameConfig.latestGameIDs.insert(0, gameId);
-                      });
-                    } catch (err) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.red,
-                          content: Text("ERROR: $err")
-                        )
-                      );
-                    }
-                  },
+                        setState(() {
+                          widget.gameConfig.latestGameIDs.insert(0, gameId);
+                        });
+                      } catch (err) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.red,
+                            content: Text("ERROR: $err")
+                          )
+                        );
+                      }
+                    },
+                  ),
                 ),
-                ElevatedIconButton(
-                  text: const Text("Join Game", style: TextStyle(fontSize: 25)),
-                  icon: const Icon(Icons.directions_run),
-                  mx: 20, my: 20,
-                  gradient: const LinearGradient(
+                Expanded(
+                  flex: 5,
+                  child: ElevatedIconButton(
+                    text: const Text("Join Game", style: TextStyle(fontSize: 25)),
+                    icon: const Icon(Icons.directions_run),
+                    mx: 20, my: 5,
+                    gradient: const LinearGradient(
                       colors: [
                         Color.fromRGBO(54,57,62, 0.7),
                         Color.fromRGBO(46,49,54, 0.7),
@@ -238,16 +258,16 @@ class _MainPage extends State<MainPage> {
                       ],
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight
+                    ),
+                    onPressed: () {
+                      widget.gameConfig.gameID = int.tryParse(gameIdController.text) ?? 0;
+                      joinGame(context, widget.gameConfig, playerNameController.text);
+                    },
                   ),
-                  onPressed: () {
-                    widget.gameConfig.gameID = int.tryParse(gameIdController.text) ?? 0;
-                    joinGame(context, widget.gameConfig, playerName.text);
-                  },
                 ),
               ],
             ),
           ),
-
           Expanded(
             child: Container(
               decoration: BoxDecoration(

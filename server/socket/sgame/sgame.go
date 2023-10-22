@@ -44,7 +44,7 @@ func (s *Server) StreamGameboard(stream game.GameService_StreamGameboardServer) 
 
 		curBoard, ok := s.Boards[req.Gameid]
 		if !ok {
-			err = fmt.Errorf("No such game %d", req.Gameid)
+			err = fmt.Errorf("Game with id %d not found", req.Gameid)
 			break
 		}
 

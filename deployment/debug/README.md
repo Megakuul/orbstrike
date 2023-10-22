@@ -9,13 +9,14 @@ The instructions require you to have the *flutter sdk* and the *go* compiler ins
 ### Installation Redis
 
 Install redis
-**Important**: Make sure to install at least redis 7.0.0, the library used does not support redis-servers below version 7. It will produce weird errors.
+**Important**: Make sure to install at least redis 7.0.0, the library used, does not support redis-clusters below version 7.
 ```bash
 # Arch
 sudo pacman -S redis
 
 # Ubuntu/Debian
-sudo apt install redis-server
+sudo add-apt-repository ppa:redislabs/redis && sudo apt update -y
+sudo apt install redis
 ```
 
 ### Run Redis Cluster

@@ -16,8 +16,6 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
-
-	"net/http"
 )
 
 var config conf.Config
