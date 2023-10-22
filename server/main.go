@@ -18,18 +18,12 @@ import (
 	"google.golang.org/grpc"
 
 	"net/http"
-	_ "net/http/pprof"
 )
 
 var config conf.Config
 var rdb *redis.ClusterClient
 
 func main() {
-
-	go func() {
-		fmt.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
-	
 	var cfgFile string
 	if len(os.Args) > 1 {
 		cfgFile = os.Args[1]
