@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 
@@ -20,7 +21,7 @@ class UserCredentials {
 class MainUICallbacks {
   final void Function(String message, Color color) showDial;
   final void Function(String message, Color color) showSnack;
-  final void Function(bool loading) setProgress;
+  final void Function(bool loading, String message) setProgress;
 
   MainUICallbacks({required this.showDial, required this.showSnack, required this.setProgress});
 }
@@ -48,6 +49,7 @@ class GameCoreComponents {
   bool mainPlayerRingState;
   final List<int> mainPlayerCollided = [];
   final Map<int, EnemyPlayer> playerComponents = {};
+  late SpriteSheet playerSpriteSheet;
 
   GameCoreComponents({
     required this.board,
@@ -153,7 +155,11 @@ Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
   // Create main component if not existent
   if (coreComp.mainPlayerComponent==null && coreComp.board.players[coreComp.mainPlayerCreds?.id]!=null) {
     coreComp.mainPlayerComponent
-      = MainPlayer(networkPlayerRep: coreComp.board.players[coreComp.mainPlayerCreds?.id]!, collided: coreComp.mainPlayerCollided);
+      = MainPlayer(
+      networkPlayerRep: coreComp.board.players[coreComp.mainPlayerCreds?.id]!,
+      collided: coreComp.mainPlayerCollided,
+      spriteSheet: coreComp.playerSpriteSheet,
+    );
 
     coreComp.world.add(coreComp.mainPlayerComponent!);
   }
@@ -176,7 +182,7 @@ Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
   // Add players that were added and update the existing
   for (var networkPlayerRep in coreComp.board.players.values) {
     if (!coreComp.playerComponents.containsKey(networkPlayerRep.id)) {
-      final player = EnemyPlayer(networkPlayerRep: networkPlayerRep);
+      final player = EnemyPlayer(networkPlayerRep: networkPlayerRep, spriteSheet: coreComp.playerSpriteSheet);
       if (networkPlayerRep.id!=coreComp.mainPlayerCreds?.id) {
         coreComp.playerComponents[networkPlayerRep.id] = player;
         componentBuffer.putIfAbsent(player, () => true);

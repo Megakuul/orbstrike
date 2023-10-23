@@ -22,7 +22,7 @@ const MAX_SPEED = 50
 const MAX_PL_RAD = 250
 const MAX_USERNAME_CHARS = 50
 
-const PLAYER_COLORS = 8
+const PLAYER_COLORS = 5
 
 var ctx context.Context = context.Background()
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/events.dart';
+import 'package:flame/sprite.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class GameOverlay extends StatefulWidget {
 
 class _GameOverlay extends State<GameOverlay> {
   ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
+  String loadingMsg = "";
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +72,9 @@ class _GameOverlay extends State<GameOverlay> {
                     )
                   );
                 },
-                setProgress: (loading) {
+                setProgress: (loading, msg) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
+                    loadingMsg = msg;
                     isLoading.value = loading;
                   });
                 }
@@ -85,13 +88,13 @@ class _GameOverlay extends State<GameOverlay> {
                 return Positioned.fill(
                   child: Container(
                     color: Colors.black.withOpacity(0.5),
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CupertinoActivityIndicator(radius: 25),
-                        SizedBox(height: 20),
-                        Text("Connecting to Orbstrike Proxy...",style: TextStyle(color: Colors.white60))
+                        const CupertinoActivityIndicator(radius: 25),
+                        const SizedBox(height: 20),
+                        Text(loadingMsg,style: const TextStyle(color: Colors.white60))
                       ],
                     ),
                   ),
@@ -122,6 +125,9 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final String name;
   final ChannelCredentials? credentials;
   final MainUICallbacks mCallbacks;
+
+  static const P_SPRITESHEETSIZE = 335.0;
+  static const P_SPRITESHEETPATH = "playerSpriteSheet.png";
 
   GameField({
     required this.gameId,
@@ -189,9 +195,15 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
     addAll([coreComp.mainCamera, coreComp.world]);
 
     try {
-      mCallbacks.setProgress(true);
+      mCallbacks.setProgress(true, "Loading Assets...");
+      final imageInstance = await images.load(P_SPRITESHEETPATH);
+      coreComp.playerSpriteSheet = SpriteSheet(image: imageInstance,srcSize: Vector2.all(P_SPRITESHEETSIZE));
+      mCallbacks.setProgress(false, "");
+
+      mCallbacks.setProgress(true, "Connecting to Orbstrike Proxy...");
       coreComp.mainPlayerCreds = await joinGame(gameId, name, host, port, credentials);
-      mCallbacks.setProgress(false);
+      mCallbacks.setProgress(false, "");
+
       startGameSocket(coreApi, coreComp, mCallbacks, gameId, host, port);
     } catch (err) {
       String errMsg;
@@ -199,7 +211,6 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
       if (dynErr is Exception && (dynErr as dynamic).message != null) {
         errMsg = (dynErr as dynamic).message;
       } else { errMsg = err.toString(); }
-
       mCallbacks.showDial(errMsg, const Color.fromRGBO(222, 4, 4, 1));
       return;
     }

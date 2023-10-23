@@ -2,15 +2,19 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:orbstrike/proto/game/game.pb.dart';
 
 class MainPlayer extends PositionComponent with CollisionCallbacks {
   Player networkPlayerRep;
   final List<int> collided;
+  final SpriteSheet spriteSheet;
   late ShapeHitbox hitbox;
 
-  MainPlayer({required this.networkPlayerRep, required this.collided});
+  Sprite? playerSprite;
+
+  MainPlayer({required this.networkPlayerRep, required this.collided, required this.spriteSheet});
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
@@ -29,21 +33,28 @@ class MainPlayer extends PositionComponent with CollisionCallbacks {
   }
 
   @override
-  void onLoad() {
+  void onLoad() async {
     hitbox = CircleHitbox(
         radius: networkPlayerRep.rad,
         position: Vector2.all(0),
         anchor: Anchor.center
     )..renderShape = false;
     add(hitbox);
+
+    playerSprite = spriteSheet.getSprite(0, networkPlayerRep.color);
   }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
 
-    final paint = Paint()..color = Colors.red;
-    canvas.drawCircle(const Offset(0, 0), networkPlayerRep.rad, paint);
+    if (playerSprite!=null) {
+      playerSprite?.render(
+        canvas,
+        position: Vector2(-networkPlayerRep.rad, -networkPlayerRep.rad),
+        size: Vector2(networkPlayerRep.rad*2, networkPlayerRep.rad*2),
+      );
+    }
 
     if (networkPlayerRep.ringEnabled) {
       final ringpnt = Paint()
@@ -67,11 +78,14 @@ class MainPlayer extends PositionComponent with CollisionCallbacks {
 
 class EnemyPlayer extends PositionComponent {
   Player networkPlayerRep;
+  final SpriteSheet spriteSheet;
   late ShapeHitbox hitbox;
+
+  Sprite? playerSprite;
 
   final TextPainter textPainter = TextPainter();
 
-  EnemyPlayer({required this.networkPlayerRep});
+  EnemyPlayer({required this.networkPlayerRep, required this.spriteSheet});
 
   @override
   void onLoad() {
@@ -81,15 +95,21 @@ class EnemyPlayer extends PositionComponent {
         anchor: Anchor.center
     )..renderShape = false;
     add(hitbox);
+
+    playerSprite = spriteSheet.getSprite(0, networkPlayerRep.color);
   }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
 
-    final paint = Paint()..color = Colors.red;
-
-    canvas.drawCircle(const Offset(0, 0), networkPlayerRep.rad, paint);
+    if (playerSprite!=null) {
+      playerSprite?.render(
+        canvas,
+        position: Vector2(-networkPlayerRep.rad, -networkPlayerRep.rad),
+        size: Vector2(networkPlayerRep.rad*2, networkPlayerRep.rad*2),
+      );
+    }
 
     if (networkPlayerRep.ringEnabled) {
       final ringpnt = Paint()
@@ -120,5 +140,4 @@ class EnemyPlayer extends PositionComponent {
       y = networkPlayerRep.y;
     }
   }
-
 }
