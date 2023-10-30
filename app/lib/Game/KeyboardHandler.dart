@@ -6,9 +6,9 @@ Move_Direction? getMovementInput() {
   final s = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyS);
   final a = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyA);
   final d = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyD);
-  final space = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.space);
+  final ctrl = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.controlLeft);
 
-  if (space) { return Move_Direction.NONE; }
+  if (ctrl) { return Move_Direction.NONE; }
   if (w&&d&&s&&a) { return Move_Direction.NONE; }
   else if (w&&s) {
     if (a) { return Move_Direction.LEFT; }
@@ -40,7 +40,7 @@ Move_Direction? getMovementInput() {
 }
 
 bool getRingState() {
-  if (RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.keyR)) {
+  if (RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.space)) {
     return true;
   }
   return false;

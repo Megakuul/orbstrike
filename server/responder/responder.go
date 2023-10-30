@@ -38,8 +38,9 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 		
 		curPlayer := curBoard.Players[int32(decUserkey)]
 		if curPlayer==nil {
+			// When gsync scheduler doesn't handle the player in time, this will always lead to Game Over!
 			srv.SessionResponses[sessionId] =
-				fmt.Errorf("Player is not registered in this game! This issue can occur when the orbstrike gsync scheduler didn't handle the player in time.")
+				fmt.Errorf("Game Over!")
 			srv.Mutex.Unlock()
 			continue
 		}

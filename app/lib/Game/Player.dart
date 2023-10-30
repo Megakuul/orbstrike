@@ -1,39 +1,40 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
+import 'package:orbstrike/Game/Player.helper.dart';
 import 'package:orbstrike/proto/game/game.pb.dart';
 
-class MainPlayer extends PositionComponent with CollisionCallbacks {
+class PlayerComponent extends PositionComponent with CollisionCallbacks {
   Player networkPlayerRep;
-  final List<int> collided;
-  final SpriteSheet spriteSheet;
+  final SpriteSheet playerNormalSS;
+  final SpriteSheet playerRingedSS;
+  final SpriteSheet ringAnimateSS;
+
+  ui.Image? playerNormalRendered;
+  ui.Image? playerRingedRendered;
+  SpriteAnimationComponent? ringComponent;
+
+  bool ringEnabledBuf = false;
+
+  static const RINGANIMATEINTERVAL = 0.05;
+
   late ShapeHitbox hitbox;
 
-  Sprite? playerSprite;
+  final TextPainter nameTextPainter = TextPainter();
 
-  MainPlayer({required this.networkPlayerRep, required this.collided, required this.spriteSheet});
-
-  @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollisionStart(intersectionPoints, other);
-    if (other is EnemyPlayer) {
-      collided.add(other.networkPlayerRep.id);
-    }
-  }
-
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    super.onCollisionEnd(other);
-    if (other is EnemyPlayer) {
-      collided.remove(other.networkPlayerRep.id);
-    }
-  }
+  PlayerComponent({
+    required this.networkPlayerRep,
+    required this.playerNormalSS,
+    required this.playerRingedSS,
+    required this.ringAnimateSS
+  });
 
   @override
   void onLoad() async {
+    super.onLoad();
     hitbox = CircleHitbox(
         radius: networkPlayerRep.rad,
         position: Vector2.all(0),
@@ -41,33 +42,60 @@ class MainPlayer extends PositionComponent with CollisionCallbacks {
     )..renderShape = false;
     add(hitbox);
 
-    playerSprite = spriteSheet.getSprite(0, networkPlayerRep.color);
+    playerNormalRendered = await prerenderSpriteComponent(
+      playerNormalSS.getSprite(0, networkPlayerRep.color),
+      Size.fromRadius(networkPlayerRep.rad),
+    );
+
+    playerRingedRendered = await prerenderSpriteComponent(
+      playerRingedSS.getSprite(0, networkPlayerRep.color),
+      Size.fromRadius(networkPlayerRep.rad),
+    );
+
+    ringComponent = SpriteAnimationComponent(
+      animation: ringAnimateSS.createAnimation(
+          row: 0, from: 0, to: ringAnimateSS.columns-1,
+          stepTime: RINGANIMATEINTERVAL
+      ),
+      size: Vector2.all(networkPlayerRep.ringrad*2),
+      anchor: Anchor.center
+    );
   }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
 
-    if (playerSprite!=null) {
-      playerSprite?.render(
-        canvas,
-        position: Vector2(-networkPlayerRep.rad, -networkPlayerRep.rad),
-        size: Vector2(networkPlayerRep.rad*2, networkPlayerRep.rad*2),
+    if (playerNormalRendered!=null && playerRingedRendered!=null) {
+      canvas.drawImage(
+        networkPlayerRep.ringEnabled ? playerRingedRendered! : playerNormalRendered!,
+        Offset(-networkPlayerRep.rad, -networkPlayerRep.rad),
+        Paint()
       );
     }
 
-    if (networkPlayerRep.ringEnabled) {
-      final ringpnt = Paint()
-        ..color = const Color(0xFF000000)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3;
-      canvas.drawCircle(const Offset(0,0), networkPlayerRep.ringrad, ringpnt);
-    }
+    nameTextPainter
+      ..text = TextSpan(
+        text: "${networkPlayerRep.name} 💀 ${networkPlayerRep.kills}",
+        style: const TextStyle(color: Colors.white60, fontSize: 12),
+      )
+      ..textDirection = TextDirection.ltr
+      ..textAlign = TextAlign.center
+      ..layout()
+      ..paint(canvas, Offset(-(nameTextPainter.width / 2), networkPlayerRep.rad+10));
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (ringComponent!=null && networkPlayerRep.ringEnabled && !ringEnabledBuf) {
+      add(ringComponent!);
+      ringEnabledBuf=networkPlayerRep.ringEnabled;
+    } else if (ringComponent!=null && !networkPlayerRep.ringEnabled && ringEnabledBuf) {
+      remove(ringComponent!);
+      ringEnabledBuf=networkPlayerRep.ringEnabled;
+    }
 
     if (x!=networkPlayerRep.x || y!=networkPlayerRep.y) {
       x = networkPlayerRep.x;
@@ -76,68 +104,39 @@ class MainPlayer extends PositionComponent with CollisionCallbacks {
   }
 }
 
-class EnemyPlayer extends PositionComponent {
-  Player networkPlayerRep;
-  final SpriteSheet spriteSheet;
-  late ShapeHitbox hitbox;
+class MainPlayerComponent extends PlayerComponent {
+  final List<int> collided;
 
-  Sprite? playerSprite;
-
-  final TextPainter textPainter = TextPainter();
-
-  EnemyPlayer({required this.networkPlayerRep, required this.spriteSheet});
+  MainPlayerComponent({
+    required super.networkPlayerRep,
+    required super.playerNormalSS,
+    required super.playerRingedSS,
+    required super.ringAnimateSS,
+    required this.collided
+  });
 
   @override
-  void onLoad() {
-    hitbox = CircleHitbox(
-        radius: networkPlayerRep.rad,
-        position: Vector2.all(0),
-        anchor: Anchor.center
-    )..renderShape = false;
-    add(hitbox);
-
-    playerSprite = spriteSheet.getSprite(0, networkPlayerRep.color);
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
+    if (other is EnemyPlayerComponent) {
+      collided.add(other.networkPlayerRep.id);
+    }
   }
 
   @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-
-    if (playerSprite!=null) {
-      playerSprite?.render(
-        canvas,
-        position: Vector2(-networkPlayerRep.rad, -networkPlayerRep.rad),
-        size: Vector2(networkPlayerRep.rad*2, networkPlayerRep.rad*2),
-      );
-    }
-
-    if (networkPlayerRep.ringEnabled) {
-      final ringpnt = Paint()
-        ..color = const Color(0xFF000000)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3;
-      canvas.drawCircle(const Offset(0,0), networkPlayerRep.ringrad, ringpnt);
-    }
-
-    // Draw text
-    textPainter
-      ..text = TextSpan(
-        text: networkPlayerRep.name,
-        style: const TextStyle(color: Colors.white, fontSize: 12),
-      )
-      ..textDirection = TextDirection.ltr
-      ..textAlign = TextAlign.center
-      ..layout()
-      ..paint(canvas, Offset(-(textPainter.width / 2), networkPlayerRep.rad+10));
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-
-    if (x!=networkPlayerRep.x || y!=networkPlayerRep.y) {
-      x = networkPlayerRep.x;
-      y = networkPlayerRep.y;
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+    if (other is EnemyPlayerComponent) {
+      collided.remove(other.networkPlayerRep.id);
     }
   }
+}
+
+class EnemyPlayerComponent extends PlayerComponent {
+  EnemyPlayerComponent({
+    required super.networkPlayerRep,
+    required super.playerNormalSS,
+    required super.playerRingedSS,
+    required super.ringAnimateSS
+  });
 }

@@ -76,7 +76,7 @@ class _MainPage extends State<MainPage> {
 
   final gameRadiusController = TextEditingController(text: "2000");
   final gamePlayerRadiusController = TextEditingController(text: "50");
-  final gamePlayerRingRadiusController = TextEditingController(text: "70");
+  final gamePlayerRingRadiusController = TextEditingController(text: "85");
   final gameSpeedController = TextEditingController(text: "10");
   final gameMaxPlayerController = TextEditingController(text: "20");
 

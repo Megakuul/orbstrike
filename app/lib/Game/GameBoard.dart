@@ -127,7 +127,9 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final MainUICallbacks mCallbacks;
 
   static const P_SPRITESHEETSIZE = 335.0;
-  static const P_SPRITESHEETPATH = "playerSpriteSheet.png";
+  static const P_NORMALSSPATH = "playerNormalSS.png";
+  static const P_RINGEDSSPATH = "playerRingedSS.png";
+  static const P_RINGANIMATESSPATH = "ringAnimateSS.png";
 
   GameField({
     required this.gameId,
@@ -191,17 +193,31 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
+    super.onLoad();
+
+    final fpsCounter = FpsTextComponent();
     coreComp.mainCamera = CameraComponent(world: coreComp.world);
-    addAll([coreComp.mainCamera, coreComp.world]);
+    addAll([coreComp.mainCamera, coreComp.world, fpsCounter]);
 
     try {
       mCallbacks.setProgress(true, "Loading Assets...");
-      final imageInstance = await images.load(P_SPRITESHEETPATH);
-      coreComp.playerSpriteSheet = SpriteSheet(image: imageInstance,srcSize: Vector2.all(P_SPRITESHEETSIZE));
+      coreComp.playerNameSS = SpriteSheet(
+          image: await images.load(P_NORMALSSPATH),
+          srcSize: Vector2.all(P_SPRITESHEETSIZE)
+      );
+      coreComp.playerRingedSS = SpriteSheet(
+          image: await images.load(P_RINGEDSSPATH),
+          srcSize: Vector2.all(P_SPRITESHEETSIZE)
+      );
+      coreComp.ringAnimateSS = SpriteSheet(
+          image: await images.load(P_RINGANIMATESSPATH),
+          srcSize: Vector2.all(P_SPRITESHEETSIZE)
+      );
       mCallbacks.setProgress(false, "");
 
       mCallbacks.setProgress(true, "Connecting to Orbstrike Proxy...");
-      coreComp.mainPlayerCreds = await joinGame(gameId, name, host, port, credentials);
+      coreComp.mainPlayerCreds =
+          await joinGame(gameId, name, host, port, credentials);
       mCallbacks.setProgress(false, "");
 
       startGameSocket(coreApi, coreComp, mCallbacks, gameId, host, port);
@@ -210,7 +226,9 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
       dynamic dynErr = err;
       if (dynErr is Exception && (dynErr as dynamic).message != null) {
         errMsg = (dynErr as dynamic).message;
-      } else { errMsg = err.toString(); }
+      } else {
+        errMsg = err.toString();
+      }
       mCallbacks.showDial(errMsg, const Color.fromRGBO(222, 4, 4, 1));
       return;
     }
@@ -221,7 +239,6 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
         gameid: gameId,
         userkey: coreComp.mainPlayerCreds?.key
     ));
-    super.onLoad();
   }
 
   @override

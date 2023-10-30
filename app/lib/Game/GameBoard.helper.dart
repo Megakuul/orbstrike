@@ -43,13 +43,15 @@ class GameCoreComponents {
   final World world = World();
   WorldBorder? border;
   WorldBackground? background;
-  MainPlayer? mainPlayerComponent;
+  MainPlayerComponent? mainPlayerComponent;
   Move_Direction mainPlayerDirection;
   UserCredentials? mainPlayerCreds;
   bool mainPlayerRingState;
   final List<int> mainPlayerCollided = [];
-  final Map<int, EnemyPlayer> playerComponents = {};
-  late SpriteSheet playerSpriteSheet;
+  final Map<int, EnemyPlayerComponent> playerComponents = {};
+  late SpriteSheet playerNameSS;
+  late SpriteSheet playerRingedSS;
+  late SpriteSheet ringAnimateSS;
 
   GameCoreComponents({
     required this.board,
@@ -155,10 +157,12 @@ Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
   // Create main component if not existent
   if (coreComp.mainPlayerComponent==null && coreComp.board.players[coreComp.mainPlayerCreds?.id]!=null) {
     coreComp.mainPlayerComponent
-      = MainPlayer(
+      = MainPlayerComponent(
       networkPlayerRep: coreComp.board.players[coreComp.mainPlayerCreds?.id]!,
       collided: coreComp.mainPlayerCollided,
-      spriteSheet: coreComp.playerSpriteSheet,
+      playerNormalSS: coreComp.playerNameSS,
+      playerRingedSS: coreComp.playerRingedSS,
+      ringAnimateSS: coreComp.ringAnimateSS,
     );
 
     coreComp.world.add(coreComp.mainPlayerComponent!);
@@ -182,7 +186,12 @@ Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
   // Add players that were added and update the existing
   for (var networkPlayerRep in coreComp.board.players.values) {
     if (!coreComp.playerComponents.containsKey(networkPlayerRep.id)) {
-      final player = EnemyPlayer(networkPlayerRep: networkPlayerRep, spriteSheet: coreComp.playerSpriteSheet);
+      final player = EnemyPlayerComponent(
+        networkPlayerRep: networkPlayerRep,
+        playerNormalSS: coreComp.playerNameSS,
+        playerRingedSS: coreComp.playerRingedSS,
+        ringAnimateSS: coreComp.ringAnimateSS,
+      );
       if (networkPlayerRep.id!=coreComp.mainPlayerCreds?.id) {
         coreComp.playerComponents[networkPlayerRep.id] = player;
         componentBuffer.putIfAbsent(player, () => true);
