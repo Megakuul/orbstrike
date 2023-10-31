@@ -9,6 +9,7 @@ import 'package:orbstrike/proto/game/game.pb.dart';
 
 class PlayerComponent extends PositionComponent with CollisionCallbacks {
   Player networkPlayerRep;
+  final double lerpFactor;
   final SpriteSheet playerNormalSS;
   final SpriteSheet playerRingedSS;
   final SpriteSheet ringAnimateSS;
@@ -25,8 +26,12 @@ class PlayerComponent extends PositionComponent with CollisionCallbacks {
 
   final TextPainter nameTextPainter = TextPainter();
 
+  double targetX = 0.0;
+  double targetY = 0.0;
+
   PlayerComponent({
     required this.networkPlayerRep,
+    required this.lerpFactor,
     required this.playerNormalSS,
     required this.playerRingedSS,
     required this.ringAnimateSS
@@ -98,8 +103,13 @@ class PlayerComponent extends PositionComponent with CollisionCallbacks {
     }
 
     if (x!=networkPlayerRep.x || y!=networkPlayerRep.y) {
-      x = networkPlayerRep.x;
-      y = networkPlayerRep.y;
+      targetX = networkPlayerRep.x;
+      targetY = networkPlayerRep.y;
+    }
+
+    if (x != targetX || y != targetY) {
+      x += (targetX - x) * lerpFactor;
+      y += (targetY - y) * lerpFactor;
     }
   }
 }
@@ -109,10 +119,11 @@ class MainPlayerComponent extends PlayerComponent {
 
   MainPlayerComponent({
     required super.networkPlayerRep,
+    required super.lerpFactor,
     required super.playerNormalSS,
     required super.playerRingedSS,
     required super.ringAnimateSS,
-    required this.collided
+    required this.collided,
   });
 
   @override
@@ -135,6 +146,7 @@ class MainPlayerComponent extends PlayerComponent {
 class EnemyPlayerComponent extends PlayerComponent {
   EnemyPlayerComponent({
     required super.networkPlayerRep,
+    required super.lerpFactor,
     required super.playerNormalSS,
     required super.playerRingedSS,
     required super.ringAnimateSS

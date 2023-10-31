@@ -16,18 +16,23 @@ import 'package:orbstrike/Game/KeyboardHandler.dart';
 import 'package:orbstrike/Game/GameBoard.helper.dart';
 
 import '../Components/GameErrorDialog.dart';
+import '../Components/DebugComponents.dart';
 
 class GameOverlay extends StatefulWidget {
   final String host;
   final int port;
   final int gameId;
   final String name;
+  final double lerpFactor;
+  final bool showDebug;
   final ChannelCredentials? credentials;
   const GameOverlay({super.key,
     required this.host,
     required this.port,
     required this.gameId,
     required this.name,
+    required this.lerpFactor,
+    required this.showDebug,
     required this.credentials
   });
 
@@ -51,6 +56,8 @@ class _GameOverlay extends State<GameOverlay> {
               name: widget.name,
               host: widget.host,
               port: widget.port,
+              lerpFactor: widget.lerpFactor,
+              showDebug: widget.showDebug,
               credentials: widget.credentials,
               mCallbacks: MainUICallbacks(
                 showDial: (message, color) {
@@ -78,7 +85,7 @@ class _GameOverlay extends State<GameOverlay> {
                     isLoading.value = loading;
                   });
                 }
-              )
+              ),
             )
           ), // Your FlameGame widget
           ValueListenableBuilder<bool>(
@@ -123,6 +130,8 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final int port;
   final int gameId;
   final String name;
+  final double lerpFactor;
+  final bool showDebug;
   final ChannelCredentials? credentials;
   final MainUICallbacks mCallbacks;
 
@@ -134,6 +143,8 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   GameField({
     required this.gameId,
     required this.name,
+    required this.lerpFactor,
+    required this.showDebug,
     required this.credentials,
     required this.host,
     required this.port,
@@ -149,7 +160,6 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
     mainPlayerDirection: Move_Direction.NONE,
     mainPlayerRingState: false,
   );
-
 
   @override
   Color backgroundColor() => Colors.black12;
@@ -168,36 +178,28 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
     return KeyEventResult.handled;
   }
 
-  double keystrokeAccumulator = 0.0;
-  final double keystrokeUpdateInterval = 0.10;
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-
-    keystrokeAccumulator += dt;
-    while (keystrokeAccumulator >= keystrokeUpdateInterval) {
-      coreApi.stream.add(Move(
-          direction: coreComp.mainPlayerDirection,
-          enableRing: coreComp.mainPlayerRingState,
-          hitPlayers: coreComp.mainPlayerCollided,
-          gameid: gameId, userkey: coreComp.mainPlayerCreds?.key
-      ));
-      keystrokeAccumulator -= keystrokeUpdateInterval;
-    }
-
-    if (coreComp.mainPlayerComponent!=null) {
-      coreComp.mainCamera.follow(coreComp.mainPlayerComponent!);
-    }
-  }
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
+    coreComp.lerpFactor = lerpFactor;
 
-    final fpsCounter = FpsTextComponent();
+    if (showDebug) {
+      final textPaint = TextPaint(
+          style: const TextStyle(
+            fontSize: 15,
+            color: Colors.white60,
+          )
+      );
+      add(IngameFrameCounter()
+        ..textRenderer=textPaint);
+      add(NetworkFrameCounter(coreApi: coreApi)
+        ..textRenderer=textPaint
+        ..position=Vector2(0, 30));
+    }
+
     coreComp.mainCamera = CameraComponent(world: coreComp.world);
-    addAll([coreComp.mainCamera, coreComp.world, fpsCounter]);
+    addAll([coreComp.mainCamera, coreComp.world]);
 
     try {
       mCallbacks.setProgress(true, "Loading Assets...");
@@ -239,6 +241,30 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
         gameid: gameId,
         userkey: coreComp.mainPlayerCreds?.key
     ));
+  }
+
+  // Accumulator for time to achieve a constant sendinginterval
+  double deltaAccumulator = 0.0;
+  final double senderInterval = 0.10;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    deltaAccumulator += dt;
+    while (deltaAccumulator >= senderInterval) {
+      coreApi.stream.add(Move(
+          direction: coreComp.mainPlayerDirection,
+          enableRing: coreComp.mainPlayerRingState,
+          hitPlayers: coreComp.mainPlayerCollided,
+          gameid: gameId, userkey: coreComp.mainPlayerCreds?.key
+      ));
+      deltaAccumulator -= senderInterval;
+    }
+
+    if (coreComp.mainPlayerComponent!=null) {
+      coreComp.mainCamera.follow(coreComp.mainPlayerComponent!);
+    }
   }
 
   @override

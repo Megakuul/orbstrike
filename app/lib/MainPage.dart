@@ -4,6 +4,7 @@ import 'package:orbstrike/Components/CreateGameDialog.dart';
 import 'package:orbstrike/Components/ElevatedIconButton.dart';
 import 'package:orbstrike/Components/GradientText.dart';
 import 'package:orbstrike/Components/InputField.dart';
+import 'package:orbstrike/Components/SettingDialog.dart';
 import 'package:orbstrike/proto/auth/auth.pbgrpc.dart';
 
 import 'Game/GameBoard.dart';
@@ -11,10 +12,21 @@ import 'Game/GameBoard.dart';
 final GlobalKey gameKey = GlobalKey();
 
 class GameConfiguration {
-  GameConfiguration({required this.hostname, required this.port, required this.gameID, required this.latestGameIDs, required this.credentials});
+  GameConfiguration({
+    required this.hostname,
+    required this.port,
+    required this.gameID,
+    required this.lerpFactor,
+    required this.showDebug,
+    required this.latestGameIDs,
+    required this.credentials
+  });
+
   String hostname;
   int port;
   int gameID;
+  double lerpFactor;
+  bool showDebug;
   ChannelCredentials? credentials;
   List<int> latestGameIDs;
 }
@@ -54,6 +66,8 @@ void joinGame(BuildContext context, GameConfiguration conf, String name) {
         port: conf.port,
         gameId: conf.gameID,
         name: name,
+        lerpFactor: conf.lerpFactor,
+        showDebug: conf.showDebug,
         credentials: conf.credentials,
       )
     )
@@ -82,6 +96,9 @@ class _MainPage extends State<MainPage> {
 
   final playerNameController = TextEditingController();
 
+  final TextEditingController showDebugController = TextEditingController();
+  final TextEditingController lerpFactorController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -90,6 +107,8 @@ class _MainPage extends State<MainPage> {
     gameIdController.text = gameIdStr=="-1" ? "" : gameIdStr;
     hostController.text = widget.gameConfig.hostname;
     portController.text = widget.gameConfig.port.toString();
+    showDebugController.text = widget.gameConfig.showDebug.toString();
+    lerpFactorController.text = widget.gameConfig.lerpFactor.toString();
   }
 
   @override
@@ -308,6 +327,46 @@ class _MainPage extends State<MainPage> {
             )
           )
         ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: FloatingActionButton(
+        mini: true,
+        tooltip: "Advanced Settings",
+        onPressed: () async {
+          final result = await showDialog(context: context, builder: (context) {
+            return SettingDialog(
+              showDebugController: showDebugController,
+              lerpFactorController: lerpFactorController
+            );
+          });
+
+          if (result!="Save") { return; }
+
+          try {
+            final double? lerpFactor =
+              double.tryParse(lerpFactorController.text);
+            if (lerpFactor==null) {
+              throw Exception("lerpFactor must be a number!");
+            }
+            widget.gameConfig.lerpFactor = lerpFactor;
+
+            if (showDebugController.text.toUpperCase()=="TRUE") {
+              widget.gameConfig.showDebug = true;
+            } else if (showDebugController.text.toUpperCase()=="FALSE") {
+              widget.gameConfig.showDebug = false;
+            } else {
+              throw Exception("showDebug must 'true' or 'false'!");
+            }
+          } catch (err) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.red,
+                content: Text("ERROR: $err")
+              )
+            );
+          }
+        },
+        child: const Icon(Icons.settings),
       ),
       bottomNavigationBar: Align(
         heightFactor: 1,

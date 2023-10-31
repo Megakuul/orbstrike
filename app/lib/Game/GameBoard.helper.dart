@@ -27,28 +27,34 @@ class MainUICallbacks {
 }
 
 class GameCoreApi {
+  int fetchCount;
+
   ClientChannel? chan;
   GameServiceClient? client;
   BehaviorSubject<Move> stream;
   ChannelCredentials? credentials;
   bool shutdown = false;
 
-  GameCoreApi({required this.stream, this.chan, this.client, this.credentials});
+  GameCoreApi({required this.stream, this.chan, this.client, this.credentials, this.fetchCount=-1});
 }
 
 class GameCoreComponents {
   late final CameraComponent mainCamera;
+  late final double lerpFactor;
 
   GameBoard board;
   final World world = World();
   WorldBorder? border;
   WorldBackground? background;
+
   MainPlayerComponent? mainPlayerComponent;
   Move_Direction mainPlayerDirection;
   UserCredentials? mainPlayerCreds;
   bool mainPlayerRingState;
+
   final List<int> mainPlayerCollided = [];
   final Map<int, EnemyPlayerComponent> playerComponents = {};
+
   late SpriteSheet playerNameSS;
   late SpriteSheet playerRingedSS;
   late SpriteSheet ringAnimateSS;
@@ -132,13 +138,15 @@ void startGameSocket(GameCoreApi api, GameCoreComponents coreComponents, MainUIC
         coreComponents.world.remove(key);
       }
     });
+
+    if (api.fetchCount!=-1) { api.fetchCount++; }
   }, onError: (error) {
     // gRPC endpoint sends errors for things like "Game Over", "Game not found" etc. -> 400 Errors
     mCallbacks.showDial(error.message, const Color.fromRGBO(222, 4, 4, 1));
     api.shutdown = true;
   }, onDone: () {
     if (!api.shutdown) {
-      mCallbacks.showSnack("Reconnecting...", Colors.red);
+      mCallbacks.showSnack("Reconnecting...", Colors.grey);
       // gRPC endpoint closes connection when facing a unexpected issue (e.g. read EOF, major failure etc.) -> 500 Errors
       // Wait {reconnectTimeout} seconds, on major failures this gives the cluster time to rebuild pods without being spammed.
       Future.delayed(Duration(seconds: reconnectTimeout), () {
@@ -160,6 +168,7 @@ Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
       = MainPlayerComponent(
       networkPlayerRep: coreComp.board.players[coreComp.mainPlayerCreds?.id]!,
       collided: coreComp.mainPlayerCollided,
+      lerpFactor: coreComp.lerpFactor,
       playerNormalSS: coreComp.playerNameSS,
       playerRingedSS: coreComp.playerRingedSS,
       ringAnimateSS: coreComp.ringAnimateSS,
@@ -188,6 +197,7 @@ Map<Component, bool> updateGameBoard(final GameCoreComponents coreComp) {
     if (!coreComp.playerComponents.containsKey(networkPlayerRep.id)) {
       final player = EnemyPlayerComponent(
         networkPlayerRep: networkPlayerRep,
+        lerpFactor: coreComp.lerpFactor,
         playerNormalSS: coreComp.playerNameSS,
         playerRingedSS: coreComp.playerRingedSS,
         ringAnimateSS: coreComp.ringAnimateSS,

@@ -39,6 +39,8 @@ class App extends StatelessWidget {
         port: 8080,
         gameID: -1,
         credentials: null,
+        lerpFactor: 0.3,
+        showDebug: false,
         latestGameIDs: []
       )),
     );
