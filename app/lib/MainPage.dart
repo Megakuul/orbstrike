@@ -1,13 +1,13 @@
 import 'package:grpc/grpc.dart';
 import 'package:flutter/material.dart';
-import 'package:orbstrike/Components/CreateGameDialog.dart';
-import 'package:orbstrike/Components/ElevatedIconButton.dart';
-import 'package:orbstrike/Components/GradientText.dart';
-import 'package:orbstrike/Components/InputField.dart';
-import 'package:orbstrike/Components/SettingDialog.dart';
+import 'package:orbstrike/Components/CustomWidgets/ElevatedIconButton.dart';
+import 'package:orbstrike/Components/CustomWidgets/GradientText.dart';
+import 'package:orbstrike/Components/CustomWidgets/InputField.dart';
 import 'package:orbstrike/proto/auth/auth.pbgrpc.dart';
 
-import 'Game/GameBoard.dart';
+import 'package:orbstrike/Components/Dialogs/CreateGameDialog.dart';
+import 'package:orbstrike/Components/Dialogs/SettingDialog.dart';
+import 'package:orbstrike/Game/Core/GameOverlay.dart';
 
 final GlobalKey gameKey = GlobalKey();
 
@@ -19,7 +19,8 @@ class GameConfiguration {
     required this.lerpFactor,
     required this.showDebug,
     required this.latestGameIDs,
-    required this.credentials
+    required this.credentials,
+    required this.uid,
   });
 
   String hostname;
@@ -29,6 +30,7 @@ class GameConfiguration {
   bool showDebug;
   ChannelCredentials? credentials;
   List<int> latestGameIDs;
+  final String uid;
 }
 
 Future<int> createGame(GameConfiguration conf,
@@ -47,7 +49,7 @@ Future<int> createGame(GameConfiguration conf,
   );
 
   final req = CreateGameRequest(
-    identifier: "serialnumber",
+    identifier: conf.uid,
     radius: radius,
     playerradius: plRadius,
     playerringradius: plRingRadius,

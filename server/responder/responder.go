@@ -1,12 +1,14 @@
 package responder
 
 import (
-	"fmt"
 	"math"
+	"math/rand"
 
 	"github.com/megakuul/orbstrike/server/crypto"
 	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/socket/sgame"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
@@ -23,7 +25,7 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 		curBoard, ok := srv.Boards[Move.Gameid]
 		if !ok {
 			srv.SessionResponses[sessionId] =
-				fmt.Errorf("Game with id %d not found", Move.Gameid)
+				status.Errorf(codes.NotFound, "Game with id %d not found!", Move.Gameid)
 			srv.Mutex.Unlock()
 			continue
 		}
@@ -31,7 +33,7 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 		decUserkey, err := crypto.DecryptUserKey(Move.Userkey, srv.ServerSecret)
 		if err!=nil {
 			srv.SessionResponses[sessionId] =
-				fmt.Errorf("UNAUTHORIZED! Userkey is invalid.")
+				status.Errorf(codes.Unauthenticated, "Userkey is invalid!")
 			srv.Mutex.Unlock()
 			continue	
 		}
@@ -40,7 +42,7 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 		if curPlayer==nil {
 			// When gsync scheduler doesn't handle the player in time, this will always lead to Game Over!
 			srv.SessionResponses[sessionId] =
-				fmt.Errorf("Game Over!")
+				status.Errorf(codes.Unauthenticated, srv.GameOverMessages[rand.Intn(len(srv.GameOverMessages))])
 			srv.Mutex.Unlock()
 			continue
 		}
@@ -53,7 +55,7 @@ func Respond(sessionRequests map[int64]*game.Move, srv *sgame.Server) {
 		if curPlayerPos.isOutsideMap(curBoard.Rad) {
 			delete(curBoard.Players, curPlayer.Id)
 			srv.SessionResponses[sessionId] =
-				fmt.Errorf("Game Over!")
+				status.Errorf(codes.Unauthenticated, srv.GameOverMessages[rand.Intn(len(srv.GameOverMessages))])
 			srv.Mutex.Unlock()
 			continue
 		}

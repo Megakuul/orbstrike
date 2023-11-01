@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orbstrike/Components/InputField.dart';
+import 'package:orbstrike/Components/CustomWidgets/InputField.dart';
 
 class SettingDialog extends StatelessWidget {
   final TextEditingController showDebugController;

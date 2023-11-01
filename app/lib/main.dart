@@ -39,9 +39,10 @@ class App extends StatelessWidget {
         port: 8080,
         gameID: -1,
         credentials: null,
-        lerpFactor: 0.3,
+        lerpFactor: 8,
         showDebug: false,
-        latestGameIDs: []
+        latestGameIDs: [],
+        uid: (DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000).toString()
       )),
     );
   }

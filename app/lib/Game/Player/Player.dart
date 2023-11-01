@@ -1,10 +1,11 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
-import 'package:orbstrike/Game/Player.helper.dart';
+import 'package:orbstrike/Game/Lib/SpritePrerenderer.dart';
 import 'package:orbstrike/proto/game/game.pb.dart';
 
 class PlayerComponent extends PositionComponent with CollisionCallbacks {
@@ -108,8 +109,9 @@ class PlayerComponent extends PositionComponent with CollisionCallbacks {
     }
 
     if (x != targetX || y != targetY) {
-      x += (targetX - x) * lerpFactor;
-      y += (targetY - y) * lerpFactor;
+      double smoothing = 1 - exp(-lerpFactor * dt);
+      x += (targetX - x) * smoothing;
+      y += (targetY - y) * smoothing;
     }
   }
 }

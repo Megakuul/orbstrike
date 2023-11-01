@@ -3,7 +3,6 @@ package proxy
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
 	"io"
 	"time"
 
@@ -13,7 +12,9 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -29,21 +30,21 @@ type Server struct {
 func (s *Server) ProxyGameboard(clientStream game.GameService_ProxyGameboardServer) error {
 	metaData, ok := metadata.FromIncomingContext(clientStream.Context())
 	if !ok {
-		return fmt.Errorf("Invalid proxy request: Metadata header is missing!")
+		return status.Errorf(codes.InvalidArgument, "Invalid proxy request: Metadata header is missing!")
 	}
 
 	gameidStrList:=metaData.Get(GAMEID_MD_KEY)
 	if len(gameidStrList) != 1 {
-		return fmt.Errorf("Invalid proxy request: Metadata must contain 'gameid' key at first position!")
+		return status.Errorf(codes.InvalidArgument, "Invalid proxy request: Metadata must contain 'gameid' key at first position!")
 	}
 
 	ctx := context.Background()
 	address, err := algo.FindGServer(s.RDB, &ctx, gameidStrList[0])
 	if err!=nil {
 		logger.WriteErrLogger(err)
-		return fmt.Errorf("Internal cluster failure: Something went wrong, try again in 5 minutes!")
+		return status.Errorf(codes.Internal, "Internal cluster failure: Something went wrong, try again in 5 minutes!")
 	} else if address=="" {
-		return fmt.Errorf("Invalid proxy request: Game not found!")
+		return status.Errorf(codes.NotFound, "Invalid proxy request: Game not found!")
 	}
 
 	var conn *grpc.ClientConn

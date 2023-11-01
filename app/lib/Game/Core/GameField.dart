@@ -2,128 +2,21 @@ import 'dart:async';
 
 import 'package:flame/events.dart';
 import 'package:flame/sprite.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:grpc/grpc.dart';
+
+import 'package:orbstrike/Game/Core/CoreReader.dart';
 import 'package:orbstrike/proto/game/game.pbgrpc.dart';
-import 'package:rxdart/rxdart.dart';
-
-import 'package:orbstrike/Game/KeyboardHandler.dart';
-import 'package:orbstrike/Game/GameBoard.helper.dart';
-
-import '../Components/GameErrorDialog.dart';
-import '../Components/DebugComponents.dart';
-
-class GameOverlay extends StatefulWidget {
-  final String host;
-  final int port;
-  final int gameId;
-  final String name;
-  final double lerpFactor;
-  final bool showDebug;
-  final ChannelCredentials? credentials;
-  const GameOverlay({super.key,
-    required this.host,
-    required this.port,
-    required this.gameId,
-    required this.name,
-    required this.lerpFactor,
-    required this.showDebug,
-    required this.credentials
-  });
-
-  @override
-  State<GameOverlay> createState() => _GameOverlay();
-}
-
-class _GameOverlay extends State<GameOverlay> {
-  ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
-  String loadingMsg = "";
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromRGBO(30,33,36, 1),
-      body: Stack(
-        children: [
-          GameWidget(
-            game: GameField(
-              gameId: widget.gameId,
-              name: widget.name,
-              host: widget.host,
-              port: widget.port,
-              lerpFactor: widget.lerpFactor,
-              showDebug: widget.showDebug,
-              credentials: widget.credentials,
-              mCallbacks: MainUICallbacks(
-                showDial: (message, color) {
-                  showDialog (
-                    context: context,
-                    builder: (context) {
-                      return GameErrorDialog(
-                        message: message,
-                        color: color,
-                      );
-                    }
-                  );
-                },
-                showSnack: (message, color) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: color,
-                      content: Text(message)
-                    )
-                  );
-                },
-                setProgress: (loading, msg) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    loadingMsg = msg;
-                    isLoading.value = loading;
-                  });
-                }
-              ),
-            )
-          ), // Your FlameGame widget
-          ValueListenableBuilder<bool>(
-            valueListenable: isLoading,
-            builder: (context, loading, child) {
-              if (loading) {
-                return Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const CupertinoActivityIndicator(radius: 25),
-                        const SizedBox(height: 20),
-                        Text(loadingMsg,style: const TextStyle(color: Colors.white60))
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          )
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: "Leave the game",
-        child: const Icon(Icons.exit_to_app_outlined),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
-    );
-  }
-}
-
+import 'package:orbstrike/Game/Lib/InputParser.dart';
+import 'package:orbstrike/Components/DebugComponents.dart';
+import 'package:orbstrike/Game/Lib/AuthServiceWrapper.dart';
+import 'package:orbstrike/Game/Lib/Types/GameCoreApi.dart';
+import 'package:orbstrike/Game/Lib/Types/GameCoreComponents.dart';
+import 'package:orbstrike/Game/Lib/Types/MainUICallbacks.dart';
 
 class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final String host;
@@ -151,9 +44,7 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
     required this.mCallbacks,
   });
 
-  final GameCoreApi coreApi = GameCoreApi(
-    stream: BehaviorSubject<Move>(),
-  );
+  final GameCoreApi coreApi = GameCoreApi();
 
   final GameCoreComponents coreComp = GameCoreComponents(
     board: GameBoard(),
@@ -220,9 +111,8 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
       mCallbacks.setProgress(true, "Connecting to Orbstrike Proxy...");
       coreComp.mainPlayerCreds =
           await joinGame(gameId, name, host, port, credentials);
-      mCallbacks.setProgress(false, "");
 
-      startGameSocket(coreApi, coreComp, mCallbacks, gameId, host, port);
+      startCoreReader(coreApi, coreComp, mCallbacks, gameId, host, port);
     } catch (err) {
       String errMsg;
       dynamic dynErr = err;
@@ -235,7 +125,7 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
       return;
     }
 
-    coreApi.stream.add(Move(
+    coreApi.stream?.add(Move(
         direction: Move_Direction.NONE,
         enableRing: false,
         gameid: gameId,
@@ -253,7 +143,7 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
     deltaAccumulator += dt;
     while (deltaAccumulator >= senderInterval) {
-      coreApi.stream.add(Move(
+      coreApi.stream?.add(Move(
           direction: coreComp.mainPlayerDirection,
           enableRing: coreComp.mainPlayerRingState,
           hitPlayers: coreComp.mainPlayerCollided,
@@ -269,9 +159,8 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
   @override
   void onDispose() async {
-    coreApi.shutdown = true;
     try {
-      coreApi.stream.close();
+      coreApi.stream?.close();
       coreApi.chan?.shutdown();
       if (coreComp.mainPlayerCreds!=null) {
         await exitGame(gameId, coreComp.mainPlayerCreds, host, port, credentials);
@@ -284,9 +173,3 @@ class GameField extends FlameGame with KeyboardEvents, HasCollisionDetection {
     super.onDispose();
   }
 }
-
-
-
-
-
-

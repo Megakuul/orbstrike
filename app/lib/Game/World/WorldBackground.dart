@@ -2,7 +2,6 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-
 class WorldBackground extends PositionComponent {
   final double radius;
   final double rectSize;
@@ -45,12 +44,6 @@ class WorldBackground extends PositionComponent {
     }
     return rec.endRecording();
   }
-
-  @override
-  double get z => -1000;
-
-  @override
-  bool get isHud => false;
 
   @override
   int get priority => -1000;

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 
 	"github.com/megakuul/orbstrike/server/conf"
 	"github.com/megakuul/orbstrike/server/db"
@@ -76,6 +77,8 @@ func main() {
 		SessionRequests: map[int64]*game.Move{},
 		SessionResponses: map[int64]error{},
 		ServerSecret: config.Secret,
+
+		GameOverMessages: strings.Split(config.GameOverMessages, "|"),
 
 		MaxChannelSize: config.MaxChannelSize,
 		ResponseIntervalMS: config.ResponseIntervalMS,

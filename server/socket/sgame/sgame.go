@@ -1,14 +1,15 @@
 package sgame
 
 import (
-	"fmt"
 	"io"
 	"math/rand"
 	"time"
 
-	"github.com/redis/go-redis/v9"
-	"github.com/megakuul/orbstrike/server/proto/game"
 	"github.com/megakuul/orbstrike/server/mutex"
+	"github.com/megakuul/orbstrike/server/proto/game"
+	"github.com/redis/go-redis/v9"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Server struct {
@@ -18,6 +19,8 @@ type Server struct {
 	SessionResponses map[int64]error
 	Mutex mutex.RWMutex
 	ServerSecret string
+
+	GameOverMessages []string
 
 	MaxChannelSize int
 	ResponseIntervalMS int
@@ -44,7 +47,7 @@ func (s *Server) StreamGameboard(stream game.GameService_StreamGameboardServer) 
 
 		curBoard, ok := s.Boards[req.Gameid]
 		if !ok {
-			err = fmt.Errorf("Game with id %d not found", req.Gameid)
+			err = status.Errorf(codes.NotFound, "Game with id %d not found!", req.Gameid)
 			break
 		}
 

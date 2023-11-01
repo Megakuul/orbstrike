@@ -39,3 +39,5 @@ syncintervalms: 1000
 # Defines the offline-threshold until the orchestrator will panic and reallocate the games
 downtimethresholdms: 5000
 
+# List seperated by '|' containing messages displayed when players are removed from the game
+gameovermessages: "Game Over|Wasted"

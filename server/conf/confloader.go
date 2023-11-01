@@ -30,6 +30,8 @@ type Config struct {
 	Base64SSLCertificate string `mapstructure:"base64_ssl_certificate"`
 	Base64SSLPrivateKey string `mapstructure:"base64_ssl_privatekey"`
 	Base64SSLCA string `mapstructure:"base64_ssl_ca"`
+
+	GameOverMessages string `mapstructure:"gameovermessages"`
 }
 
 func LoadConig(confpath string) (Config, error) {
@@ -58,6 +60,8 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("base64_ssl_certificate", "")
 	viper.SetDefault("base64_ssl_privatekey", "")
 	viper.SetDefault("base64_ssl_ca", "")
+
+	viper.SetDefault("gameovermessages", "Game Over")
 
 	err := viper.ReadInConfig()
 	if err!=nil {
