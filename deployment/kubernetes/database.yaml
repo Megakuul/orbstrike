@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orbstrike-db-environment
+  namespace: orbstrike-system
+stringData:
+  tls-cert: |
+    -----BEGIN CERTIFICATE-----
+    -----END CERTIFICATE-----
+  tls-key: |
+    -----BEGIN PRIVATE KEY-----
+    -----END PRIVATE KEY-----
+  tls-ca: |
+    -----BEGIN CERTIFICATE-----
+    -----END CERTIFICATE-----
+  acl-file: |
+    user u_orbstrike_admin_full +@all ~* on >SuperMegaSecret123$
+    user u_orbstrike_api_rw +@all -@dangerous +CLUSTER ~* on >SuperSecret123
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orbstrike-db-config
+  namespace: orbstrike-system
+data:
+  redis.conf: |
+    cluster-enabled yes
+    cluster-node-timeout 5000
+    appendonly yes
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 64mb
+    maxmemory 100mb
+    maxmemory-policy allkeys-lru
+    aclfile /etc/redis/acl/access.acl
+    tls-cert-file /etc/redis/tls/pub.cert
+    tls-key-file /etc/redis/tls/priv.key
+    tls-ca-file /etc/redis/tls/ca.cert
+    dir /data
+    appendfilename appendonly.aof
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: orbstrike-db-deployment
+  namespace: orbstrike-system
+spec:
+  serviceName: "redis"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orbstrike-db-cluster
+  template:
+    metadata:
+      labels:
+        app: orbstrike-db-cluster
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.0.0
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200Mi
+        env:
+        - name: REDIS_CONFIG_FILE
+          value: "/etc/redis/redis.conf"
+        volumeMounts:
+        - name: orbstrike-db-config
+          mountPath: /etc/redis
+        - name: orbstrike-db-store
+          mountPath: /data
+        - name: orbstrike-db-environment
+          mountPath: /etc/redis/tls/pub.cert
+          subPath: tls-cert
+        - name: orbstrike-db-environment
+          mountPath: /etc/redis/tls/priv.key
+          subPath: tls-key
+        - name: orbstrike-db-environment
+          mountPath: /etc/redis/tls/ca.cert
+          subPath: tls-ca
+        - name: orbstrike-db-environment
+          mountPath: /etc/redis/acl/access.acl
+          subPath: acl-file
+  volumeClaimTemplates:
+    metadata:
+      name: orbstrike-db-store
+      namespace: orbstrike-system
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 2Gi
+  volumes:
+  - name: orbstrike-db-config
+    configMap:
+      name: orbstrike-db-config
+  - name: orbstrike-db-environment
+    secret:
+      secretName: orbstrike-db-environment

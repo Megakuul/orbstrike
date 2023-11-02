@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orbstrike-orchestrator-environment
+  namespace: orbstrike-system
+type: Opaque
+data:
+  port: "443"
+  timeoutmin: "180"
+  secret: "awe9Kl2ZGEtjnoPoTjCXrnNppw4k6Kq9"
+  logfile: "/var/log/orbstrike.orchestrator.log"
+  logoptions: "ERROR|WARNING|INFORMATION"
+  maxlogsizekb: "500"
+  logstdout: "true"
+  base64_ssl_certificate: ""
+  base64_ssl_privatekey: ""
+  base64_ssl_ca: ""
+  dbshardnodes: "localhost:6379"
+  dbusername: "ORBSTRIKE_APIUSER_RW"
+  dbpassword: "SuperSecret123"
+  db_base64_ssl_certificate: ""
+  db_base64_ssl_privatekey: ""
+  db_base64_ssl_ca: ""
+  gameserver_base64_ssl_ca: ""
+  focontrollerdowntimethresholdms: "3000"
+  failoverintervalms: "1000"
+  gamelifetimemin: "180"
+  gamejointimeoutsec: "10"
+  dailyusergamelimit: "20"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orbstrike-orchestrator-deployment
+  namespace: orbstrike-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orbstrike-orchestrator
+  template:
+    metadata:
+      labels:
+        app: orbstrike-orchestrator
+    spec:
+      containers:
+        - name: orbstrike-orchestrator-container
+          image: megakuul/orbstrike-orchestrator:latest
+          envFrom:
+          - secretRef:
+              name: orbstrike-orchestrator-environment
+          ports:
+          - containerPort: 443
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orbstrike-orchestrator-lb
+  namespace: orbstrike-system
+spec:
+  type: LoadBalancer
+  selector:
+    app: orbstrike-orchestrator
+  ports:
+    - protocol: TCP
+      port: 433
+      targetPort: 443

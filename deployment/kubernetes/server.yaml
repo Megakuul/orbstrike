@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orbstrike-server-environment
+  namespace: orbstrike-system
+type: Opaque
+data:
+  port: 10187
+  addr: ""
+  secret: "awe9Kl2ZGEtjnoPoTjCXrnNppw4k6Kq9"
+  logfile: "/var/log/orbstrike.orchestrator.log"
+  logoptions: "ERROR|WARNING|INFORMATION"
+  maxlogsizekb: "500"
+  logstdout: "true"
+  base64_ssl_certificate: ""
+  base64_ssl_privatekey: ""
+  base64_ssl_ca: ""
+  dbshardnodes: "localhost:6379"
+  dbusername: "ORBSTRIKE_APIUSER_RW"
+  dbpassword: "SuperSecret123"
+  db_base64_ssl_certificate: ""
+  db_base64_ssl_privatekey: ""
+  db_base64_ssl_ca: ""
+  maxchannelsize: "10"
+  requestperworker: "15"
+  syncintervalms: "1000"
+  downtimethresholdms: "5000"
+  gameovermessage: "Game Over|Garbage Collected"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: orbstrike-server-deployment
+  namespace: orbstrike-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orbstrike-server
+  template:
+    metadata:
+      labels:
+        app: orbstrike-server
+    spec:
+      containers:
+        - name: orbstrike-server-container
+          image: megakuul/orbstrike-server:latest
+          envFrom:
+          - secretRef:
+              name: orbstrike-server-environment
+          ports:
+          - containerPort: 10187
