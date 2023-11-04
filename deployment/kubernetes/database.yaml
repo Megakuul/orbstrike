@@ -5,14 +5,11 @@ metadata:
   namespace: orbstrike-system
 stringData:
   tls-cert: |
-    -----BEGIN CERTIFICATE-----
-    -----END CERTIFICATE-----
+    base64cert
   tls-key: |
-    -----BEGIN PRIVATE KEY-----
-    -----END PRIVATE KEY-----
+    base64key
   tls-ca: |
-    -----BEGIN CERTIFICATE-----
-    -----END CERTIFICATE-----
+    base64cert
   acl-file: |
     user u_orbstrike_admin_full +@all ~* on >SuperMegaSecret123$
     user u_orbstrike_api_rw +@all -@dangerous +CLUSTER ~* on >SuperSecret123
@@ -31,12 +28,25 @@ data:
     auto-aof-rewrite-min-size 64mb
     maxmemory 100mb
     maxmemory-policy allkeys-lru
-    aclfile /etc/redis/acl/access.acl
-    tls-cert-file /etc/redis/tls/pub.cert
-    tls-key-file /etc/redis/tls/priv.key
-    tls-ca-file /etc/redis/tls/ca.cert
+    aclfile /etc/redis/conf/acl-file
+    tls-cert-file /etc/redis/conf/tls-cert
+    tls-key-file /etc/redis/conf/tls-key
+    tls-ca-file /etc/redis/conf/tls-ca
     dir /data
     appendfilename appendonly.aof
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: orbstrike-db-storageclass
+  namespace: orbstrike-system
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+parameters:
+  numberOfReplicas: "3"
+  staleReplicaTimeout: "2880" # 48 hours in minutes
+  fromBackup: ""
+  fsType: "ext4"
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -56,7 +66,8 @@ spec:
     spec:
       containers:
       - name: redis
-        image: redis:7.0.0
+        image: redis:7.2.3-alpine
+        imagePullPolicy: IfNotPresent
         resources:
           limits:
             cpu: 100m
@@ -70,31 +81,23 @@ spec:
         - name: orbstrike-db-store
           mountPath: /data
         - name: orbstrike-db-environment
-          mountPath: /etc/redis/tls/pub.cert
-          subPath: tls-cert
+          mountPath: /etc/redis/conf
+
+      volumes:
+        - name: orbstrike-db-config
+          configMap:
+            name: orbstrike-db-config
         - name: orbstrike-db-environment
-          mountPath: /etc/redis/tls/priv.key
-          subPath: tls-key
-        - name: orbstrike-db-environment
-          mountPath: /etc/redis/tls/ca.cert
-          subPath: tls-ca
-        - name: orbstrike-db-environment
-          mountPath: /etc/redis/acl/access.acl
-          subPath: acl-file
+          secret:
+            secretName: orbstrike-db-environment
+              
   volumeClaimTemplates:
-    metadata:
+  - metadata:
       name: orbstrike-db-store
       namespace: orbstrike-system
     spec:
       accessModes: ["ReadWriteOnce"]
-      storageClassName: longhorn
+      storageClassName: orbstrike-db-storageclass
       resources:
         requests:
           storage: 2Gi
-  volumes:
-  - name: orbstrike-db-config
-    configMap:
-      name: orbstrike-db-config
-  - name: orbstrike-db-environment
-    secret:
-      secretName: orbstrike-db-environment
