@@ -4,7 +4,7 @@ metadata:
   name: orbstrike-orchestrator-environment
   namespace: orbstrike-system
 type: Opaque
-data:
+stringData:
   port: "443"
   timeoutmin: "180"
   secret: "awe9Kl2ZGEtjnoPoTjCXrnNppw4k6Kq9"
@@ -15,12 +15,18 @@ data:
   base64_ssl_certificate: ""
   base64_ssl_privatekey: ""
   base64_ssl_ca: ""
-  dbshardnodes: "localhost:6379"
-  dbusername: "ORBSTRIKE_APIUSER_RW"
+  dbshardnodes: |
+    cache-db-set-0.cache-db-svc.orbstrike-system.svc.cluster.local:6379,
+    cache-db-set-1.cache-db-svc.orbstrike-system.svc.cluster.local:6379,
+    cache-db-set-2.cache-db-svc.orbstrike-system.svc.cluster.local:6379
+  dbusername: "u_orbstrike_api_rw"
   dbpassword: "SuperSecret123"
-  db_base64_ssl_certificate: ""
-  db_base64_ssl_privatekey: ""
-  db_base64_ssl_ca: ""
+  db_base64_ssl_certificate: |
+    base64cert
+  db_base64_ssl_privatekey: |
+    base64key
+  db_base64_ssl_ca: |
+    base64cert
   gameserver_base64_ssl_ca: ""
   focontrollerdowntimethresholdms: "3000"
   failoverintervalms: "1000"
@@ -31,20 +37,20 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orbstrike-orchestrator-deployment
+  name: orchestrator-deployment
   namespace: orbstrike-system
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: orbstrike-orchestrator
+      app: orchestrator
   template:
     metadata:
       labels:
-        app: orbstrike-orchestrator
+        app: orchestrator
     spec:
       containers:
-        - name: orbstrike-orchestrator-container
+        - name: orchestrator
           image: megakuul/orbstrike-orchestrator:latest
           envFrom:
           - secretRef:
@@ -55,12 +61,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: orbstrike-orchestrator-lb
+  name: orchestrator-lb
   namespace: orbstrike-system
 spec:
   type: LoadBalancer
   selector:
-    app: orbstrike-orchestrator
+    app: orchestrator
   ports:
     - protocol: TCP
       port: 433

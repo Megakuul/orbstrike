@@ -46,14 +46,17 @@ The redis-cluster needs to be initialized, to do this you will need to call foll
 redis-cli --cluster create <Pod1>:6379 <Pod2>:6379 <Pod3>:6379 --cluster-replicas 0
 ```
 
-This needs to be done initialy, you can do it over a automated solution like Ansible or just simply create a port-forwarding and do it manually:
+This needs to be done initialy, you can do it over a automated solution like Ansible. For simplicity you can also directly do it from a redis-container:
 
 ```bash
-kubectl port-forward pod/<Pod1> 7001:6379 &
-kubectl port-forward pod/<Pod2> 7002:6379 &
-kubectl port-forward pod/<Pod3> 7003:6379 &
-
-redis-cli --cluster create 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 --cluster-replicas 0
+# Connect to any database container
+kubectl exec -it -n orbstrike-system pod/orbstrike-db-set-1 -- sh
+# Create the initial cluster
+redis-cli --cluster create \
+cache-db-set-0.cache-db-svc.orbstrike-system.svc.cluster.local:6379 \
+cache-db-set-1.cache-db-svc.orbstrike-system.svc.cluster.local:6379 \
+cache-db-set-2.cache-db-svc.orbstrike-system.svc.cluster.local:6379 \
+--cluster-replicas 0
 ```
 
 When you want to add another shard master you can do it like this

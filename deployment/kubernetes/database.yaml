@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: orbstrike-db-environment
+  name: cache-db-environment
   namespace: orbstrike-system
 stringData:
   tls-cert: |
     base64cert
   tls-key: |
-    base64key
+    base64key  
   tls-ca: |
     base64cert
   acl-file: |
@@ -17,7 +17,7 @@ stringData:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: orbstrike-db-config
+  name: cache-db-config
   namespace: orbstrike-system
 data:
   redis.conf: |
@@ -31,14 +31,14 @@ data:
     aclfile /etc/redis/conf/acl-file
     tls-cert-file /etc/redis/conf/tls-cert
     tls-key-file /etc/redis/conf/tls-key
-    tls-ca-file /etc/redis/conf/tls-ca
+    tls-ca-cert-file /etc/redis/conf/tls-ca
     dir /data
     appendfilename appendonly.aof
 ---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: orbstrike-db-storageclass
+  name: cache-db-storageclass
   namespace: orbstrike-system
 provisioner: driver.longhorn.io
 allowVolumeExpansion: true
@@ -48,21 +48,35 @@ parameters:
   fromBackup: ""
   fsType: "ext4"
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache-db-svc
+  namespace: orbstrike-system
+spec:
+  clusterIP: None
+  selector:
+    app: cache-db-cluster
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: orbstrike-db-deployment
+  name: cache-db-set
   namespace: orbstrike-system
 spec:
-  serviceName: "redis"
+  serviceName: "cache-db-svc"
   replicas: 3
   selector:
     matchLabels:
-      app: orbstrike-db-cluster
+      app: cache-db-cluster
   template:
     metadata:
       labels:
-        app: orbstrike-db-cluster
+        app: cache-db-cluster
     spec:
       containers:
       - name: redis
@@ -72,32 +86,31 @@ spec:
           limits:
             cpu: 100m
             memory: 200Mi
-        env:
-        - name: REDIS_CONFIG_FILE
-          value: "/etc/redis/redis.conf"
+        args:
+        - "/etc/redis/redis.conf"
         volumeMounts:
-        - name: orbstrike-db-config
+        - name: cache-db-config
           mountPath: /etc/redis
-        - name: orbstrike-db-store
+        - name: cache-db-store
           mountPath: /data
-        - name: orbstrike-db-environment
+        - name: cache-db-environment
           mountPath: /etc/redis/conf
 
       volumes:
-        - name: orbstrike-db-config
+        - name: cache-db-config
           configMap:
-            name: orbstrike-db-config
-        - name: orbstrike-db-environment
+            name: cache-db-config
+        - name: cache-db-environment
           secret:
-            secretName: orbstrike-db-environment
+            secretName: cache-db-environment
               
   volumeClaimTemplates:
   - metadata:
-      name: orbstrike-db-store
+      name: cache-db-store
       namespace: orbstrike-system
     spec:
       accessModes: ["ReadWriteOnce"]
-      storageClassName: orbstrike-db-storageclass
+      storageClassName: cache-db-storageclass
       resources:
         requests:
           storage: 2Gi

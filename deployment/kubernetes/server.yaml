@@ -4,7 +4,7 @@ metadata:
   name: orbstrike-server-environment
   namespace: orbstrike-system
 type: Opaque
-data:
+stringData:
   port: 10187
   addr: ""
   secret: "awe9Kl2ZGEtjnoPoTjCXrnNppw4k6Kq9"
@@ -15,35 +15,55 @@ data:
   base64_ssl_certificate: ""
   base64_ssl_privatekey: ""
   base64_ssl_ca: ""
-  dbshardnodes: "localhost:6379"
-  dbusername: "ORBSTRIKE_APIUSER_RW"
+  dbshardnodes: |
+    cache-db-set-0.cache-db-svc.orbstrike-system.svc.cluster.local:6379,
+    cache-db-set-1.cache-db-svc.orbstrike-system.svc.cluster.local:6379,
+    cache-db-set-2.cache-db-svc.orbstrike-system.svc.cluster.local:6379
+  dbusername: "u_orbstrike_api_rw"
   dbpassword: "SuperSecret123"
-  db_base64_ssl_certificate: ""
-  db_base64_ssl_privatekey: ""
-  db_base64_ssl_ca: ""
+  db_base64_ssl_certificate: |
+    base64cert
+  db_base64_ssl_privatekey: |
+    base64key
+  db_base64_ssl_ca:  |
+    base64cert
   maxchannelsize: "10"
   requestperworker: "15"
   syncintervalms: "1000"
   downtimethresholdms: "5000"
   gameovermessage: "Game Over|Garbage Collected"
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-svc
+  namespace: orbstrike-system
+spec:
+  clusterIP: none
+  selector: server-cluster
+  ports:
+    - protocol: TCP
+      port: 10187
+      targetPort: 10187
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: orbstrike-server-deployment
+  name: server-deployment
   namespace: orbstrike-system
 spec:
+  serviceName: "server-svc"
   replicas: 3
   selector:
     matchLabels:
-      app: orbstrike-server
+      app: server-cluster
   template:
     metadata:
       labels:
-        app: orbstrike-server
+        app: server-cluster
     spec:
       containers:
-        - name: orbstrike-server-container
+        - name: server-container
           image: megakuul/orbstrike-server:latest
           envFrom:
           - secretRef:
