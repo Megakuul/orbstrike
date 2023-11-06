@@ -1,0 +1,107 @@
+{{- $relName := .Release.Name }}
+{{- $relNs := .Release.Namespace }}
+
+# Cache Database
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cache-db-env-{{ $relName }}
+  namespace: {{ $relNs }}
+stringData:
+  tls-cert: {{ .Values.cacheDBCert }}
+  tls-key: {{ .Values.cacheDBKey }}
+  tls-ca: {{ .Values.cacheDBCa }}
+  acl-file: {{ .Values.cacheDBAcl }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cache-db-conf-{{ $relName }}
+  namespace: {{ $relNs }}
+data:
+  redis.conf: |
+    cluster-enabled yes
+    cluster-node-timeout {{ .Values.cacheDBNodeTimeout }}
+    appendonly yes
+    auto-aof-rewrite-percentage {{ .Values.cacheDBAofRewritePercentage }}
+    auto-aof-rewrite-min-size {{ .Values.cacheDBAofRewriteMinSize }}
+    maxmemory {{ .Values.cacheDBMaxMemory }}
+    maxmemory-policy allkeys-lru
+    aclfile /etc/redis/conf/acl-file
+    {{- if .Values.cacheDBEnableTLS }}
+    tls-cert-file /etc/redis/conf/tls-cert
+    tls-key-file /etc/redis/conf/tls-key
+    tls-ca-cert-file /etc/redis/conf/tls-ca
+    {{- end }}
+    dir /data
+    appendfilename appendonly.aof
+---
+# Orchestrator
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orchestrator-env-{{ $relName }}
+  namespace: {{ $relNs }}
+type: Opaque
+stringData:
+  port: "{{ .Values.orchestratorPort }}"
+  timeoutmin: "{{ .Values.orchestratorTimeoutMin }}"
+  secret: "{{ .Values.appSecret }}"
+  logfile: "{{ .Values.orchestratorLogFile }}"
+  logoptions: "{{ .Values.orchestratorLogOptions }}"
+  maxlogsizekb: "{{ .Values.orchestratorMaxLogSizeKB }}"
+  logstdout: "{{ .Values.orchestratorLogStdout }}"
+  base64_ssl_certificate: "{{ .Values.orchestratorCert }}"
+  base64_ssl_privatekey: "{{ .Values.orchestratorKey }}"
+  base64_ssl_ca: "{{ .Values.orchestratorCa }}"
+  dbshardnodes: |
+    {{- range .Values.appCacheShard }}
+    cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,
+    {{- end }}
+  dbusername: "u_orbstrike_api_rw"
+  dbpassword: "SuperSecret123"
+  db_base64_ssl_certificate: {{ .Values.cacheDBCert }}
+  db_base64_ssl_privatekey: {{ .Values.cacheDBKey }}
+  db_base64_ssl_ca: {{ .Values.cacheDBCa }}
+  gameserver_base64_ssl_ca: ""
+  focontrollerdowntimethresholdms: "3000"
+  failoverintervalms: "1000"
+  gamelifetimemin: "180"
+  gamejointimeoutsec: "10"
+  dailyusergamelimit: "20"
+---
+# Game Server
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orbstrike-server-environment
+  namespace: {{ $relNs }}
+type: Opaque
+stringData:
+  port: 10187
+  addr: ""
+  secret: "awe9Kl2ZGEtjnoPoTjCXrnNppw4k6Kq9"
+  logfile: "/var/log/orbstrike.orchestrator.log"
+  logoptions: "ERROR|WARNING|INFORMATION"
+  maxlogsizekb: "500"
+  logstdout: "true"
+  base64_ssl_certificate: ""
+  base64_ssl_privatekey: ""
+  base64_ssl_ca: ""
+  dbshardnodes: |
+    cache-db-set-0.cache-db-svc.orbstrike-system.svc.cluster.local:6379,
+    cache-db-set-1.cache-db-svc.orbstrike-system.svc.cluster.local:6379,
+    cache-db-set-2.cache-db-svc.orbstrike-system.svc.cluster.local:6379
+  dbusername: "u_orbstrike_api_rw"
+  dbpassword: "SuperSecret123"
+  db_base64_ssl_certificate: |
+    base64cert
+  db_base64_ssl_privatekey: |
+    base64key
+  db_base64_ssl_ca:  |
+    base64cert
+  maxchannelsize: "10"
+  requestperworker: "15"
+  syncintervalms: "1000"
+  downtimethresholdms: "5000"
+  gameovermessage: "Game Over|Garbage Collected"

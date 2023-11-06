@@ -21,7 +21,7 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 	}
 
 	rdb:=redis.NewClusterClient(&redis.ClusterOptions{
-		Addrs: strings.Split(config.DBShardNodes, ","),
+		Addrs: TrimSplit(config.DBShardNodes, ","),
 		Username: config.DBUsername,
 		Password: config.DBPassword,
 		TLSConfig: tlsConf,
@@ -33,4 +33,16 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 	}
 
 	return rdb, nil
+}
+
+func TrimSplit(input string, delimiter string) ([]string) {
+	slices := strings.Split(input, delimiter)
+	sliceBuf := []string{}
+	for _, slice := range slices {
+		slice = strings.TrimSpace(slice)
+		if slice!="" {
+			sliceBuf = append(sliceBuf, slice)
+		}
+	}
+	return sliceBuf
 }

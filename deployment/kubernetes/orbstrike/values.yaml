@@ -1,0 +1,52 @@
+
+
+
+
+
+
+
+
+
+# -- Application Specific Data -- #
+
+cacheDBEnableTLS: true
+cacheDBCert: |
+  base64cert
+cacheDBKey: |
+  base64key
+cacheDBCa: |
+  base64ca
+cacheDBAcl: |
+  user u_orbstrike_admin_full +@all ~* on >SuperMegaSecret123$
+  user u_orbstrike_api_rw +@all -@dangerous +CLUSTER ~* on >SuperSecret123
+cacheDBNodeTimeout: 5000
+cacheDBMaxMemory: "100mb"
+cacheDBAofRewritePercentage: 100
+cacheDBAofRewriteMinSize: "64mb"
+
+appSecret: awe9Kl2ZGEtjnoPoTjCXrnNppw4k6Kq9
+# Specify at least one instance for each shard (enter the number of the instance)
+appCacheShard:
+  - 0
+  - 1
+  - 2
+appCacheUsername: u_orbstrike_api_rw
+appCachePassword: SuperSecret123
+
+orchestratorPort: 443
+orchestratorTimeoutMin: 180
+orchestratorLogFile: /var/log/orbstrike.orchestrator.log
+orchestratorLogOptions: ERROR|WARNING|INFORMATION
+orchestratorMaxLogSizeKB: 500
+orchestratorLogStdout: true
+
+orchestratorCert: |
+  base64cert
+orchestratorKey: |
+  base64key
+orchestratorCa: |
+  base64ca
+  
+
+
+# -- Application Specific Data -- #
