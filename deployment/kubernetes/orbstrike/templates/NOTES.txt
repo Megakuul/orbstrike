@@ -1,1 +1,11 @@
 Installed Orbstrike-System!
+
+For the Longhorn Cluster, its required to have *open-iscsi* installed on each node.
+
+You will also need to initialize the REDIS Cluster with following command from inside the cluster:
+
+redis-cli --cluster create \
+{{- range $i, $e := until (int .Values.cacheDBShard) }}
+cache-db-set-{{ .Release.Name }}-{{ $i }}.cache-db-svc-{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local:6379 \
+{{- end }}
+--cluster-replicas {{ add .Values.cacheDBReplicas -1 }}

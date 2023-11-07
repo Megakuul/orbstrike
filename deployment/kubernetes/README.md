@@ -7,6 +7,8 @@ To deploy the application on Kubernetes we will need to deploy the orchestrator 
 
 For the Kubernetes deployment, an installed Kubernetes cluster (at least v1.28.0) is required.
 
+You will also need HELM to be installed on your system.
+
 The deployment also uses some other services, you can install them as follows:
 
 #### Metallb
@@ -69,5 +71,3 @@ To add a replica to a shard master
 ```bash
 redis-cli --cluster add-node <Pod1>:6379 <Pod4>:6379 --cluster-slave
 ```
-
-

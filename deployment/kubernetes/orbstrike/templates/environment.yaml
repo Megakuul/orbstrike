@@ -58,50 +58,47 @@ stringData:
     {{- range .Values.appCacheShard }}
     cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,
     {{- end }}
-  dbusername: "u_orbstrike_api_rw"
-  dbpassword: "SuperSecret123"
+  dbusername: "{{ .Values.appCacheUsername }}"
+  dbpassword: "{{ .Values.appCachePassword }}"
   db_base64_ssl_certificate: {{ .Values.cacheDBCert }}
   db_base64_ssl_privatekey: {{ .Values.cacheDBKey }}
   db_base64_ssl_ca: {{ .Values.cacheDBCa }}
-  gameserver_base64_ssl_ca: ""
-  focontrollerdowntimethresholdms: "3000"
-  failoverintervalms: "1000"
-  gamelifetimemin: "180"
-  gamejointimeoutsec: "10"
-  dailyusergamelimit: "20"
+  gameserver_base64_ssl_ca: {{ .Values.serverCa }}
+  focontrollerdowntimethresholdms: "{{ .Values.orchestratorDowntimeThresholdms }}"
+  failoverintervalms: "{{ .Values.orchestratorFailoverInterval }}"
+  gamelifetimemin: "{{ .Values.appGameLifeTimeMin }}"
+  gamejointimeoutsec: "{{ .Values.appGameJoinTimeoutSec }}"
+  dailyusergamelimit: "{{ .Values.appDailyUserGameLimit }}"
 ---
 # Game Server
 apiVersion: v1
 kind: Secret
 metadata:
-  name: orbstrike-server-environment
+  name: orbstrike-server-env-{{ $relName }} 
   namespace: {{ $relNs }}
 type: Opaque
 stringData:
-  port: 10187
+  port: "{{ .Values.serverPort }}"
   addr: ""
-  secret: "awe9Kl2ZGEtjnoPoTjCXrnNppw4k6Kq9"
-  logfile: "/var/log/orbstrike.orchestrator.log"
-  logoptions: "ERROR|WARNING|INFORMATION"
-  maxlogsizekb: "500"
-  logstdout: "true"
-  base64_ssl_certificate: ""
-  base64_ssl_privatekey: ""
-  base64_ssl_ca: ""
+  secret: "{{ .Values.appSecret }}"
+  logfile: "{{ .Values.serverLogFile }}"
+  logoptions: "{{ .Values.serverLogOptions }}"
+  maxlogsizekb: "{{ .Values.serverMaxLogSizeKB }}"
+  logstdout: "{{ .Values.serverLogStdout }}"
+  base64_ssl_certificate: "{{ .Values.serverCert }}"
+  base64_ssl_privatekey: "{{ .Values.serverKey }}"
+  base64_ssl_ca: "{{ .Values.serverCa }}"
   dbshardnodes: |
-    cache-db-set-0.cache-db-svc.orbstrike-system.svc.cluster.local:6379,
-    cache-db-set-1.cache-db-svc.orbstrike-system.svc.cluster.local:6379,
-    cache-db-set-2.cache-db-svc.orbstrike-system.svc.cluster.local:6379
-  dbusername: "u_orbstrike_api_rw"
-  dbpassword: "SuperSecret123"
-  db_base64_ssl_certificate: |
-    base64cert
-  db_base64_ssl_privatekey: |
-    base64key
-  db_base64_ssl_ca:  |
-    base64cert
-  maxchannelsize: "10"
-  requestperworker: "15"
-  syncintervalms: "1000"
-  downtimethresholdms: "5000"
-  gameovermessage: "Game Over|Garbage Collected"
+    {{- range .Values.appCacheShard }}
+    cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,
+    {{- end }}
+  dbusername: "{{ .Values.appCacheUsername }}"
+  dbpassword: "{{ .Values.appCachePassword }}"
+  db_base64_ssl_certificate: {{ .Values.cacheDBCert }}
+  db_base64_ssl_privatekey: {{ .Values.cacheDBKey }}
+  db_base64_ssl_ca: {{ .Values.cacheDBCa }}
+  maxchannelsize: "{{ .Values.serverMaxChanSize }}"
+  requestperworker: "{{ .Values.serverReqPerWorker }}"
+  syncintervalms: "{{ .Values.serverSyncIntervalms }}"
+  downtimethresholdms: "{{ .Values.serverDowntimeThresholdms }}"
+  gameovermessage: "{{ .Values.appGameOverMessage }}"

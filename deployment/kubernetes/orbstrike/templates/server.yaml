@@ -1,37 +1,39 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: server-svc
-  namespace: orbstrike-system
+  name: server-svc-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   clusterIP: none
   selector: server-cluster
   ports:
     - protocol: TCP
-      port: 10187
-      targetPort: 10187
+      port: {{ .Values.serverPort }}
+      targetPort: {{ .Values.serverPort }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: server-deployment
-  namespace: orbstrike-system
+  namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: "server-svc"
-  replicas: 3
+  serviceName: "server-svc-{{ .Release.Name }}"
+  replicas: {{ .Values.serverReplicas }}
   selector:
     matchLabels:
-      app: server-cluster
+      app: server-{{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: server-cluster
+        app: server-{{ .Release.Name }}
     spec:
       containers:
-        - name: server-container
+        - name: server-{{ .Release.Name }}
           image: megakuul/orbstrike-server:latest
           envFrom:
           - secretRef:
-              name: orbstrike-server-environment
+              name: server-env-{{ .Release.Name }}
           ports:
-          - containerPort: 10187
+          - containerPort: {{ .Values.serverPort }}
+          resources:
+            {{- toYaml .Values.serverResources | nindent 10 }}

@@ -1,37 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orchestrator-deployment
-  namespace: orbstrike-system
+  name: orchestrator-deployment-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 3
+  replicas: {{ .Values.orchestratorReplicas }}
   selector:
     matchLabels:
-      app: orchestrator
+      app: orchestrator-{{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: orchestrator
+        app: orchestrator-{{ .Release.Name }}
     spec:
       containers:
-        - name: orchestrator
+        - name: orchestrator-{{ .Release.Name }}
           image: megakuul/orbstrike-orchestrator:latest
           envFrom:
           - secretRef:
-              name: orbstrike-orchestrator-environment
+              name: orchestrator-env-{{ .Release.Name }}
           ports:
-          - containerPort: 443
+          - containerPort: {{ .Values.orchestratorPort }}
+          resources:
+            {{- toYaml .Values.orchestratorResources | nindent 10 }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: orchestrator-lb
-  namespace: orbstrike-system
+  name: orchestrator-lb-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    metallb.universe.tf/address-pool: ip-pool-{{ .Release.Name }}
 spec:
   type: LoadBalancer
   selector:
-    app: orchestrator
+    app: orchestrator-{{ .Release.Name }}
   ports:
     - protocol: TCP
-      port: 433
-      targetPort: 443
+      port: {{ .Values.orchestratorPort }}
+      targetPort: {{ .Values.orchestratorPort }}

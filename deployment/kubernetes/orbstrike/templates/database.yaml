@@ -1,8 +1,8 @@
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: cache-db-storageclass
-  namespace: orbstrike-system
+  name: cache-db-storageclass-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 provisioner: driver.longhorn.io
 allowVolumeExpansion: true
 parameters:
@@ -14,12 +14,12 @@ parameters:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cache-db-svc
-  namespace: orbstrike-system
+  name: cache-db-svc-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   clusterIP: None
   selector:
-    app: cache-db-cluster
+    app: cache-db-cluster-{{ .Release.Name }}
   ports:
     - protocol: TCP
       port: 6379
@@ -28,52 +28,50 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: cache-db-set
-  namespace: orbstrike-system
+  name: cache-db-set-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: "cache-db-svc"
-  replicas: 3
+  serviceName: "cache-db-svc-{{ .Release.Name }}"
+  replicas: {{ mul .Values.cacheDBShard .Values.cacheDBReplicas }}
   selector:
     matchLabels:
-      app: cache-db-cluster
+      app: cache-db-cluster-{{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: cache-db-cluster
+        app: cache-db-cluster-{{ .Release.Name }}
     spec:
       containers:
       - name: redis
         image: redis:7.2.3-alpine
         imagePullPolicy: IfNotPresent
         resources:
-          limits:
-            cpu: 100m
-            memory: 200Mi
+          {{- toYaml .Values.cacheDBResources | nindent 10 }}
         args:
         - "/etc/redis/redis.conf"
         volumeMounts:
-        - name: cache-db-config
+        - name: cache-db-conf-{{ .Release.Name }}
           mountPath: /etc/redis
-        - name: cache-db-store
+        - name: cache-db-store-{{ .Release.Name }}
           mountPath: /data
-        - name: cache-db-environment
+        - name: cache-db-env-{{ .Release.Name }}
           mountPath: /etc/redis/conf
 
       volumes:
-        - name: cache-db-config
+        - name: cache-db-conf-{{ .Release.Name }}
           configMap:
-            name: cache-db-config
-        - name: cache-db-environment
+            name: cache-db-conf-{{ .Release.Name }}
+        - name: cache-db-env-{{ .Release.Name }}
           secret:
-            secretName: cache-db-environment
+            secretName: cache-db-env-{{ .Release.Name }}
               
   volumeClaimTemplates:
   - metadata:
-      name: cache-db-store
-      namespace: orbstrike-system
+      name: cache-db-store-{{ .Release.Name }}
+      namespace: {{ .Release.Namespace }}
     spec:
       accessModes: ["ReadWriteOnce"]
-      storageClassName: cache-db-storageclass
+      storageClassName: cache-db-storageclass-{{ .Release.Name }}
       resources:
         requests:
           storage: 2Gi

@@ -1,17 +1,20 @@
+{{- if not .Values.orchestratorSpeakerIP }}
+{{- fail "Value orchestratorSpeakerIP is required!" }}
+{{- end }}
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
   name: l2-ip
-  namespace: metallb-system
+  namespace: {{ .Release.Namespace }}
 spec:
   ipAddressPools:
-  - orbstrike-pool
+  - ip-pool-{{ .Release.Name }}
 ---
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-  name: orbstrike-pool
-  namespace: metallb-system
+  name: ip-pool-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   addresses:
-    - 10.1.1.80
+    - {{ .Values.orchestratorSpeakerIP }}
