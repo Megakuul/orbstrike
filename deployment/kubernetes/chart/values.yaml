@@ -1,0 +1,146 @@
+# -- CacheDB Settings -- #
+
+# There are cacheDBShard*cacheDBReplicas instances launched
+# Number of redis shards
+cacheDBShard: 3
+# Number of replicas per shard (including shard-master)
+cacheDBReplicas: 1
+
+# Kubernetes resource limit for each instance
+cacheDBResources:
+   limits:
+     cpu: 100m
+     memory: 200Mi
+
+# Set to true to enable mutual TLS, or false for unencrypted connections
+cacheDBEnableTLS: false
+# Certificate chain in base64. Enter "" when connection is unencrypted
+cacheDBCert: ""
+cacheDBKey: ""
+cacheDBCa: ""
+
+# ACL configuration of database.
+cacheDBAcl: |
+  user admin_full +@all ~* on >password
+  user api_rw +@all -@dangerous +CLUSTER ~* on >password
+
+# Node-Timeout of redis instances
+cacheDBNodeTimeout: 5000
+# Maximum memory usage of the hash (after limit is reached it will remove keys after the allkey-lru concept
+cacheDBMaxMemory: "100mb"
+# Storage of the persistent volume of one instance
+cacheDBDiskStorage: 2Gi
+# Defines the storage percentage after when the AOF file will be rewriten
+cacheDBAofRewritePercentage: 90
+# Defines the minimum size after when the AOF file can be rewriten
+cacheDBAofRewriteMinSize: "64mb"
+
+# -- CacheDB Settings -- #
+
+# -- Orchestrator Settigns -- #
+
+# Defines the external IP of the Metallb speaker
+# orchestratorSpeakerIP: 10.100.32.100
+
+# Port on which orchestrator is exposed
+orchestratorPort: 443
+
+# Defines the replicas for the orchestrator
+orchestratorReplicas: 3
+
+# Kubernetes resource limit for each instance
+orchestratorResources:
+   limits:
+     cpu: 50m
+     memory: 50Mi
+
+# Defines the timeout for connected sockets on the orchestrator in minutes
+# After the timeout sockets are kicked from the connection no matter if they are still alive
+# the client will then automatically reconnect. This feature is to prevent freezed connections to allocate memory on the orchestrator.
+orchestratorTimeoutMin: 180
+
+# Those options define the behaviour of logs
+orchestratorLogFile: /var/log/orbstrike.orchestrator.log
+orchestratorLogOptions: ERROR|WARNING|INFORMATION
+orchestratorMaxLogSizeKB: 500
+orchestratorLogStdout: true
+
+# Certificate chain in base64. Enter "" when connection is unencrypted
+# Note that this is the certificate used for communicating with the client
+orchestratorCert: ""
+orchestratorKey: ""
+orchestratorCa: ""
+
+# Defines the time a orchestrator is the FailoverController after beeing elected
+# With this it defines the downtime-threshold of the FailoverController
+orchestratorDowntimeThresholdms: 3000
+# Defines the interval in which is checked if a new FailoverController should be elected
+orchestratorFailoverInterval: 1000
+
+# -- Orchestrator Settings -- #  
+
+# -- Server Settings -- #
+
+# Port on which orchestrator is exposed
+serverPort: 10187
+
+# Defines the replicas for the gameserver
+serverReplicas: 5
+
+# Kubernetes resource limit for each instance
+serverResources:
+   limits:
+     cpu: 100m
+     memory: 100Mi
+
+# Those options define the behaviour of logs
+serverLogFile: /var/log/orbstrike.server.log
+serverLogOptions: ERROR|WARNING|INFORMATION
+serverMaxLogSizeKB: 500
+serverLogStdout: true
+
+# Certificate chain in base64. Enter "" when connection is unencrypted
+serverCert: ""
+serverKey: ""
+serverCa: ""
+
+# Defines how much requests can be in a respond channel
+serverMaxChanSize: 10
+# Defines how much requests are processed synchron per worker
+serverReqPerWorker: 15
+# Defines the interval in which game is synchronized with the database
+serverSyncIntervalms: 1000
+# Defines the offline-threshold until the orchestrator will panic and reallocate the games
+serverDowntimeThresholdms: 5000
+
+# -- Server Settings -- #
+
+# -- Shared App Settings -- #
+
+# App secret used to encrypt tickets / userkeys, this key must be kept absolutely secret (comparable to a JWT secret)
+appSecret: awe9Kl2ZGEtjnoPoTjCXrnNppw4k6Kq9
+
+# Specify at least one instance for each shard (enter the number of the instance)
+# You can also specify every instance, it doesn't matter -> more defined instances = more instances can failover.
+appCacheShard:
+  - 0
+  - 1
+  - 2
+# Usercredentials for authorization of orchestrator and server at the database
+# The user must have read and write access to the database
+appCacheUsername: api_rw
+appCachePassword: password
+
+
+# Defines the response-interval of the server. It's the interval in which updates are sent to the clients -> aka "Network FPS" (100ms -> 10 FPS)
+appResponseIntervalms: 15
+# Defines the lifetime of a game, when this expires, the game is deleted
+appGameLifeTimeMin: 180
+# Defines after which time the player is removed from the queue (gamejoin is cancelled) when the gsync scheduler doesn't allocate the game.
+appGameJoinTimeoutSec: 10
+# Defines the maximum games that a running client can create per 24 hours
+appDailyUserGameLimit: 20
+# List seperated by '|' containing messages displayed when players are removed from the game
+appGameOverMessage: "Game Over!|Garbage Collected!|You got roasted!"
+
+# -- Shared App Settings -- #

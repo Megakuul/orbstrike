@@ -8,10 +8,10 @@ metadata:
   name: cache-db-env-{{ $relName }}
   namespace: {{ $relNs }}
 stringData:
-  tls-cert: {{ .Values.cacheDBCert }}
-  tls-key: {{ .Values.cacheDBKey }}
-  tls-ca: {{ .Values.cacheDBCa }}
-  acl-file: {{ .Values.cacheDBAcl }}
+  tls-cert: "{{ .Values.cacheDBCert }}"
+  tls-key: "{{ .Values.cacheDBKey }}"
+  tls-ca: "{{ .Values.cacheDBCa }}"
+  acl-file: "{{ .Values.cacheDBAcl }}"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -102,3 +102,4 @@ stringData:
   syncintervalms: "{{ .Values.serverSyncIntervalms }}"
   downtimethresholdms: "{{ .Values.serverDowntimeThresholdms }}"
   gameovermessage: "{{ .Values.appGameOverMessage }}"
+  responseintervalms: "{{ .Values.appResponseIntervalms }}"

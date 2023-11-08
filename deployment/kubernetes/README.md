@@ -1,64 +1,46 @@
 # Kubernetes Deployment
 
-To deploy the application on Kubernetes we will need to deploy the orchestrator and server services aswell as the redis-cluster.
+The kubernetes deployment is handled with HELM and the provided chart.
 
+Dependencies:
+ - Metallb (v0.13.12)
+ - Longhorn (v1.5.2)
+ 
+The dependencies are included in the repository, so you will not need to install it manually.
 
-### Prerequisites
-
-For the Kubernetes deployment, an installed Kubernetes cluster (at least v1.28.0) is required.
-
-You will also need HELM to be installed on your system.
-
-The deployment also uses some other services, you can install them as follows:
-
-#### Metallb
-
-To loadbalance the nodes without external loadbalancer we will use Metallb, you can install it by manifest (v0.13.12):
+For the longhorn block-storage every kubernetes node needs to have *open-iscsi* installed and up and running:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
-```
-
-#### Longhorn
-
-As Storageprovider for the redis-cluster we use Longhorn for high available block storage.
-
-To use longhorn you will need open-iscsi installed on every node, on Arch you can do this like so:
-
-```bash
+# Example for arch
 sudo pacman -S open-iscsi
 
-# Enable and run the iscsid service on every node
 sudo systemctl enable iscsid && sudo systemctl start iscsid
 ```
 
-Then you can install the longhorn system with kubectl (v1.5.2):
+### Installation
+
+Install the Helm chart with:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.5.2/deploy/longhorn.yaml
+helm install <stage> ./chart --set orchestratorSpeakerIP=<speakerIp> --namespace obstrike-system --create-namespace
+```
+Usually you want to use a custom *values.yaml* file, you can specify it after the *-f* or *--values* flag. The mandatory flag *orchestratorSpeakerIP* is the IP that is "exposed" by the metallb speaker.
+
+For instructions to the specific attributes, just copy the *values.yaml* file from the *chart* directory, inside you will find any attribute documented and described.
+```bash
+cp ./chart/values.yaml myvalues.yaml
+emacs -nw myvalues.yaml
 ```
 
-
-
-### Setup Redis
+### Initialization (also described in HELM output)
 
 The redis-cluster needs to be initialized, to do this you will need to call following command from the redis cli:
 
 ```bash
-redis-cli --cluster create <Pod1>:6379 <Pod2>:6379 <Pod3>:6379 --cluster-replicas 0
-```
-
-This needs to be done initialy, you can do it over a automated solution like Ansible. For simplicity you can also directly do it from a redis-container:
-
-```bash
 # Connect to any database container
-kubectl exec -it -n orbstrike-system pod/orbstrike-db-set-1 -- sh
+kubectl exec -it -n orbstrike-system pod/<Pod1> -- sh
 # Create the initial cluster
-redis-cli --cluster create \
-cache-db-set-0.cache-db-svc.orbstrike-system.svc.cluster.local:6379 \
-cache-db-set-1.cache-db-svc.orbstrike-system.svc.cluster.local:6379 \
-cache-db-set-2.cache-db-svc.orbstrike-system.svc.cluster.local:6379 \
---cluster-replicas 0
+redis-cli --cluster create <Pod1>:6379 <Pod2>:6379 <Pod3>:6379 --cluster-replicas 0
 ```
 
 When you want to add another shard master you can do it like this
@@ -71,3 +53,21 @@ To add a replica to a shard master
 ```bash
 redis-cli --cluster add-node <Pod1>:6379 <Pod4>:6379 --cluster-slave
 ```
+
+### Update dependencies
+
+When you need to update the dependencie-versions you can simply do this by updating the *version* attribute in the *dependencie* section of the *Chart.yaml* file and then running:
+```
+helm dependencie build
+```
+
+Make sure to extensively test the application after updating the dependencies!
+
+### Manifest
+
+When you need a manifest instead of the Helm chart, you can just generate the file from the chart:
+```bash
+helm template <releaseName> chart --namespace orbstrike-system --set orchestratorSpeakerIP=<speakerIp> orbstrike.yaml
+```
+
+Specify all variables you want to customize with either *--set* or with a custom *value.yaml* file (specified by *--values*)

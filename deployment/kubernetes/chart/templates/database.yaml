@@ -74,4 +74,4 @@ spec:
       storageClassName: cache-db-storageclass-{{ .Release.Name }}
       resources:
         requests:
-          storage: 2Gi
+          storage: {{ .Values.cacheDBDiskStorage }}
