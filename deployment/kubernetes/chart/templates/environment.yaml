@@ -80,6 +80,7 @@ type: Opaque
 stringData:
   port: "{{ .Values.serverPort }}"
   addr: ""
+  hostnamesuffix: ".server-svc-{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
   secret: "{{ .Values.appSecret }}"
   logfile: "{{ .Values.serverLogFile }}"
   logoptions: "{{ .Values.serverLogOptions }}"

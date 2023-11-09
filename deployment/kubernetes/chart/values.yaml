@@ -45,14 +45,23 @@ cacheDBAofRewriteMinSize: "64mb"
 # Port on which orchestrator is exposed
 orchestratorPort: 443
 
-# Defines the replicas for the orchestrator
-orchestratorReplicas: 3
+# Defines the replicas when deployment is launched
+orchestratorDefaultReplicas: 3
+# Defines the max replicas
+orchestratorMaxReplicas: 5
+# Defines the min replicas
+orchestratorMinReplicas: 1
+# Defines the mem/cpu utilisation percentage on which the orchestrator is scaled
+orchestratorScaleUtil: 80
 
 # Kubernetes resource limit for each instance
 orchestratorResources:
-   limits:
-     cpu: 50m
-     memory: 50Mi
+  requests:
+    cpu: 50m
+    memory: 30Mi
+  limits:
+    cpu: 120m
+    memory: 100Mi
 
 # Defines the timeout for connected sockets on the orchestrator in minutes
 # After the timeout sockets are kicked from the connection no matter if they are still alive
@@ -84,14 +93,23 @@ orchestratorFailoverInterval: 1000
 # Port on which orchestrator is exposed
 serverPort: 10187
 
-# Defines the replicas for the gameserver
-serverReplicas: 5
+# Defines the replicas when deployment is launched
+serverDefaultReplicas: 3
+# Defines the max replicas
+serverMaxReplicas: 5
+# Defines the min replicas
+serverMinReplicas: 1
+# Defines the mem/cpu utilisation percentage on which the orchestrator is scaled
+serverScaleUtil: 90
 
 # Kubernetes resource limit for each instance
 serverResources:
-   limits:
-     cpu: 100m
-     memory: 100Mi
+  requests:
+    cpu: 100m
+    memory: 100Mi
+  limits:
+    cpu: 500m
+    memory: 400Mi
 
 # Those options define the behaviour of logs
 serverLogFile: /var/log/orbstrike.server.log

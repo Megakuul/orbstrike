@@ -1,24 +1,10 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: server-svc-{{ .Release.Name }}
-  namespace: {{ .Release.Namespace }}
-spec:
-  clusterIP: none
-  selector: server-cluster
-  ports:
-    - protocol: TCP
-      port: {{ .Values.serverPort }}
-      targetPort: {{ .Values.serverPort }}
----
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
-  name: server-deployment
+  name: server-deployment-{{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: "server-svc-{{ .Release.Name }}"
-  replicas: {{ .Values.serverReplicas }}
+  replicas: {{ .Values.serverDefaultReplicas }}
   selector:
     matchLabels:
       app: server-{{ .Release.Name }}
@@ -37,3 +23,48 @@ spec:
           - containerPort: {{ .Values.serverPort }}
           resources:
             {{- toYaml .Values.serverResources | nindent 10 }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: server-hpa-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: server-deployment-{{ .Release.Name }}
+  minReplicas: {{ .Values.serverMinReplicas }}
+  maxReplicas: {{ .Values.serverMaxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.serverScaleUtil }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.serverScaleUtil }}
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-svc-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  clusterIP: None
+  selector:
+    app: server-{{ .Release.Name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.serverPort }}
+      targetPort: {{ .Values.serverPort }}

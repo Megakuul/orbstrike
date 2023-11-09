@@ -7,6 +7,7 @@ import (
 type Config struct {
 	Port int `mapstructure:"port"`
 	Addr string `mapstructre:"addr"`
+	HostnameSuffix string `mapstructure:"hostnamesuffix"`
 	Secret string `mapstructure:"secret"`
 
 	DBShardNodes string `mapstructure:"dbshardnodes"`
@@ -60,6 +61,7 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetDefault("base64_ssl_certificate", "")
 	viper.SetDefault("base64_ssl_privatekey", "")
 	viper.SetDefault("base64_ssl_ca", "")
+	viper.SetDefault("hostnamesuffix", "")
 
 	viper.SetDefault("gameovermessages", "Game Over")
 

@@ -30,12 +30,12 @@ func StartScheduler(srv *sgame.Server, config *conf.Config) {
 		"Initiating GSync Scheduler...",
 	)
 	var gserverAddr string
-	if config.Addr == "" {
+	if config.Addr == "" { 
 		hostname, err := os.Hostname()
 		if err!=nil {
 			logger.WriteErrLogger(err)
 		} else {
-			gserverAddr = fmt.Sprintf("%s:%d", hostname, config.Port)
+			gserverAddr = fmt.Sprintf("%s%s:%d", hostname, config.HostnameSuffix, config.Port)
 		}
 	} else {
 		gserverAddr = fmt.Sprintf("%s:%d", config.Addr, config.Port)

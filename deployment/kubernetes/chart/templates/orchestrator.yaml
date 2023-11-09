@@ -4,7 +4,7 @@ metadata:
   name: orchestrator-deployment-{{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.orchestratorReplicas }}
+  replicas: {{ .Values.orchestratorDefaultReplicas }}
   selector:
     matchLabels:
       app: orchestrator-{{ .Release.Name }}
@@ -23,6 +23,35 @@ spec:
           - containerPort: {{ .Values.orchestratorPort }}
           resources:
             {{- toYaml .Values.orchestratorResources | nindent 10 }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: orchestrator-hpa-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: orchestrator-deployment-{{ .Release.Name }}
+  minReplicas: {{ .Values.orchestratorMinReplicas }}
+  maxReplicas: {{ .Values.orchestratorMaxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.orchestratorScaleUtil }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.orchestratorScaleUtil }}
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 10
 ---
 apiVersion: v1
 kind: Service

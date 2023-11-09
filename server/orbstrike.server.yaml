@@ -2,6 +2,9 @@
 port: 10187
 # Defines the address to which the orchestrator will connect, when left on "" it will take the hostname instead, this is usually used with Container-Engines with built-in DNS support
 addr: ""
+# Defines a hostnamesuffix that is appended to the hostname (only applied when addr is "")
+# This is important when using kubernetes, to append FQDN DNS name after the hostname
+hostnamesuffix: ""
 # Shared secret required on both the Orchestrator and GameServers for validation, similar to a JWT Secret.
 secret: "thismustatleastbe40randomcharsinprod"
 
