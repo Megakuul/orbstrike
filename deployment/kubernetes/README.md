@@ -58,7 +58,7 @@ redis-cli --cluster add-node <Pod1>:6379 <Pod4>:6379 --cluster-slave
 
 When you need to update the dependencie-versions you can simply do this by updating the *version* attribute in the *dependencie* section of the *Chart.yaml* file and then running:
 ```
-helm dependencie build
+helm dependency build
 ```
 
 Make sure to extensively test the application after updating the dependencies!

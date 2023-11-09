@@ -1,0 +1,3 @@
+Installed Orbstrike-PLG-Addon!
+
+For the Longhorn Cluster, its required to have *open-iscsi* installed on each node.
