@@ -44,31 +44,31 @@ metadata:
   name: orchestrator-env-{{ $relName }}
   namespace: {{ $relNs }}
 stringData:
-  port: "{{ .Values.orchestratorPort }}"
-  timeoutmin: "{{ .Values.orchestratorTimeoutMin }}"
-  secret: "{{ .Values.appSecret }}"
-  logfile: "{{ .Values.orchestratorLogFile }}"
-  logoptions: "{{ .Values.orchestratorLogOptions }}"
-  maxlogsizekb: "{{ .Values.orchestratorMaxLogSizeKB }}"
-  logstdout: "{{ .Values.orchestratorLogStdout }}"
-  base64_ssl_certificate: "{{ .Values.orchestratorCert }}"
-  base64_ssl_privatekey: "{{ .Values.orchestratorKey }}"
-  base64_ssl_ca: "{{ .Values.orchestratorCa }}"
-  dbshardnodes: |
+  PORT: "{{ .Values.orchestratorPort }}"
+  TIMEOUTMIN: "{{ .Values.orchestratorTimeoutMin }}"
+  SECRET: "{{ .Values.appSecret }}"
+  LOGFILE: "{{ .Values.orchestratorLogFile }}"
+  LOGOPTIONS: "{{ .Values.orchestratorLogOptions }}"
+  MAXLOGSIZEKB: "{{ .Values.orchestratorMaxLogSizeKB }}"
+  LOGSTDOUT: "{{ .Values.orchestratorLogStdout }}"
+  BASE64_SSL_CERTIFICATE: "{{ .Values.orchestratorCert }}"
+  BASE64_SSL_PRIVATEKEY: "{{ .Values.orchestratorKey }}"
+  BASE64_SSL_CA: "{{ .Values.orchestratorCa }}"
+  DBSHARDNODES: |
     {{- range .Values.appCacheShard }}
-    cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,
+    cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local,
     {{- end }}
-  dbusername: "{{ .Values.appCacheUsername }}"
-  dbpassword: "{{ .Values.appCachePassword }}"
-  db_base64_ssl_certificate: {{ .Values.cacheDBCert }}
-  db_base64_ssl_privatekey: {{ .Values.cacheDBKey }}
-  db_base64_ssl_ca: {{ .Values.cacheDBCa }}
-  gameserver_base64_ssl_ca: {{ .Values.serverCa }}
-  focontrollerdowntimethresholdms: "{{ .Values.orchestratorDowntimeThresholdms }}"
-  failoverintervalms: "{{ .Values.orchestratorFailoverInterval }}"
-  gamelifetimemin: "{{ .Values.appGameLifeTimeMin }}"
-  gamejointimeoutsec: "{{ .Values.appGameJoinTimeoutSec }}"
-  dailyusergamelimit: "{{ .Values.appDailyUserGameLimit }}"
+  DBUSERNAME: "{{ .Values.appCacheUsername }}"
+  DBPASSWORD: "{{ .Values.appCachePassword }}"
+  DB_BASE64_SSL_CERTIFICATE: {{ .Values.cacheDBCert }}
+  DB_BASE64_SSL_PRIVATEKEY: {{ .Values.cacheDBKey }}
+  DB_BASE64_SSL_CA: {{ .Values.cacheDBCa }}
+  GAMESERVER_BASE64_SSL_CA: {{ .Values.serverCa }}
+  FOCONTROLLERDOWNTIMETHRESHOLDMS: "{{ .Values.orchestratorDowntimeThresholdms }}"
+  FAILOVERINTERVALMS: "{{ .Values.orchestratorFailoverInterval }}"
+  GAMELIFETIMEMIN: "{{ .Values.appGameLifeTimeMin }}"
+  GAMEJOINTIMEOUTSEC: "{{ .Values.appGameJoinTimeoutSec }}"
+  DAILYUSERGAMELIMIT: "{{ .Values.appDailyUserGameLimit }}"
 ---
 # Game Server
 apiVersion: v1
@@ -77,29 +77,29 @@ metadata:
   name: server-env-{{ $relName }} 
   namespace: {{ $relNs }}
 stringData:
-  port: "{{ .Values.serverPort }}"
-  addr: ""
-  hostnamesuffix: ".server-svc-{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
-  secret: "{{ .Values.appSecret }}"
-  logfile: "{{ .Values.serverLogFile }}"
-  logoptions: "{{ .Values.serverLogOptions }}"
-  maxlogsizekb: "{{ .Values.serverMaxLogSizeKB }}"
-  logstdout: "{{ .Values.serverLogStdout }}"
-  base64_ssl_certificate: "{{ .Values.serverCert }}"
-  base64_ssl_privatekey: "{{ .Values.serverKey }}"
-  base64_ssl_ca: "{{ .Values.serverCa }}"
-  dbshardnodes: |
+  PORT: "{{ .Values.serverPort }}"
+  ADDR: ""
+  HOSTNAMESUFFIX: ".server-svc-{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
+  SECRET: "{{ .Values.appSecret }}"
+  LOGFILE: "{{ .Values.serverLogFile }}"
+  LOGOPTIONS: "{{ .Values.serverLogOptions }}"
+  MAXLOGSIZEKB: "{{ .Values.serverMaxLogSizeKB }}"
+  LOGSTDOUT: "{{ .Values.serverLogStdout }}"
+  BASE64_SSL_CERTIFICATE: "{{ .Values.serverCert }}"
+  BASE64_SSL_PRIVATEKEY: "{{ .Values.serverKey }}"
+  BASE64_SSL_CA: "{{ .Values.serverCa }}"
+  DBSHARDNODES: |
     {{- range .Values.appCacheShard }}
     cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,
     {{- end }}
-  dbusername: "{{ .Values.appCacheUsername }}"
-  dbpassword: "{{ .Values.appCachePassword }}"
-  db_base64_ssl_certificate: {{ .Values.cacheDBCert }}
-  db_base64_ssl_privatekey: {{ .Values.cacheDBKey }}
-  db_base64_ssl_ca: {{ .Values.cacheDBCa }}
-  maxchannelsize: "{{ .Values.serverMaxChanSize }}"
-  requestperworker: "{{ .Values.serverReqPerWorker }}"
-  syncintervalms: "{{ .Values.serverSyncIntervalms }}"
-  downtimethresholdms: "{{ .Values.serverDowntimeThresholdms }}"
-  gameovermessage: "{{ .Values.appGameOverMessage }}"
-  responseintervalms: "{{ .Values.appResponseIntervalms }}"
+  DBUSERNAME: "{{ .Values.appCacheUsername }}"
+  DBPASSWORD: "{{ .Values.appCachePassword }}"
+  DB_BASE64_SSL_CERTIFICATE: {{ .Values.cacheDBCert }}
+  DB_BASE64_SSL_PRIVATEKEY: {{ .Values.cacheDBKey }}
+  DB_BASE64_SSL_CA: {{ .Values.cacheDBCa }}
+  MAXCHANNELSIZE: "{{ .Values.serverMaxChanSize }}"
+  REQUESTPERWORKER: "{{ .Values.serverReqPerWorker }}"
+  SYNCINTERVALMS: "{{ .Values.serverSyncIntervalms }}"
+  DOWNTIMETHRESHOLDMS: "{{ .Values.serverDowntimeThresholdms }}"
+  GAMEOVERMESSAGE: "{{ .Values.appGameOverMessage }}"
+  RESPONSEINTERVALMS: "{{ .Values.appResponseIntervalms }}"

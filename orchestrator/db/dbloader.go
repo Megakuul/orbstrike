@@ -12,6 +12,12 @@ import (
 
 
 func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
+	print(config)
+
+	if config.DBShardNodes=="" {
+		return nil, fmt.Errorf("Variable 'DBSHARDNODES' is not set!")
+	}
+	
 	tlsConf, err := ssl.GetTLSClientMutual(
 		config.DBBase64SSLCertificate,
 		config.DBBase64SSLPrivateKey,
@@ -27,10 +33,10 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 		Password: config.DBPassword,
 		TLSConfig: tlsConf,
 	})
-
+	
 	err = rdb.Ping(context.Background()).Err()
 	if err!=nil {
-		return nil, fmt.Errorf("%s\ncluster-nodes: %s", err, config.DBShardNodes) 
+		return nil, err
 	}
 
 	return rdb, nil

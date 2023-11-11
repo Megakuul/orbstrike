@@ -16,6 +16,7 @@ spec:
       containers:
         - name: server-{{ .Release.Name }}
           image: megakuul/orbstrike-server:latest
+          imagePullPolicy: Always
           envFrom:
           - secretRef:
               name: server-env-{{ .Release.Name }}

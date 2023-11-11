@@ -15,6 +15,7 @@ spec:
     spec:
       containers:
         - name: orchestrator-{{ .Release.Name }}
+          imagePullPolicy: Always
           image: megakuul/orbstrike-orchestrator:latest
           envFrom:
           - secretRef:
