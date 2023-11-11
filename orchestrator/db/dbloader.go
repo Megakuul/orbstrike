@@ -12,8 +12,6 @@ import (
 
 
 func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
-	print(config)
-
 	if config.DBShardNodes=="" {
 		return nil, fmt.Errorf("Variable 'DBSHARDNODES' is not set!")
 	}

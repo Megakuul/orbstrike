@@ -10,7 +10,7 @@ type Config struct {
 	TimeoutMin int `mapstructure:"timeoutmin"`
 	Secret string `mapstructure:"secret"`
 
-	DBShardNodes string `mapstructure:"dbshardnodes"`
+	DBShardNodes string `mapstructure:"DBSHARDNODES"`
 	DBUsername string `mapstructure:"dbusername"`
 	DBPassword string `mapstructure:"dbpassword"`
 	DBBase64SSLCertificate string `mapstructure:"db_base64_ssl_certificate"`

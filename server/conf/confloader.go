@@ -7,7 +7,7 @@ import (
 
 type Config struct {
 	Port int `mapstructure:"port"`
-	Addr string `mapstructre:"addr"`
+	Addr string `mapstructure:"addr"`
 	HostnameSuffix string `mapstructure:"hostnamesuffix"`
 	Secret string `mapstructure:"secret"`
 

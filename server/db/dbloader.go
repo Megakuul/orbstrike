@@ -14,12 +14,11 @@ import (
 
 func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 	fmt.Println(config)
+	time.Sleep(300 * time.Second)
 
 	if config.DBShardNodes=="" {
 		return nil, fmt.Errorf("Variable 'DBSHARDNODES' is not set!")
 	}
-
-	time.Sleep(300 * time.Second)
 	
 	tlsConf, err := ssl.GetTLSClient(
 		config.DBBase64SSLCertificate,
