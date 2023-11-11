@@ -54,7 +54,10 @@ stringData:
   BASE64_SSL_CERTIFICATE: "{{ .Values.orchestratorCert }}"
   BASE64_SSL_PRIVATEKEY: "{{ .Values.orchestratorKey }}"
   BASE64_SSL_CA: "{{ .Values.orchestratorCa }}"
-  DBSHARDNODES: "{{- range .Values.appCacheShard }}cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,{{- end }}"
+  DBSHARDNODES: |
+    {{- range .Values.appCacheShard }}
+    cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,
+    {{- end }}
   DBUSERNAME: "{{ .Values.appCacheUsername }}"
   DBPASSWORD: "{{ .Values.appCachePassword }}"
   DB_BASE64_SSL_CERTIFICATE: {{ .Values.cacheDBCert }}
@@ -85,7 +88,10 @@ stringData:
   BASE64_SSL_CERTIFICATE: "{{ .Values.serverCert }}"
   BASE64_SSL_PRIVATEKEY: "{{ .Values.serverKey }}"
   BASE64_SSL_CA: "{{ .Values.serverCa }}"
-  DBSHARDNODES: "{{- range .Values.appCacheShard }}cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,{{- end }}"
+  DBSHARDNODES: |
+    {{- range .Values.appCacheShard }}
+    cache-db-set-{{ $relName }}-{{ . }}.cache-db-svc-{{ $relName }}.{{ $relNs }}.svc.cluster.local:6379,
+    {{- end }}
   DBUSERNAME: "{{ .Values.appCacheUsername }}"
   DBPASSWORD: "{{ .Values.appCachePassword }}"
   DB_BASE64_SSL_CERTIFICATE: {{ .Values.cacheDBCert }}

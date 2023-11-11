@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/megakuul/orbstrike/server/conf"
 	"github.com/megakuul/orbstrike/server/ssl"
@@ -13,9 +12,6 @@ import (
 
 
 func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
-	fmt.Println(config)
-	time.Sleep(300 * time.Second)
-
 	if config.DBShardNodes=="" {
 		return nil, fmt.Errorf("Variable 'DBSHARDNODES' is not set!")
 	}
@@ -39,7 +35,7 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 	
 	err = rdb.Ping(context.Background()).Err()
 	if err!=nil {
-		return nil, fmt.Errorf("%s\ncluster-nodes: %s", err, config.DBShardNodes) 
+		return nil, err
 	}
 	
 	return rdb, nil

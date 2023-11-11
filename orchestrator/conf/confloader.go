@@ -10,7 +10,7 @@ type Config struct {
 	TimeoutMin int `mapstructure:"timeoutmin"`
 	Secret string `mapstructure:"secret"`
 
-	DBShardNodes string `mapstructure:"DBSHARDNODES"`
+	DBShardNodes string `mapstructure:"dbshardnodes"`
 	DBUsername string `mapstructure:"dbusername"`
 	DBPassword string `mapstructure:"dbpassword"`
 	DBBase64SSLCertificate string `mapstructure:"db_base64_ssl_certificate"`
@@ -43,7 +43,30 @@ func LoadConig(confpath string) (Config, error) {
 	viper.SetConfigName(confpath)
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
-	viper.AutomaticEnv()
+
+	// AutomaticEnv() does not work properly at this time
+	viper.BindEnv("port", "PORT")
+    viper.BindEnv("timeoutmin", "TIMEOUTMIN")
+    viper.BindEnv("secret", "SECRET")
+    viper.BindEnv("dbshardnodes", "DBSHARDNODES")
+    viper.BindEnv("dbusername", "DBUSERNAME")
+    viper.BindEnv("dbpassword", "DBPASSWORD")
+    viper.BindEnv("db_base64_ssl_certificate", "DB_BASE64_SSL_CERTIFICATE")
+    viper.BindEnv("db_base64_ssl_privatekey", "DB_BASE64_SSL_PRIVATEKEY")
+    viper.BindEnv("db_base64_ssl_ca", "DB_BASE64_SSL_CA")
+    viper.BindEnv("logfile", "LOGFILE")
+    viper.BindEnv("logoptions", "LOGOPTIONS")
+    viper.BindEnv("maxlogsizekb", "MAXLOGSIZEKB")
+    viper.BindEnv("logstdout", "LOGSTDOUT")
+    viper.BindEnv("gameserver_base64_ssl_ca", "GAMESERVER_BASE64_SSL_CA")
+    viper.BindEnv("base64_ssl_certificate", "BASE64_SSL_CERTIFICATE")
+    viper.BindEnv("base64_ssl_privatekey", "BASE64_SSL_PRIVATEKEY")
+    viper.BindEnv("base64_ssl_ca", "BASE64_SSL_CA")
+    viper.BindEnv("focontrollerdowntimethresholdms", "FOCONTROLLERDOWNTIMETHRESHOLDMS")
+    viper.BindEnv("failoverintervalms", "FAILOVERINTERVALMS")
+    viper.BindEnv("gamejointimeoutsec", "GAMEJOINTIMEOUTSEC")
+    viper.BindEnv("gamelifetimemin", "GAMELIFETIMEMIN")
+    viper.BindEnv("dailyusergamelimit", "DAILYUSERGAMELIMIT")
 
 	viper.SetDefault("timeoutmin", 180)
 	viper.SetDefault("logoptions", "ERROR|WARNING")
