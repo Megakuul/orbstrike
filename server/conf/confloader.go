@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 )
 
@@ -67,7 +68,11 @@ func LoadConig(confpath string) (Config, error) {
 
 	err := viper.ReadInConfig()
 	if err!=nil {
-		return config, err
+		if _,ok := err.(viper.ConfigFileNotFoundError); !ok {
+			return config, err
+		} else {
+			fmt.Println("No configfile found. Values are read from environment.")
+		}
 	}
 
 	if err = viper.Unmarshal(&config); err!=nil {

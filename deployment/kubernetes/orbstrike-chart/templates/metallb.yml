@@ -4,8 +4,8 @@
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
-  name: l2-ip
-  namespace: {{ .Release.Namespace }}
+  name: l2-ip-{{ .Release.Namespace }}-{{ .Release.Name }}
+  namespace: {{ .Values.metallbNamespace }}
 spec:
   ipAddressPools:
   - ip-pool-{{ .Release.Name }}
@@ -13,8 +13,8 @@ spec:
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-  name: ip-pool-{{ .Release.Name }}
-  namespace: {{ .Release.Namespace }}
+  name: ip-pool-{{ .Release.Namespace }}-{{ .Release.Name }}
+  namespace: {{ .Values.metallbNamespace }}
 spec:
   addresses:
     - {{ .Values.orchestratorSpeakerIP }}

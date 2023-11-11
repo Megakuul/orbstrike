@@ -1,3 +1,6 @@
+# Defines the namespace in which metallb resources are placed
+metallbNamespace: "metallb-system"
+
 # -- CacheDB Settings -- #
 
 # There are cacheDBShard*cacheDBReplicas instances launched
@@ -5,6 +8,9 @@
 cacheDBShard: 3
 # Number of replicas per shard (including shard-master)
 cacheDBReplicas: 1
+
+# Number of replicas of the disk over the cluster
+cacheDBDiskReplicas: 4
 
 # Kubernetes resource limit for each instance
 cacheDBResources:
@@ -40,7 +46,7 @@ cacheDBAofRewriteMinSize: "64mb"
 # -- Orchestrator Settigns -- #
 
 # Defines the external IP of the Metallb speaker
-# orchestratorSpeakerIP: 10.100.32.100
+# orchestratorSpeakerIP: 10.100.32.100/24
 
 # Port on which orchestrator is exposed
 orchestratorPort: 443

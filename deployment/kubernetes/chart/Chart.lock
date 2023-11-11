@@ -1,9 +1,0 @@
-dependencies:
-- name: metallb
-  repository: https://metallb.github.io/metallb
-  version: 0.13.12
-- name: longhorn
-  repository: https://charts.longhorn.io
-  version: 1.5.2
-digest: sha256:776afdcf46ced1970030b711b0ad42508138c8ecf8a4adae330dd17f128259df
-generated: "2023-11-08T19:23:31.275554492+01:00"

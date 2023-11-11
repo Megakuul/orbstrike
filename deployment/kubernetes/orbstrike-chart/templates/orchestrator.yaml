@@ -22,7 +22,7 @@ spec:
           ports:
           - containerPort: {{ .Values.orchestratorPort }}
           resources:
-            {{- toYaml .Values.orchestratorResources | nindent 10 }}
+            {{- toYaml .Values.orchestratorResources | nindent 12 }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -59,7 +59,7 @@ metadata:
   name: orchestrator-lb-{{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   annotations:
-    metallb.universe.tf/address-pool: ip-pool-{{ .Release.Name }}
+    metallb.universe.tf/address-pool: ip-pool-{{ .Release.Namespace }}-{{ .Release.Name }}
 spec:
   type: LoadBalancer
   selector:

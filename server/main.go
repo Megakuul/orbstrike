@@ -34,6 +34,7 @@ func main() {
 	if err!=nil {
 		fmt.Println("Failed to load configuration!")
 		fmt.Println(err)
+		os.Exit(1)
 	}
 	
 	err = logger.InitLogger(
@@ -45,6 +46,7 @@ func main() {
 	if err!=nil {
 		fmt.Println("Failed to initialize logger!")
 		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	logger.WriteInformationLogger(

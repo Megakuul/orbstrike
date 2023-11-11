@@ -6,7 +6,7 @@ metadata:
 provisioner: driver.longhorn.io
 allowVolumeExpansion: true
 parameters:
-  numberOfReplicas: "3"
+  numberOfReplicas: "{{ .Values.cacheDBDiskReplicas }}"
   staleReplicaTimeout: "2880" # 48 hours in minutes
   fromBackup: ""
   fsType: "ext4"
@@ -56,7 +56,7 @@ spec:
           mountPath: /data
         - name: cache-db-env-{{ .Release.Name }}
           mountPath: /etc/redis/conf
-
+        command: ["sleep", "infinity"]
       volumes:
         - name: cache-db-conf-{{ .Release.Name }}
           configMap:

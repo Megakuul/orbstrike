@@ -22,7 +22,7 @@ spec:
           ports:
           - containerPort: {{ .Values.serverPort }}
           resources:
-            {{- toYaml .Values.serverResources | nindent 10 }}
+            {{- toYaml .Values.serverResources | nindent 12 }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
