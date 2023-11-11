@@ -11,7 +11,8 @@ stringData:
   tls-cert: "{{ .Values.cacheDBCert }}"
   tls-key: "{{ .Values.cacheDBKey }}"
   tls-ca: "{{ .Values.cacheDBCa }}"
-  acl-file: "{{ .Values.cacheDBAcl }}"
+  acl-file: |
+    {{- .Values.cacheDBAcl | nindent 4 }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -42,7 +43,6 @@ kind: Secret
 metadata:
   name: orchestrator-env-{{ $relName }}
   namespace: {{ $relNs }}
-type: Opaque
 stringData:
   port: "{{ .Values.orchestratorPort }}"
   timeoutmin: "{{ .Values.orchestratorTimeoutMin }}"
@@ -74,9 +74,8 @@ stringData:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: orbstrike-server-env-{{ $relName }} 
+  name: server-env-{{ $relName }} 
   namespace: {{ $relNs }}
-type: Opaque
 stringData:
   port: "{{ .Values.serverPort }}"
   addr: ""

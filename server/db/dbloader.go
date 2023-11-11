@@ -1,7 +1,7 @@
 package db
 
 import (
-	"context"
+
 	"strings"
 
 	"github.com/redis/go-redis/v9"
@@ -27,11 +27,12 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 		TLSConfig: tlsConf,
 	})
 
-	_, err = rdb.Ping(context.Background()).Result()
+	/*
+	err = rdb.Ping(context.Background()).Err()
 	if err!=nil {
-		return nil, err
+		return nil, fmt.Errorf("%s\ncluster-nodes: %s", err, config.DBShardNodes) 
 	}
-
+	*/
 	return rdb, nil
 }
 

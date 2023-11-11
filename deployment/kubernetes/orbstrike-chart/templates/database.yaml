@@ -56,7 +56,6 @@ spec:
           mountPath: /data
         - name: cache-db-env-{{ .Release.Name }}
           mountPath: /etc/redis/conf
-        command: ["sleep", "infinity"]
       volumes:
         - name: cache-db-conf-{{ .Release.Name }}
           configMap:
@@ -64,7 +63,6 @@ spec:
         - name: cache-db-env-{{ .Release.Name }}
           secret:
             secretName: cache-db-env-{{ .Release.Name }}
-              
   volumeClaimTemplates:
   - metadata:
       name: cache-db-store-{{ .Release.Name }}

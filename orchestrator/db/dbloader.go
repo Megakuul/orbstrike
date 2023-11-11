@@ -2,11 +2,12 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/megakuul/orbstrike/orchestrator/conf"
 	"github.com/megakuul/orbstrike/orchestrator/ssl"
+	"github.com/redis/go-redis/v9"
 )
 
 
@@ -29,7 +30,7 @@ func StartClient(config *conf.Config) (*redis.ClusterClient, error) {
 
 	err = rdb.Ping(context.Background()).Err()
 	if err!=nil {
-		return nil, err
+		return nil, fmt.Errorf("%s\ncluster-nodes: %s", err, config.DBShardNodes) 
 	}
 
 	return rdb, nil

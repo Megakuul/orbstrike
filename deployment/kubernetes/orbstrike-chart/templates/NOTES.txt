@@ -2,6 +2,8 @@ Installed Orbstrike-System!
 
 Next step is to initialize the REDIS Cluster with following command from inside the cluster:
 
+kubectl exec -it cache-db-set-{{ .Release.Name }}-0 -n {{ .Release.Namespace }} -- sh
+
 redis-cli --cluster create \
 {{- range $i, $e := until (int .Values.cacheDBShard) }}
 cache-db-set-{{ $.Release.Name }}-{{ $i }}.cache-db-svc-{{ $.Release.Name }}.{{ $.Release.Namespace }}.svc.cluster.local:6379 \

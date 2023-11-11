@@ -85,3 +85,12 @@ To add a replica to a shard master
 ```bash
 redis-cli --cluster add-node <Pod1>:6379 <Pod4>:6379 --cluster-slave
 ```
+
+**Important**:
+Unfortunaly REDIS does not support connection of cluster nodes through dns-names. It does however support automatically changing IPs of other cluster nodes when single nodes change the IP.
+
+In practice that leads to cluster-corruption when all nodes are restarted at the same time (e.g. using *helm delete <stage>* and then reapplying the chart without deleting the persistent-volumes).
+
+When pods are recreated they aquire a different IP, thats why the *nodes.conf* on the REDIS containers will contain IPs from the cluster. If all of these IPs are not reachable the cluster is corrupted and will not work.
+
+To not use a weird workaround, I decided to just ignore this. As long as not all pods are down at the same time (also when applying a update with Helm or when rollout restarting) this should not cause any issues.
